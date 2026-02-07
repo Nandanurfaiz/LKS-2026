@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 2: Router & Network - LKS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
+        
+        /* Terminal & Code Styles */
+        .terminal {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            border-left: 4px solid #3b82f6;
+            margin: 0.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+        .file-content {
+            background-color: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            font-family: 'Roboto Mono', monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .prompt { color: #22c55e; font-weight: bold; }
+        .comment { color: #94a3b8; font-style: italic; }
+        .important { color: #f43f5e; font-weight: bold; }
+
+        /* Step Styling */
+        .step-badge {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Tooltip / Hint Style */
+        .hint-btn {
+            cursor: pointer;
+            color: #3b82f6;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            transition: color 0.2s;
+        }
+        .hint-btn:hover { color: #1d4ed8; }
+        
+        /* Modal for explanation */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: #000; }
+    </style>
+    <script>
+        function showHint(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerHTML = text;
+            document.getElementById('myModal').style.display = "block";
+        }
+        function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+        }
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('myModal')) {
+                closeModal();
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50">
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-800 mb-2">Penjelasan</h3>
+            <p id="modalText" class="text-slate-600 text-sm leading-relaxed"></p>
+        </div>
+    </div>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-slate-400 hover:text-blue-600 transition">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
+                <span class="text-slate-300">|</span>
+                <span class="font-bold text-slate-800">Fase 2: Router & Firewall</span>
+            </div>
+            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Bobot 70% (Core)</span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-6 py-10 pb-24">
+
+        <header class="mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-3xl font-bold text-slate-900 mb-3">Membangun Jantung Jaringan</h1>
+            <p class="text-slate-600 leading-relaxed">
+                Kita akan mengubah VM Master menjadi <strong>Router (fw)</strong> yang menghubungkan Internet, DMZ, Internal, dan Client. Tanpa router ini, topologi hanyalah pulau-pulau yang terpisah.
+            </p>
+        </header>
+
+        <section class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+            <h2 class="text-blue-900 font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-tasks"></i> Job Sheet: Router Configuration
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <h4 class="font-bold text-blue-700 mb-2">Target IP Address (fw):</h4>
+                    <ul class="space-y-1 font-mono text-slate-700 bg-white p-3 rounded border border-blue-100">
+                        <li>eth0 (Internet): DHCP (Bridged)</li>
+                        <li>eth1 (DMZ)     : 172.16.10.1/24</li>
+                        <li>eth2 (INT)     : 192.168.10.1/24</li>
+                        <li>eth3 (Client)  : 10.10.10.1/24</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-700 mb-2">Tugas Utama:</h4>
+                    <ul class="list-disc ml-5 text-slate-700 space-y-1">
+                        <li>Mengaktifkan <strong>IP Forwarding</strong>.</li>
+                        <li>Konfigurasi <strong>NAT (Masquerade)</strong> agar klien bisa internetan.</li>
+                        <li>Install <strong>DHCP Server</strong> untuk melayani Client (Budi).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <hr class="border-slate-200 mb-12">
+
+        <section class="mb-12">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="step-badge">1</div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Cloning & Hardware Setup</h2>
+                    <p class="text-slate-500 text-sm mt-1">Menggandakan Master menjadi VM baru bernama "fw".</p>
+                </div>
+            </div>
+
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div class="border-l-4 border-slate-200 pl-4">
+                    <h4 class="font-bold text-slate-800 text-sm">1. Lakukan Full Clone</h4>
+                    <p class="text-xs text-slate-600 mt-1">
+                        Klik kanan <code>Debian-Master</code> > <strong>Manage</strong> > <strong>Clone</strong>.<br>
+                        Pilih <strong>Create a full clone</strong>. Beri nama VM: <code>fw</code> (singkatan Firewall).
+                        <i class="fas fa-question-circle hint-btn" onclick="showHint('Kenapa Full Clone?', 'Full Clone membuat salinan VM yang benar-benar terpisah. Jika Linked Clone, VM baru masih bergantung pada file VM induk. Kita butuh Full Clone agar jika Master rusak/dihapus, Router (fw) tetap aman.')"></i>
+                    </p>
+                </div>
+                
+                <div class="border-l-4 border-slate-200 pl-4">
+                    <h4 class="font-bold text-slate-800 text-sm">2. Tambahkan Network Adapter (PENTING!)</h4>
+                    <p class="text-xs text-slate-600 mt-1 mb-2">
+                        VM <code>fw</code> butuh 4 kaki (interface). Klik <strong>Edit virtual machine settings</strong> pada VM <code>fw</code>. Atur seperti ini:
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left border rounded">
+                            <thead class="bg-slate-100 font-bold">
+                                <tr>
+                                    <th class="p-2 border">Adapter</th>
+                                    <th class="p-2 border">Setting VMware</th>
+                                    <th class="p-2 border">Tujuan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-2 border">Adapter 1</td>
+                                    <td class="p-2 border font-bold text-green-600">Bridged (Replicate ON)</td>
+                                    <td class="p-2 border">Internet (ISP)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border">Adapter 2</td>
+                                    <td class="p-2 border font-bold text-blue-600">Custom: VMnet10</td>
+                                    <td class="p-2 border">DMZ</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border">Adapter 3</td>
+                                    <td class="p-2 border font-bold text-blue-600">Custom: VMnet11</td>
+                                    <td class="p-2 border">Internal</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border">Adapter 4</td>
+                                    <td class="p-2 border font-bold text-blue-600">Custom: VMnet12</td>
+                                    <td class="p-2 border">Client</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-orange-600 mt-2 bg-orange-50 p-2 rounded">
+                        <i class="fas fa-exclamation-triangle"></i> Jika Adapter kurang, klik tombol <strong>Add...</strong> > Network Adapter > Finish.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="step-badge">2</div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Konfigurasi IP Address</h2>
+                    <p class="text-slate-500 text-sm mt-1">Nyalakan VM <code>fw</code> dan login sebagai root.</p>
+                </div>
+            </div>
+
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">1. Cek Nama Interface</h4>
+                    <p class="text-xs text-slate-500 mb-2">Nama interface bisa berbeda (ens33/eth0). Cek dulu:</p>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> ip link show
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">
+                        <em>Biasanya urut: ens33 (Bridged), ens37 (DMZ), ens38 (INT), ens39 (Client). <br>Sesuaikan script di bawah dengan nama yang muncul di layar Anda.</em>
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">2. Edit Interfaces</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> nano /etc/network/interfaces
+                    </div>
+                    <p class="text-xs text-slate-500 mb-2">Hapus isinya, ganti dengan konfigurasi ini (Ingat: Jangan Typo!):</p>
+                    
+                    <div class="file-content">
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# JALUR INTERNET (Bridged)
+# Fungsi: Minta IP otomatis dari WiFi/Modem agar router bisa internetan
+auto ens33
+iface ens33 inet dhcp
+
+# JALUR DMZ (VMnet10)
+# Fungsi: IP Statis untuk Gateway Server Web (172.16.10.1)
+auto ens37
+iface ens37 inet static
+    address 172.16.10.1/24
+
+# JALUR INTERNAL (VMnet11)
+# Fungsi: IP Statis untuk Gateway Server Kantor/Mail (192.168.10.1)
+auto ens38
+iface ens38 inet static
+    address 192.168.10.1/24
+
+# JALUR CLIENT (VMnet12)
+# Fungsi: IP Statis untuk Gateway Client (10.10.10.1)
+auto ens39
+iface ens39 inet static
+    address 10.10.10.1/24</div>
+                    <button class="text-xs text-blue-600 mt-2 underline" onclick="showHint('Penjelasan Kode Interfaces', '<b>auto ensXX</b>: Menyalakan interface otomatis saat booting.<br><b>iface inet dhcp</b>: Meminta IP dari server lain (ISP).<br><b>iface inet static</b>: Kita tentukan IP-nya secara manual (Permanent).<br><b>address</b>: Alamat IP Router itu sendiri.')">Jelaskan kode di atas</button>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">3. Restart Networking</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> systemctl restart networking<br>
+                        <span class="prompt">root@fw:~#</span> ip a <span class="comment"># Pastikan IP sudah muncul semua</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="step-badge">3</div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Routing & NAT (Internet Sharing)</h2>
+                    <p class="text-slate-500 text-sm mt-1">Agar server di DMZ/INT bisa update paket dari internet.</p>
+                </div>
+            </div>
+
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">1. Aktifkan IP Forwarding</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> nano /etc/sysctl.conf
+                    </div>
+                    <p class="text-xs text-slate-500 mb-1">Hilangkan tanda pagar (#) pada baris:</p>
+                    <div class="file-content">net.ipv4.ip_forward=1</div>
+                    <button class="text-xs text-blue-600 mt-1 underline" onclick="showHint('Apa itu IP Forwarding?', 'Secara default, Linux pelit. Dia tidak mau meneruskan paket data dari satu kaki (ens37) ke kaki lain (ens33). Dengan mengaktifkan ip_forward=1, kita mengizinkan Linux bertindak sebagai jembatan/router antar-jaringan.')">Apa fungsi ini?</button>
+                    
+                    <p class="text-xs text-slate-500 mt-2 mb-1">Simpan, lalu terapkan:</p>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> sysctl -p
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">2. Konfigurasi NAT (Masquerade)</h4>
+                    <p class="text-xs text-slate-500 mb-2">Kita gunakan <code>iptables</code>. Pastikan paket terinstall:</p>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> apt install iptables iptables-persistent -y
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2 mb-2">Saat instalasi <em>iptables-persistent</em>, pilih <strong>YES</strong> untuk menyimpan rule ipv4 & ipv6.</p>
+                    
+                    <p class="text-xs text-slate-500 mb-2 font-bold">Masukkan Rule NAT:</p>
+                    <div class="terminal">
+                        <span class="comment"># NAT keluar melalui ens33 (interface internet)</span><br>
+                        <span class="prompt">root@fw:~#</span> iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE<br>
+                        <span class="comment"># Simpan agar permanen</span><br>
+                        <span class="prompt">root@fw:~#</span> netfilter-persistent save
+                    </div>
+                    <button class="text-xs text-blue-600 mt-2 underline" onclick="showHint('Penjelasan IPTABLES NAT', '<b>-t nat</b>: Kita bermain di tabel NAT (Network Address Translation).<br><b>-A POSTROUTING</b>: Aturan dipasang DI AKHIR, saat paket mau pergi keluar.<br><b>-o ens33</b>: Output interface. Paket yang keluar lewat kabel internet (ens33).<br><b>-j MASQUERADE</b>: Topengkan IP asal (192.168.x.x) menjadi IP Router publik. Jadi internet mengira yang request adalah Router, bukan Client di dalam.')">Jelaskan kode IPTABLES ini</button>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="step-badge">4</div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">DHCP Server (Untuk Client)</h2>
+                    <p class="text-slate-500 text-sm mt-1">Sesuai soal, interface Client harus DHCP.</p>
+                </div>
+            </div>
+
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">1. Install Paket</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> apt install isc-dhcp-server -y
+                    </div>
+                    <p class="text-xs text-orange-500 mt-1"><i class="fas fa-info-circle"></i> Wajar jika muncul pesan "Failed" saat install. Lanjut saja.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">2. Tentukan Interface</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> nano /etc/default/isc-dhcp-server
+                    </div>
+                    <div class="file-content">INTERFACESv4="ens39"  <span class="comment"># Sesuaikan dengan interface Client Anda</span></div>
+                    <button class="text-xs text-blue-600 mt-1 underline" onclick="showHint('Kenapa harus diset?', 'Secara default DHCP Server bingung mau membagikan IP lewat kabel yang mana. Kita harus tegas menyuruhnya: bagikan HANYA lewat kabel yang menuju ke Client (ens39), jangan ke internet!')">Kenapa ini penting?</button>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">3. Konfigurasi Subnet</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> nano /etc/dhcp/dhcpd.conf
+                    </div>
+                    <p class="text-xs text-slate-500 mb-2">Scroll ke paling bawah, tambahkan:</p>
+                    <div class="file-content">
+subnet 10.10.10.0 netmask 255.255.255.0 {
+    range 10.10.10.10 10.10.10.100;
+    option routers 10.10.10.1;
+    option domain-name-servers 8.8.8.8;
+}</div>
+                    <button class="text-xs text-blue-600 mt-2 underline" onclick="showHint('Penjelasan Konfigurasi DHCP', '<b>subnet ... netmask</b>: Wilayah jaringan yang dilayani.<br><b>range</b>: Rentang IP yang boleh dipinjamkan ke client (dari .10 sampai .100).<br><b>option routers</b>: Memberitahu client siapa pintu keluarnya (Gateway), yaitu IP Router ini sendiri.<br><b>option domain-name-servers</b>: Memberitahu client server DNS mana yang dipakai (Google 8.8.8.8).')">Jelaskan kode di atas</button>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-2">4. Restart DHCP</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> systemctl restart isc-dhcp-server<br>
+                        <span class="prompt">root@fw:~#</span> systemctl status isc-dhcp-server
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-red-50 border border-red-200 rounded-xl p-6 mb-12 shadow-sm">
+            <h2 class="text-red-900 font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-tools"></i> Troubleshooting (Jika Error)
+            </h2>
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded border border-red-100">
+                    <h4 class="font-bold text-red-600 text-sm mb-1">Masalah 1: "No DHCPOFFERS received" pada ens33</h4>
+                    <p class="text-xs text-slate-600">
+                        <strong>Penyebab:</strong> VM tidak tersambung ke WiFi fisik laptop Anda.<br>
+                        <strong>Solusi:</strong> Buka Virtual Network Editor > Klik VMnet0 > Ganti "Automatic" menjadi nama WiFi Adapter Laptop Anda > Restart Networking di Debian.
+                    </p>
+                </div>
+                <div class="bg-white p-4 rounded border border-red-100">
+                    <h4 class="font-bold text-red-600 text-sm mb-1">Masalah 2: "Job for isc-dhcp-server failed"</h4>
+                    <p class="text-xs text-slate-600">
+                        <strong>Penyebab:</strong> Salah ketik di file <code>dhcpd.conf</code> (kurang titik koma ;) atau salah nama interface di <code>/etc/default/isc-dhcp-server</code>.<br>
+                        <strong>Solusi:</strong> Cek nama interface dengan <code>ip link show</code>. Pastikan namanya sama persis (misal: ens39) dengan yang Anda tulis di config. Cek juga tanda kurung kurawal { } di file config.
+                    </p>
+                </div>
+                 <div class="bg-white p-4 rounded border border-red-100">
+                    <h4 class="font-bold text-red-600 text-sm mb-1">Masalah 3: Ping Google Gagal (Temporary Failure in Name Resolution)</h4>
+                    <p class="text-xs text-slate-600">
+                        <strong>Penyebab:</strong> DNS belum tersetting atau koneksi internet putus.<br>
+                        <strong>Solusi:</strong> Cek file <code>nano /etc/resolv.conf</code>. Pastikan ada baris <code>nameserver 8.8.8.8</code>. Jika tidak ada, tambahkan.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-green-50 border border-green-200 rounded-2xl p-8 mb-12">
+            <h2 class="text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-check-circle"></i> Verifikasi Keberhasilan Fase 2
+            </h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm">
+                    <i class="fas fa-check text-green-600 mt-1"></i>
+                    <div class="text-sm text-slate-700">
+                        <strong>Internet OK:</strong> Coba <code>ping google.com</code> dari router fw. Harus reply.
+                    </div>
+                </label>
+                <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm">
+                    <i class="fas fa-check text-green-600 mt-1"></i>
+                    <div class="text-sm text-slate-700">
+                        <strong>IP Address OK:</strong> Perintah <code>ip a</code> menampilkan 4 IP yang benar (DHCP, 172..., 192..., 10...).
+                    </div>
+                </label>
+                <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm">
+                    <i class="fas fa-check text-green-600 mt-1"></i>
+                    <div class="text-sm text-slate-700">
+                        <strong>Forwarding ON:</strong> <code>sysctl net.ipv4.ip_forward</code> bernilai 1.
+                    </div>
+                </label>
+                 <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm">
+                    <i class="fas fa-check text-green-600 mt-1"></i>
+                    <div class="text-sm text-slate-700">
+                        <strong>DHCP Active:</strong> Service isc-dhcp-server statusnya "Running" (Hijau).
+                    </div>
+                </label>
+            </div>
+        </section>
+
+        <div class="flex justify-between items-center">
+            <a href="index.html" class="px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold">
+                Kembali ke Dashboard
+            </a>
+            <a href="phase3.html" class="px-8 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition font-bold flex items-center gap-2">
+                Lanjut ke Fase 3 <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>
