@@ -3,24 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase 1: Infrastruktur Dasar - LKS 2026</title>
+    <title>Fase 1: Infrastruktur Dasar (Offline DVD) - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
         
-        /* Terminal Style */
+        /* Terminal & Code Styles */
         .terminal {
             background-color: #1e293b;
             color: #e2e8f0;
-            padding: 1rem 1.25rem;
+            padding: 1rem;
             border-radius: 0.5rem;
             font-family: 'Roboto Mono', monospace;
             font-size: 0.85rem;
             border-left: 4px solid #3b82f6;
-            margin: 0.5rem 0;
+            margin: 0.75rem 0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .file-content {
+            background-color: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            font-family: 'Roboto Mono', monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            white-space: pre;
+            overflow-x: auto;
         }
         .prompt { color: #22c55e; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
@@ -60,40 +73,113 @@
         }
         .sub-step.active { border-left-color: #3b82f6; }
         .sub-step.active::before { background: #3b82f6; }
+
+        /* Tooltip / Hint Style */
+        .hint-btn {
+            cursor: pointer;
+            color: #3b82f6;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+            transition: color 0.2s;
+            display: inline-block;
+            padding: 4px;
+        }
+        .hint-btn:hover { color: #1d4ed8; }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 20% auto;
+            padding: 1.5rem;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+        .close {
+            color: #64748b;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .close:hover { color: #0f172a; }
     </style>
+    <script>
+        function showHint(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerHTML = text;
+            document.getElementById('myModal').style.display = "block";
+        }
+        function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('myModal')) { closeModal(); }
+        }
+    </script>
 </head>
-<body class="bg-slate-50">
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-3 border-b pb-2">Penjelasan</h3>
+            <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+        </div>
+    </div>
 
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="text-slate-400 hover:text-blue-600 transition">
-                    <i class="fas fa-arrow-left"></i> Kembali
+        <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-slate-400 hover:text-blue-600 transition p-2">
+                    <i class="fas fa-arrow-left text-lg"></i>
                 </a>
-                <span class="text-slate-300">|</span>
-                <span class="font-bold text-slate-800">Fase 1: Setup Infrastruktur & Master VM</span>
+                <div class="flex flex-col">
+                    <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase 1</span>
+                    <span class="text-xs text-slate-500 md:hidden">Infrastructure</span>
+                </div>
+                <span class="hidden md:inline text-slate-300">|</span>
+                <span class="hidden md:inline font-bold text-slate-800">Setup Infrastruktur & Master VM</span>
             </div>
-            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Bobot 70% (Base)</span>
+            <span class="bg-blue-100 text-blue-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">Bobot 70% (Base)</span>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-6 py-10 pb-24">
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
-        <header class="mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-3xl font-bold text-slate-900 mb-3">Membangun Fondasi Lab</h1>
-            <p class="text-slate-600 leading-relaxed">
-                Fase ini menentukan keberhasilan fase berikutnya. Kita akan membangun "kabel virtual" sesuai topologi soal agar server-server nanti bisa saling terhubung di jalur yang benar.
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Membangun Fondasi Lab</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Fase ini menentukan keberhasilan fase berikutnya. Kita akan membangun "kabel virtual" dan menginstall Master VM menggunakan <strong>Metode DVD (Offline)</strong>.
             </p>
         </header>
 
-        <section class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 mb-12 shadow-sm">
-            <h2 class="text-indigo-900 font-bold text-lg mb-4 flex items-center gap-2">
+        <section class="bg-indigo-50 border border-indigo-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
+            <h2 class="text-indigo-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
                 <i class="fas fa-file-contract"></i> Konteks Soal (Mengapa kita melakukan ini?)
             </h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
                     <h4 class="text-xs font-bold text-indigo-500 uppercase mb-1">Kutipan Skenario:</h4>
-                    <p class="text-sm text-slate-700 italic bg-white p-3 rounded border border-indigo-100">
+                    <p class="text-xs md:text-sm text-slate-700 italic bg-white p-3 rounded border border-indigo-100">
                         "...Anda diminta membangun infrastruktur jaringan yang aman dengan memisahkan layanan publik (DMZ), layanan internal (INT), dan Client..."
                     </p>
                 </div>
@@ -110,28 +196,28 @@
 
         <hr class="border-slate-200 mb-12">
 
-        <section class="mb-12">
-            <div class="flex items-start gap-4 mb-6">
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">1</div>
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Setting Virtual Network Editor</h2>
-                    <p class="text-slate-500 text-sm mt-1">Langkah ini wajib dilakukan <strong>sebelum</strong> membuat VM apapun.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Setting Virtual Network Editor</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Langkah ini wajib dilakukan <strong>sebelum</strong> membuat VM apapun.</p>
                 </div>
             </div>
 
-            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
                 <div class="space-y-6">
-                    <div class="border-l-4 border-slate-200 pl-4">
+                    <div class="border-l-4 border-slate-200 pl-3 md:pl-4">
                         <h4 class="font-bold text-sm text-slate-800">1. Buka Aplikasi dengan Akses Admin</h4>
                         <p class="text-xs text-slate-500 mt-1">Cari "Virtual Network Editor" di menu Start Windows, klik kanan -> <strong>Run as Administrator</strong>.</p>
                     </div>
 
-                    <div class="border-l-4 border-slate-200 pl-4">
+                    <div class="border-l-4 border-slate-200 pl-3 md:pl-4">
                         <h4 class="font-bold text-sm text-slate-800">2. Aktifkan Mode Edit</h4>
                         <p class="text-xs text-slate-500 mt-1">Jika tombol-tombol terlihat abu-abu (mati), klik tombol <strong>Change Settings</strong> di pojok kanan bawah jendela.</p>
                     </div>
 
-                    <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 py-2 rounded-r">
+                    <div class="border-l-4 border-blue-500 pl-3 md:pl-4 bg-blue-50 py-2 rounded-r">
                         <h4 class="font-bold text-sm text-blue-800">3. Tambahkan Network Baru (Ulangi 3x)</h4>
                         <p class="text-xs text-blue-700 mt-1 mb-2">Klik tombol <strong>Add Network...</strong>, pilih VMnet yang sesuai, lalu atur detailnya:</p>
                         
@@ -180,7 +266,7 @@
                         </div>
                     </div>
 
-                    <div class="border-l-4 border-slate-200 pl-4">
+                    <div class="border-l-4 border-slate-200 pl-3 md:pl-4">
                         <h4 class="font-bold text-sm text-slate-800">4. Simpan</h4>
                         <p class="text-xs text-slate-500 mt-1">Klik <strong>Apply</strong> dan tunggu proses restart network driver selesai, lalu klik OK.</p>
                     </div>
@@ -188,33 +274,33 @@
             </div>
         </section>
 
-        <section class="mb-12">
-            <div class="flex items-start gap-4 mb-6">
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Instalasi Master VM (Detail)</h2>
-                    <p class="text-slate-500 text-sm mt-1">Panduan langkah-demi-langkah instalasi OS Debian 12.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Instalasi Master VM (Offline)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Panduan instalasi Debian 12 menggunakan DVD.</p>
                 </div>
             </div>
 
-            <div class="ml-14 bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-8 rounded-xl border border-slate-200 shadow-sm">
                 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800">2.1 Setup Awal VM</h4>
-                    <p class="text-sm text-slate-600 mb-2">Buat VM Baru di VMware dengan spesifikasi:</p>
-                    <ul class="text-sm list-disc ml-5 text-slate-600 mb-2">
-                        <li><strong>ISO Image:</strong> `debian-12.x.x-amd64-DVD-1.iso`</li>
+                    <h4 class="font-bold text-slate-800 text-sm">2.1 Setup Awal VM</h4>
+                    <p class="text-xs text-slate-600 mb-2">Buat VM Baru di VMware dengan spesifikasi:</p>
+                    <ul class="text-xs md:text-sm list-disc ml-5 text-slate-600 mb-2">
+                        <li><strong>ISO Image:</strong> `debian-12.x.x-amd64-DVD-1.iso` (Wajib DVD-1 Binary!)</li>
                         <li><strong>VM Name:</strong> `Debian-Master`</li>
-                        <li><strong>Disk Size:</strong> `20 GB` (Store virtual disk as a single file)</li>
+                        <li><strong>Disk Size:</strong> `20 GB` (Single file)</li>
                         <li><strong>Memory:</strong> `1024 MB` (1 GB)</li>
-                        <li><strong>Network Adapter:</strong> Pilih `NAT` (Agar bisa konek internet saat install).</li>
+                        <li><strong>Network Adapter:</strong> Pilih `NAT` (Sementara, agar bisa konek internet jika mendesak).</li>
                     </ul>
                 </div>
 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800">2.2 Booting & Bahasa</h4>
-                    <ul class="text-sm list-decimal ml-5 text-slate-600 space-y-1">
-                        <li>Pilih menu <strong>Install</strong> (Jangan <em>Graphical Install</em> agar proses lebih cepat & ringan).</li>
+                    <h4 class="font-bold text-slate-800 text-sm">2.2 Booting & Bahasa</h4>
+                    <ul class="text-xs md:text-sm list-decimal ml-5 text-slate-600 space-y-1">
+                        <li>Pilih menu <strong>Install</strong> (Jangan <em>Graphical Install</em> agar proses lebih cepat).</li>
                         <li><strong>Language:</strong> English</li>
                         <li><strong>Location:</strong> Other -> Asia -> Indonesia.</li>
                         <li><strong>Keyboard:</strong> American English.</li>
@@ -222,7 +308,7 @@
                 </div>
 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800">2.3 Identitas & Akun</h4>
+                    <h4 class="font-bold text-slate-800 text-sm">2.3 Identitas & Akun</h4>
                     <div class="grid grid-cols-2 gap-4 text-sm mb-2 mt-2">
                         <div class="bg-slate-50 p-2 rounded border">
                             <span class="block text-xs text-slate-400 font-bold uppercase">Hostname</span>
@@ -233,7 +319,7 @@
                             <span class="font-mono font-bold text-blue-600">lks.kabupaten</span>
                         </div>
                     </div>
-                    <ul class="text-sm list-decimal ml-5 text-slate-600 space-y-1">
+                    <ul class="text-xs md:text-sm list-decimal ml-5 text-slate-600 space-y-1">
                         <li><strong>Root Password:</strong> <code>123</code> (Konfirmasi: 123)</li>
                         <li><strong>Full Name/User:</strong> <code>siswa</code></li>
                         <li><strong>User Password:</strong> <code>123</code> (Konfirmasi: 123)</li>
@@ -241,24 +327,27 @@
                 </div>
 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800">2.4 Partisi Disk</h4>
-                    <p class="text-sm text-slate-600">Pilih <strong>Guided - use entire disk</strong> -> Pilih Harddisk -> <strong>All files in one partition</strong> -> <strong>Finish partitioning and write changes to disk</strong> -> Pilih <strong>Yes</strong>.</p>
+                    <h4 class="font-bold text-slate-800 text-sm">2.4 Partisi Disk</h4>
+                    <p class="text-xs md:text-sm text-slate-600">Pilih <strong>Guided - use entire disk</strong> -> Pilih Harddisk -> <strong>All files in one partition</strong> -> <strong>Finish partitioning and write changes to disk</strong> -> Pilih <strong>Yes</strong>.</p>
                 </div>
 
-                <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800">2.5 Package Manager (Repo)</h4>
-                    <ul class="text-sm list-decimal ml-5 text-slate-600 space-y-1">
-                        <li>Scan extra installation media? -> <strong>No</strong></li>
-                        <li>Use a network mirror? -> <strong>Yes</strong></li>
-                        <li>Mirror country: <strong>Indonesia</strong> -> Pilih `kambing.ui.ac.id` atau `kartolo` (Pilih yang stabil).</li>
-                        <li>HTTP Proxy: Kosongkan -> Continue.</li>
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                    <h4 class="font-bold text-yellow-800 text-sm mb-2"><i class="fas fa-compact-disc"></i> 2.5 Package Manager (Mode DVD)</h4>
+                    <ul class="text-xs md:text-sm list-decimal ml-5 text-slate-700 space-y-1">
+                        <li>
+                            Scan extra installation media? -> <strong>YES</strong>
+                            <button class="text-xs text-blue-600 font-bold ml-1 hover:underline cursor-pointer" onclick="showHint('Cara Ganti DVD di Tengah Jalan', 'Saat Anda pilih YES, layar akan meminta DVD-2. Jangan tekan Enter dulu!<br>1. Tekan Ctrl+Alt untuk keluar dari VM.<br>2. Klik menu VM > Settings > CD/DVD > Browse > Pilih ISO DVD-2.<br>3. Klik OK, kembali ke VM, baru tekan Enter.')">
+                                <i class="fas fa-question-circle"></i> Cara Scan DVD 2?
+                            </button>
+                        </li>
+                        <li>Use a network mirror? -> <strong>NO</strong> (Kita pakai DVD sepenuhnya).</li>
                     </ul>
                 </div>
 
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
                     <h4 class="font-bold text-red-700 text-sm mb-2"><i class="fas fa-exclamation-triangle"></i> 2.6 SOFTWARE SELECTION (SANGAT PENTING!)</h4>
-                    <p class="text-xs text-red-600 mb-2">Salah di sini akan membuat VM berat. Saat muncul menu "Software selection", atur centang persis seperti ini:</p>
-                    <div class="bg-white p-3 rounded border border-red-200 font-mono text-sm text-slate-700">
+                    <p class="text-xs text-red-600 mb-2">Salah di sini akan membuat VM berat. Saat muncul menu "Software selection", atur centang persis seperti ini (Gunakan SPASI untuk centang):</p>
+                    <div class="bg-white p-3 rounded border border-red-200 font-mono text-xs md:text-sm text-slate-700">
                         [ ] Debian desktop environment<br>
                         [ ] ... GNOME<br>
                         [ ] ... Xfce<br>
@@ -269,23 +358,23 @@
                 </div>
 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800">2.7 Bootloader & Finish</h4>
-                    <p class="text-sm text-slate-600">Install GRUB boot loader? -> <strong>Yes</strong> -> Pilih device <strong>/dev/sda</strong> (bukan manual). <br> Tunggu selesai, lalu <strong>Reboot</strong>.</p>
+                    <h4 class="font-bold text-slate-800 text-sm">2.7 Bootloader & Finish</h4>
+                    <p class="text-xs md:text-sm text-slate-600">Install GRUB boot loader? -> <strong>Yes</strong> -> Pilih device <strong>/dev/sda</strong> (bukan manual). <br> Tunggu selesai, lalu <strong>Reboot</strong>.</p>
                 </div>
 
             </div>
         </section>
 
-        <section class="mb-12">
-            <div class="flex items-start gap-4 mb-6">
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">3</div>
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Konfigurasi Pasca-Install</h2>
-                    <p class="text-slate-500 text-sm mt-1">Menyiapkan "Senjata Perang" di dalam VM Master.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi Pasca-Install</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan Repositori DVD.</p>
                 </div>
             </div>
 
-            <div class="ml-14 bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-8 rounded-xl border border-slate-200 shadow-sm">
                 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">3.1 Login Pertama & Akses Root</h4>
@@ -300,28 +389,27 @@
                 </div>
 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800 text-sm">3.2 Cek Koneksi & Repository</h4>
-                    <p class="text-xs text-slate-500 mb-2">Pastikan VM bisa internet (karena adaptor NAT) dan update daftar paket.</p>
+                    <h4 class="font-bold text-slate-800 text-sm">3.2 Cek Repositori DVD</h4>
+                    <p class="text-xs text-slate-500 mb-2">Pastikan repo internet mati agar install offline lancar:</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> ping google.com -c 3<br>
                         <span class="prompt">root@master:~#</span> nano /etc/apt/sources.list<br>
-                        <span class="comment"># Pastikan baris 'deb cdrom' diberi tanda pagar (#) didepannya agar tidak minta CD.</span><br>
-                        <span class="comment"># Simpan: Ctrl+O, Enter. Keluar: Ctrl+X</span><br>
+                        <span class="comment"># Pastikan baris 'deb http://...' DIBERI PAGAR (#)</span><br>
+                        <span class="comment"># Pastikan baris 'deb cdrom:...' TIDAK dipagar</span><br>
+                        <span class="comment"># Simpan: Ctrl+O, Enter, Ctrl+X</span><br>
                         <span class="prompt">root@master:~#</span> apt update
                     </div>
                 </div>
 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">3.3 Install Paket Wajib (Tools)</h4>
-                    <p class="text-xs text-slate-500 mb-2">Install semua alat yang dibutuhkan untuk LKS agar tidak perlu download lagi nanti.</p>
+                    <p class="text-xs text-slate-500 mb-2">Install semua alat yang ada di DVD-1.</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> apt install nano vim net-tools dnsutils iputils-ping curl wget zip unzip git -y
+                        <span class="prompt">root@master:~#</span> apt install nano vim net-tools dnsutils iputils-ping curl wget zip unzip -y
                     </div>
                 </div>
 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800 text-sm">3.4 Aktifkan SSH Root Login (Efisiensi Waktu)</h4>
-                    <p class="text-xs text-slate-500 mb-2">Secara default, Debian 12 memblokir login root via SSH. Kita buka agar config lebih cepat.</p>
+                    <h4 class="font-bold text-slate-800 text-sm">3.4 Aktifkan SSH Root Login</h4>
                     <div class="terminal">
                         <span class="prompt">root@master:~#</span> nano /etc/ssh/sshd_config
                     </div>
@@ -349,34 +437,34 @@
         </section>
 
         <section class="bg-green-50 border border-green-200 rounded-2xl p-8 mb-12">
-            <h2 class="text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
+            <h2 class="text-base md:text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
                 <i class="fas fa-check-circle"></i> Checklist Selesai Fase 1
             </h2>
             <div class="grid md:grid-cols-2 gap-4">
-                <div class="flex gap-3 text-sm text-slate-700">
+                <div class="flex gap-3 text-xs md:text-sm text-slate-700">
                     <i class="fas fa-check text-green-600 mt-1"></i>
-                    <span>Virtual Network Editor memiliki VMnet10, 11, 12 (DHCP Off).</span>
+                    <span>Virtual Network Editor OK (VMnet10, 11, 12).</span>
                 </div>
-                <div class="flex gap-3 text-sm text-slate-700">
+                <div class="flex gap-3 text-xs md:text-sm text-slate-700">
                     <i class="fas fa-check text-green-600 mt-1"></i>
-                    <span>VM Master Debian terinstall (CLI Only/Tanpa GUI).</span>
+                    <span>VM Master Debian terinstall (CLI Only).</span>
                 </div>
-                <div class="flex gap-3 text-sm text-slate-700">
+                <div class="flex gap-3 text-xs md:text-sm text-slate-700">
                     <i class="fas fa-check text-green-600 mt-1"></i>
-                    <span>Perintah `ifconfig` dan `dig` bisa dijalankan.</span>
+                    <span>Repository DVD OK (apt update tidak error).</span>
                 </div>
-                <div class="flex gap-3 text-sm text-slate-700">
+                <div class="flex gap-3 text-xs md:text-sm text-slate-700">
                     <i class="fas fa-check text-green-600 mt-1"></i>
                     <span>VM Master dalam kondisi mati (Poweroff).</span>
                 </div>
             </div>
         </section>
 
-        <div class="flex justify-between items-center">
-            <a href="index.html" class="px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="index.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
                 Kembali ke Dashboard
             </a>
-            <a href="phase2.html" class="px-8 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition font-bold flex items-center gap-2">
+            <a href="phase2.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
                 Lanjut ke Fase 2 <i class="fas fa-arrow-right"></i>
             </a>
         </div>

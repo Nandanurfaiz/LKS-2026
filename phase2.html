@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase 2: Router & Network - LKS 2026</title>
+    <title>Fase 2: Router & Network (Offline DVD) - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -151,9 +151,9 @@
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Jantung Jaringan</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Jantung Jaringan (Mode Offline)</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Kita akan mengubah VM Master menjadi <strong>Router (fw)</strong> yang menghubungkan Internet, DMZ, Internal, dan Client.
+                Kita akan mengubah VM Master menjadi <strong>Router (fw)</strong> yang menghubungkan semua zona, menggunakan instalasi paket berbasis <strong>DVD</strong>.
             </p>
         </header>
 
@@ -178,7 +178,7 @@
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
                         <li>Aktifkan <strong>IP Forwarding</strong>.</li>
                         <li>Config <strong>NAT (Masquerade)</strong>.</li>
-                        <li>Install <strong>DHCP Server</strong> (Client).</li>
+                        <li>Install <strong>DHCP Server</strong> (Via DVD).</li>
                     </ul>
                 </div>
             </div>
@@ -198,7 +198,6 @@
                     <h4 class="font-bold text-slate-800 text-sm">1. Full Clone</h4>
                     <p class="text-xs md:text-sm text-slate-600 mt-1 leading-relaxed">
                         Klik kanan <code>Debian-Master</code> > <strong>Manage</strong> > <strong>Clone</strong>. Pilih <strong>Full Clone</strong>. Nama VM: <code>fw</code>.
-                        <i class="fas fa-question-circle hint-btn" onclick="showHint('Kenapa Full Clone?', 'Full Clone membuat salinan VM yang benar-benar terpisah. Jika Linked Clone, VM baru masih bergantung pada file VM induk. Kita butuh Full Clone agar jika Master rusak/dihapus, Router (fw) tetap aman.')"></i>
                     </p>
                 </div>
                 
@@ -291,9 +290,6 @@ iface ens38 inet static
 auto ens39
 iface ens39 inet static
     address 10.10.10.1/24</div>
-                    <button class="text-xs text-blue-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Penjelasan Kode Interfaces', '<ul><li><b>auto ensXX</b>: Menyalakan interface otomatis saat booting.</li><li><b>iface inet dhcp</b>: Meminta IP dari server lain (ISP).</li><li><b>iface inet static</b>: Kita tentukan IP-nya secara manual (Permanent).</li><li><b>address</b>: Alamat IP Router itu sendiri.</li></ul>')">
-                        <i class="fas fa-info-circle"></i> Jelaskan kode ini
-                    </button>
                 </div>
 
                 <div>
@@ -312,12 +308,26 @@ iface ens39 inet static
                 <div class="step-badge">3</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Routing & NAT</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Berbagi Koneksi Internet.</p>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Wajib agar Client bisa akses Web.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
                 
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                    <h4 class="font-bold text-yellow-800 text-sm mb-2"><i class="fas fa-compact-disc"></i> Persiapan DVD</h4>
+                    <p class="text-xs text-slate-700 mb-2">Masukkan DVD-1 (Binary) ke VMware sebelum lanjut.</p>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> apt-cdrom add
+                    </div>
+                    <p class="text-xs text-slate-700 mt-2 mb-2">Matikan repo online:</p>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> nano /etc/apt/sources.list<br>
+                        <span class="comment"># Beri PAGAR (#) pada semua baris 'deb http...'</span><br>
+                        <span class="prompt">root@fw:~#</span> apt update
+                    </div>
+                </div>
+
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. IP Forwarding</h4>
                     <div class="terminal">
@@ -325,20 +335,17 @@ iface ens39 inet static
                     </div>
                     <p class="text-xs text-slate-500 mb-1">Hapus pagar (#) di baris:</p>
                     <div class="file-content py-2">net.ipv4.ip_forward=1</div>
-                    
-                    <p class="text-xs text-slate-500 mt-2 mb-1">Aktifkan:</p>
-                    <div class="terminal">
+                    <div class="terminal mt-1">
                         <span class="prompt">root@fw:~#</span> sysctl -p
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. NAT Masquerade</h4>
-                    <p class="text-xs text-slate-500 mb-2">Install tools & pasang rule:</p>
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> apt install iptables iptables-persistent -y
                     </div>
-                    <p class="text-xs text-slate-400 italic mb-2">*Pilih YES saat ditanya simpan rule IPv4/IPv6.</p>
+                    <p class="text-xs text-slate-400 italic mb-2">*Pilih YES saat ditanya simpan rule. Jika minta DVD-2, ganti ISO di Settings.</p>
                     
                     <div class="terminal">
                         <span class="comment"># Rule NAT ke ens33 (Internet)</span><br>
@@ -346,9 +353,6 @@ iface ens39 inet static
                         <span class="comment"># Simpan Permanen</span><br>
                         <span class="prompt">root@fw:~#</span> netfilter-persistent save
                     </div>
-                    <button class="text-xs text-blue-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Penjelasan IPTABLES NAT', '<ul><li><b>-t nat</b>: Menggunakan tabel NAT.</li><li><b>-A POSTROUTING</b>: Aturan dijalankan DI AKHIR (saat paket mau keluar).</li><li><b>-o ens33</b>: Output interface (Kabel Internet).</li><li><b>-j MASQUERADE</b>: Topengkan IP asal (lokal) menjadi IP Router publik agar bisa internetan.</li></ul>')">
-                        <i class="fas fa-info-circle"></i> Jelaskan kode IPTABLES
-                    </button>
                 </div>
 
             </div>
@@ -400,46 +404,6 @@ subnet 10.10.10.0 netmask 255.255.255.0 {
             </div>
         </section>
 
-        <section class="bg-red-50 border border-red-200 rounded-xl p-5 md:p-6 mb-12 shadow-sm">
-            <h2 class="text-red-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-tools"></i> Troubleshooting (Bantuan)
-            </h2>
-            <div class="space-y-3">
-                <details class="bg-white p-3 rounded border border-red-100 group">
-                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
-                        Error: "No DHCPOFFERS received"
-                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
-                    </summary>
-                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        <strong>Penyebab:</strong> VM Bridge tidak nyambung ke WiFi asli.<br>
-                        <strong>Solusi:</strong> Buka Virtual Network Editor > VMnet0 > Ubah "Automatic" jadi nama WiFi Laptop Anda.
-                    </div>
-                </details>
-                
-                <details class="bg-white p-3 rounded border border-red-100 group">
-                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
-                        Error: "Job for isc-dhcp-server failed"
-                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
-                    </summary>
-                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        <strong>Penyebab:</strong> Typo di `dhcpd.conf` (kurang titik koma ;) atau salah nama interface di `default/isc-dhcp-server`.<br>
-                        <strong>Solusi:</strong> Cek ulang ejaan nama interface (ens39 vs ens36) dan tanda kurung { }.
-                    </div>
-                </details>
-
-                <details class="bg-white p-3 rounded border border-red-100 group">
-                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
-                        Ping Google Gagal
-                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
-                    </summary>
-                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        <strong>Penyebab:</strong> DNS Server kosong.<br>
-                        <strong>Solusi:</strong> `nano /etc/resolv.conf`, pastikan ada `nameserver 8.8.8.8`.
-                    </div>
-                </details>
-            </div>
-        </section>
-
         <section class="bg-green-50 border border-green-200 rounded-2xl p-5 md:p-8 mb-12">
             <h2 class="text-base md:text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
                 <i class="fas fa-check-circle"></i> Hasil Akhir Fase 2
@@ -447,7 +411,7 @@ subnet 10.10.10.0 netmask 255.255.255.0 {
             <div class="grid md:grid-cols-2 gap-3 md:gap-4">
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>Internet OK:</strong> Ping google reply.</div>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>Repo DVD:</strong> Apt install sukses (tanpa internet).</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
