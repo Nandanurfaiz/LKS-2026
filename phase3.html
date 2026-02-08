@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 3: DNS & Web Server - LKS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
+        
+        /* Terminal & Code Styles */
+        .terminal {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            border-left: 4px solid #3b82f6;
+            margin: 0.75rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            white-space: pre-wrap; /* Wrap text on mobile */
+        }
+        .file-content {
+            background-color: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            font-family: 'Roboto Mono', monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .prompt { color: #22c55e; font-weight: bold; }
+        .comment { color: #94a3b8; font-style: italic; }
+        
+        /* Step Styling - Purple Theme */
+        .step-badge {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Tooltip / Hint Style */
+        .hint-btn {
+            cursor: pointer;
+            color: #8b5cf6;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+            transition: color 0.2s;
+            display: inline-block;
+            padding: 4px;
+        }
+        .hint-btn:hover { color: #6d28d9; }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 20% auto;
+            padding: 1.5rem;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+        .close {
+            color: #64748b;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+    </style>
+    <script>
+        function showHint(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerHTML = text;
+            document.getElementById('myModal').style.display = "block";
+        }
+        function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('myModal')) { closeModal(); }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-3 border-b pb-2">Penjelasan</h3>
+            <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+        </div>
+    </div>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-slate-400 hover:text-purple-600 transition p-2">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </a>
+                <div class="flex flex-col">
+                    <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase 3</span>
+                    <span class="text-xs text-slate-500 md:hidden">Public Services</span>
+                </div>
+                <span class="hidden md:inline text-slate-300">|</span>
+                <span class="hidden md:inline font-bold text-slate-800">DNS, Web & Load Balancer</span>
+            </div>
+            <span class="bg-purple-100 text-purple-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
+                DMZ Area
+            </span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
+
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Layanan Publik (DMZ)</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Kita akan membangun 2 Web Server identik yang dibagi bebannya oleh Load Balancer, serta membuat Domain Name Server (DNS) agar mudah diakses.
+            </p>
+        </header>
+
+        <section class="bg-purple-50 border border-purple-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
+            <h2 class="text-purple-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-globe"></i> Target Configuration
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <h4 class="font-bold text-purple-700 mb-2">Topology Info:</h4>
+                    <div class="bg-white p-3 rounded border border-purple-100 overflow-x-auto">
+                        <ul class="space-y-1 font-mono text-xs md:text-sm text-slate-700">
+                            <li><strong>Domain:</strong> lks2026.id</li>
+                            <li><strong>Web01:</strong> 172.16.10.10 (VM Baru)</li>
+                            <li><strong>Web02:</strong> 172.16.10.20 (VM Baru)</li>
+                            <li><strong>Gateway:</strong> 172.16.10.1 (Router fw)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-purple-700 mb-2 mt-4 md:mt-0">Misi Utama:</h4>
+                    <ul class="list-disc ml-5 text-slate-700 space-y-1">
+                        <li>Install <strong>Nginx</strong> di Web01 & Web02.</li>
+                        <li>Config <strong>DNS Server</strong> (Bind9) di Router.</li>
+                        <li>Config <strong>Load Balancer</strong> (HAProxy) di Router.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">1</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Siapkan Web Server (VM)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Cloning dari Master untuk Web01 & Web02.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cloning VM</h4>
+                    <p class="text-xs text-slate-600 mb-2">Matikan `Debian-Master`. Lakukan <strong>Full Clone</strong> dua kali:</p>
+                    <ul class="list-disc ml-5 text-xs text-slate-600 mb-2">
+                        <li>Clone 1 Name: <strong>web01</strong></li>
+                        <li>Clone 2 Name: <strong>web02</strong></li>
+                    </ul>
+                    <p class="text-xs text-slate-600"><strong>Setting Network (Kedua VM):</strong> Gunakan 1 Adapter saja -> <strong>Custom: VMnet10 (DMZ)</strong>.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Config IP Web01</h4>
+                    <p class="text-xs text-slate-500 mb-1">Nyalakan <code>web01</code>, login root, edit network:</p>
+                    <div class="terminal">
+                        <span class="prompt">root@web01:~#</span> nano /etc/network/interfaces
+                    </div>
+                    <div class="file-content">
+auto ens33
+iface ens33 inet static
+    address 172.16.10.10/24
+    gateway 172.16.10.1
+    dns-nameservers 8.8.8.8</div>
+                    <div class="terminal mt-2">
+                        <span class="prompt">root@web01:~#</span> hostnamectl set-hostname web01<br>
+                        <span class="prompt">root@web01:~#</span> systemctl restart networking
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Config IP Web02</h4>
+                    <p class="text-xs text-slate-500 mb-1">Lakukan hal sama di <code>web02</code>, tapi IP beda:</p>
+                    <div class="file-content">
+auto ens33
+iface ens33 inet static
+    address 172.16.10.20/24
+    gateway 172.16.10.1
+    dns-nameservers 8.8.8.8</div>
+                    <div class="terminal mt-2">
+                        <span class="prompt">root@web02:~#</span> hostnamectl set-hostname web02<br>
+                        <span class="prompt">root@web02:~#</span> systemctl restart networking
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">2</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Install Web Server (Nginx)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Membuat halaman web sederhana.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Nginx</h4>
+                    <p class="text-xs text-slate-500 mb-1">Lakukan di <strong>KEDUA</strong> server (Web01 & Web02):</p>
+                    <div class="terminal">
+                        <span class="prompt">root@web01:~#</span> apt install nginx -y
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Ubah Tampilan Web01</h4>
+                    <p class="text-xs text-slate-500 mb-1">Di VM <code>web01</code>:</p>
+                    <div class="terminal">
+                        <span class="prompt">root@web01:~#</span> echo "<h1>Ini Server WEB 01</h1>" > /var/www/html/index.html
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Ubah Tampilan Web02</h4>
+                    <p class="text-xs text-slate-500 mb-1">Di VM <code>web02</code>:</p>
+                    <div class="terminal">
+                        <span class="prompt">root@web02:~#</span> echo "<h1>Ini Server WEB 02</h1>" > /var/www/html/index.html
+                    </div>
+                    <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Kenapa konten dibedakan?', 'Agar nanti saat kita mengetes Load Balancer, kita bisa tahu request kita sedang dilayani oleh server yang mana (01 atau 02). Jika kontennya sama persis, kita tidak tahu Load Balancer bekerja atau tidak.')">
+                        <i class="fas fa-info-circle"></i> Kenapa isinya beda?
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">3</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">DNS Server (Bind9)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Konfigurasi di <strong>Router (fw)</strong>.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Bind9</h4>
+                    <p class="text-xs text-slate-500 mb-1">Pindah ke VM <code>fw</code> (Router):</p>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> apt install bind9 dnsutils -y
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Buat Zone Domain</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> nano /etc/bind/named.conf.local
+                    </div>
+                    <p class="text-xs text-slate-500 mb-2">Tambahkan di bawah:</p>
+                    <div class="file-content">
+zone "lks2026.id" {
+    type master;
+    file "/etc/bind/db.lks";
+};</div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Buat File Database</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> cp /etc/bind/db.local /etc/bind/db.lks<br>
+                        <span class="prompt">root@fw:~#</span> nano /etc/bind/db.lks
+                    </div>
+                    <p class="text-xs text-slate-500 mb-2">Edit isinya menjadi (Ganti localhost dengan lks2026.id):</p>
+                    <div class="file-content">
+;
+; BIND data file for lks2026.id
+;
+$TTL    604800
+@       IN      SOA     lks2026.id. root.lks2026.id. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      lks2026.id.
+@       IN      A       172.16.10.1
+www     IN      A       172.16.10.1</div>
+                    <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Kenapa IP 172.16.10.1?', 'Kita mengarahkan domain www.lks2026.id ke IP Router (DMZ Gateway), karena nanti di Router inilah kita akan memasang Load Balancer (HAProxy) yang membagi trafik ke Web01 dan Web02.')">
+                        <i class="fas fa-info-circle"></i> Kenapa IP-nya 172.16.10.1?
+                    </button>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">4. Restart & Cek</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> systemctl restart bind9<br>
+                        <span class="prompt">root@fw:~#</span> nslookup www.lks2026.id localhost
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">4</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Load Balancer (HAProxy)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Membagi beban trafik di Router.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install HAProxy</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> apt install haproxy -y
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Konfigurasi Frontend & Backend</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> nano /etc/haproxy/haproxy.cfg
+                    </div>
+                    <p class="text-xs text-slate-500 mb-2">Tambahkan di baris paling bawah:</p>
+                    <div class="file-content">
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server web01 172.16.10.10:80 check
+    server web02 172.16.10.20:80 check</div>
+                    <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Penjelasan HAProxy', '<b>frontend</b>: Pintu masuk. Menerima request di port 80 (HTTP) pada router.<br><b>default_backend</b>: Melempar request ke grup server di belakang.<br><b>balance roundrobin</b>: Algoritma pembagian secara bergilir (Satu ke Web01, Satu ke Web02, dst).')">
+                        <i class="fas fa-info-circle"></i> Jelaskan kode HAProxy
+                    </button>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Restart HAProxy</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> systemctl restart haproxy
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-red-50 border border-red-200 rounded-xl p-5 md:p-6 mb-12 shadow-sm">
+            <h2 class="text-red-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-tools"></i> Troubleshooting
+            </h2>
+            <div class="space-y-3">
+                <details class="bg-white p-3 rounded border border-red-100 group">
+                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
+                        Web Server tidak bisa update/install nginx
+                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
+                        <strong>Penyebab:</strong> Gateway di Web01/02 belum diset ke IP Router (172.16.10.1) atau NAT di Router mati.<br>
+                        <strong>Solusi:</strong> Cek <code>ip route</code> di Web01. Cek ping 8.8.8.8. Jika gagal, cek settingan NAT di Router (Fase 2).
+                    </div>
+                </details>
+                
+                <details class="bg-white p-3 rounded border border-red-100 group">
+                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
+                        HAProxy gagal start (Port conflict)
+                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
+                        <strong>Penyebab:</strong> Port 80 di Router sudah dipakai oleh aplikasi lain (misal Apache/Nginx terinstall di Router).<br>
+                        <strong>Solusi:</strong> <code>netstat -tulpn | grep 80</code>. Jika ada nginx/apache di router, matikan atau uninstall. Router hanya butuh HAProxy.
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section class="bg-green-50 border border-green-200 rounded-2xl p-5 md:p-8 mb-12">
+            <h2 class="text-base md:text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-check-circle"></i> Hasil Akhir Fase 3
+            </h2>
+            <div class="grid md:grid-cols-2 gap-3 md:gap-4">
+                <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
+                    <i class="fas fa-check text-green-600 text-lg"></i>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>Web01 & 02:</strong> Bisa ping google & terinstall Nginx.</div>
+                </div>
+                <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
+                    <i class="fas fa-check text-green-600 text-lg"></i>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>DNS:</strong> <code>nslookup www.lks2026.id</code> reply IP 172.16.10.1.</div>
+                </div>
+                <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
+                    <i class="fas fa-check text-green-600 text-lg"></i>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>Load Balancing:</strong> Akses IP Router berubah-ubah (Web 01 / Web 02).</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="index.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
+                Kembali ke Dashboard
+            </a>
+            <a href="phase4.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-purple-600 text-white hover:bg-purple-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
+                Lanjut ke Fase 4 <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>
