@@ -32,6 +32,28 @@
         }
         .prompt-win { color: #ccc; }
         
+        /* INTERACTIVE CODE HINT STYLE - AMBER THEME */
+        .interactive-code {
+            cursor: pointer;
+            border-bottom: 1px dashed #fbbf24; /* Garis putus-putus amber */
+            transition: all 0.2s;
+            position: relative;
+        }
+        .interactive-code:hover {
+            background-color: rgba(245, 158, 11, 0.2); /* Highlight amber */
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+        .interactive-code::after {
+            content: '\f059'; /* FontAwesome Question Icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.6rem;
+            margin-left: 4px;
+            color: #fbbf24;
+            opacity: 0.7;
+        }
+
         /* Step Badge - Amber Theme */
         .step-badge {
             width: 2.5rem;
@@ -255,7 +277,7 @@
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cek IP Address</h4>
                     <p class="text-xs text-slate-500 mb-1">Buka CMD di Windows, ketik:</p>
                     <div class="terminal cmd-win">
-                        <span class="prompt-win">C:\Users\Siswa></span> ipconfig
+                        <span class="prompt-win">C:\Users\Siswa></span> <span class="interactive-code" onclick="showHint('ipconfig', '<b>Cek IP Windows.</b><br>Menampilkan informasi IP Address yang didapat oleh komputer Windows. Kita mencari bagian <b>IPv4 Address</b>.')">ipconfig</span>
                     </div>
                     <div class="bg-green-50 text-green-800 p-2 rounded text-xs border border-green-200 mt-2">
                         <strong>Target:</strong> IPv4 Address harus <code>10.10.10.x</code> (antara 10-100).<br>
@@ -269,8 +291,8 @@
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Ping Gateway & Internet</h4>
                     <div class="terminal cmd-win">
-                        <span class="prompt-win">C:\Users\Siswa></span> ping 10.10.10.1<br>
-                        <span class="prompt-win">C:\Users\Siswa></span> ping 8.8.8.8
+                        <span class="prompt-win">C:\Users\Siswa></span> <span class="interactive-code" onclick="showHint('ping 10.10.10.1', '<b>Tes Koneksi Router.</b><br>Mengecek apakah Windows bisa menghubungi Router (Gateway). Jika Reply, berarti kabel virtual VMnet12 sudah tersambung benar.')">ping 10.10.10.1</span><br>
+                        <span class="prompt-win">C:\Users\Siswa></span> <span class="interactive-code" onclick="showHint('ping 8.8.8.8', '<b>Tes Koneksi Internet.</b><br>Mengecek apakah Windows bisa tembus sampai ke Google. Jika Reply, berarti konfigurasi <b>NAT Masquerade</b> di Router sudah berhasil.')">ping 8.8.8.8</span>
                     </div>
                     <p class="text-xs text-slate-500 italic mt-1">*Ping 8.8.8.8 hanya akan Reply jika Laptop Asli Anda terhubung internet.</p>
                 </div>
@@ -293,7 +315,7 @@
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Tes Domain (Nslookup)</h4>
                     <p class="text-xs text-slate-500 mb-1">Pastikan Client mengenal nama domain kita:</p>
                     <div class="terminal cmd-win">
-                        <span class="prompt-win">C:\Users\Siswa></span> nslookup www.lks2026.id
+                        <span class="prompt-win">C:\Users\Siswa></span> <span class="interactive-code" onclick="showHint('nslookup www.lks2026.id', '<b>Cek Domain dari Client.</b><br>Memastikan Windows bertanya ke DNS Server kita (10.10.10.1) dan mendapatkan jawaban IP Load Balancer (172.16.10.1).')">nslookup www.lks2026.id</span>
                     </div>
                     <div class="file-content">
 Server:  UnKnown

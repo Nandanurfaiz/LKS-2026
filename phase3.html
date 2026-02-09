@@ -38,6 +38,28 @@
         .prompt { color: #22c55e; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
         
+        /* INTERACTIVE CODE HINT STYLE - PURPLE THEME */
+        .interactive-code {
+            cursor: pointer;
+            border-bottom: 1px dashed #a78bfa; /* Garis putus-putus ungu muda */
+            transition: all 0.2s;
+            position: relative;
+        }
+        .interactive-code:hover {
+            background-color: rgba(139, 92, 246, 0.2); /* Highlight ungu */
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+        .interactive-code::after {
+            content: '\f059'; /* FontAwesome Question Icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.6rem;
+            margin-left: 4px;
+            color: #a78bfa;
+            opacity: 0.7;
+        }
+
         /* Step Styling - Purple Theme */
         .step-badge {
             width: 2.5rem;
@@ -205,7 +227,7 @@
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Config IP Web01</h4>
                     <p class="text-xs text-slate-500 mb-1">Nyalakan <code>web01</code>, login root, edit network:</p>
                     <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> nano /etc/network/interfaces
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/network/interfaces', '<b>Edit IP Address.</b><br>Membuka konfigurasi jaringan untuk mengubah dari DHCP menjadi Statis agar IP tidak berubah-ubah.')">nano /etc/network/interfaces</span>
                     </div>
                     <div class="file-content">
 auto ens33
@@ -214,8 +236,8 @@ iface ens33 inet static
     gateway 172.16.10.1
     dns-nameservers 8.8.8.8</div>
                     <div class="terminal mt-2">
-                        <span class="prompt">root@web01:~#</span> hostnamectl set-hostname web01<br>
-                        <span class="prompt">root@web01:~#</span> systemctl restart networking
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('hostnamectl set-hostname web01', '<b>Ganti Nama Mesin.</b><br>Mengubah identitas komputer ini menjadi <b>web01</b> agar tidak tertukar dengan server lain saat kita me-remote.')">hostnamectl set-hostname web01</span><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart networking', '<b>Terapkan Konfigurasi.</b><br>Merestart layanan jaringan untuk mengaktifkan IP Address 172.16.10.10 yang baru saja kita ketik.')">systemctl restart networking</span>
                     </div>
                 </div>
 
@@ -229,8 +251,8 @@ iface ens33 inet static
     gateway 172.16.10.1
     dns-nameservers 8.8.8.8</div>
                     <div class="terminal mt-2">
-                        <span class="prompt">root@web02:~#</span> hostnamectl set-hostname web02<br>
-                        <span class="prompt">root@web02:~#</span> systemctl restart networking
+                        <span class="prompt">root@web02:~#</span> <span class="interactive-code" onclick="showHint('hostnamectl set-hostname web02', '<b>Ganti Nama Mesin.</b><br>Mengubah identitas komputer ini menjadi <b>web02</b>.')">hostnamectl set-hostname web02</span><br>
+                        <span class="prompt">root@web02:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart networking', '<b>Terapkan Konfigurasi.</b><br>Mengaktifkan IP Address 172.16.10.20.')">systemctl restart networking</span>
                     </div>
                 </div>
 
@@ -253,8 +275,8 @@ iface ens33 inet static
                     <p class="text-xs text-slate-700 mb-2">Karena ini VM baru, mereka belum kenal DVD. Lakukan ini di <strong>KEDUA</strong> server:</p>
                     <div class="terminal">
                         <span class="comment"># Masukkan DVD-1 di VMware, lalu:</span><br>
-                        <span class="prompt">root@web01:~#</span> apt-cdrom add<br>
-                        <span class="prompt">root@web01:~#</span> apt update <br><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Daftarkan DVD.</b><br>Mengenalkan kaset DVD-1 ke sistem operasi agar bisa dipakai menginstall aplikasi.')">apt-cdrom add</span><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt update', '<b>Refresh Database.</b><br>Membaca ulang daftar isi aplikasi di dalam DVD.')">apt update</span> <br><br>
                         <span class="comment"># Lakukan hal yang sama untuk DVD-2 jika diperlukan</span><br>
                     </div>
                 </div>
@@ -262,7 +284,7 @@ iface ens33 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Nginx</h4>
                     <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> apt install nginx -y
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt install nginx -y', '<b>Install Web Server.</b><br>Memasang aplikasi NGINX. Nginx adalah software web server yang ringan dan cepat, berfungsi menampilkan halaman web HTML ke pengunjung.')">apt install nginx -y</span>
                     </div>
                     <p class="text-xs text-slate-400 mt-1">*Jika diminta masukkan DVD-2, ganti file ISO di setting VMware lalu tekan Enter.</p>
                 </div>
@@ -270,14 +292,14 @@ iface ens33 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Ubah Tampilan Web01</h4>
                     <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> echo "<h1>Ini Server WEB 01</h1>" > /var/www/html/index.html
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('echo ... > index.html', '<b>Buat Halaman Web.</b><br>Perintah ini menghapus halaman default Nginx dan menggantinya dengan tulisan <b>Ini Server WEB 01</b>. Ini memudahkan kita membedakan server mana yang sedang diakses.')">echo "<h1>Ini Server WEB 01</h1>" > /var/www/html/index.html</span>
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">3. Ubah Tampilan Web02</h4>
                     <div class="terminal">
-                        <span class="prompt">root@web02:~#</span> echo "<h1>Ini Server WEB 02</h1>" > /var/www/html/index.html
+                        <span class="prompt">root@web02:~#</span> <span class="interactive-code" onclick="showHint('echo ... > index.html', '<b>Buat Halaman Web 02.</b><br>Membuat tulisan <b>Ini Server WEB 02</b>. Nanti saat diuji Load Balancing, tulisan ini akan berganti-ganti dengan WEB 01.')">echo "<h1>Ini Server WEB 02</h1>" > /var/www/html/index.html</span>
                     </div>
                     <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Kenapa konten dibedakan?', 'Agar nanti saat kita mengetes Load Balancer, kita bisa tahu request kita sedang dilayani oleh server yang mana (01 atau 02). Jika kontennya sama persis, kita tidak tahu Load Balancer bekerja atau tidak.')">
                         <i class="fas fa-info-circle"></i> Kenapa isinya beda?
@@ -302,14 +324,14 @@ iface ens33 inet static
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Bind9</h4>
                     <p class="text-xs text-slate-500 mb-1">Pindah ke VM <code>fw</code> (Router). Pastikan DVD terpasang.</p>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> apt install bind9 dnsutils -y
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install bind9 dnsutils -y', '<b>Install DNS Tools.</b><br><b>bind9:</b> Software DNS Server.<br><b>dnsutils:</b> Paket berisi perintah nslookup dan dig untuk mengetes DNS.')">apt install bind9 dnsutils -y</span>
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Buat Zone Domain</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> nano /etc/bind/named.conf.local
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/bind/named.conf.local', '<b>Daftarkan Domain.</b><br>Di file ini kita memberi tahu Bind9 bahwa kita memiliki domain bernama <b>lks2026.id</b> dan lokasinya ada di file <b>db.lks</b>.')">nano /etc/bind/named.conf.local</span>
                     </div>
                     <div class="file-content">
 zone "lks2026.id" {
@@ -321,8 +343,8 @@ zone "lks2026.id" {
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">3. Buat File Database</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> cp /etc/bind/db.local /etc/bind/db.lks<br>
-                        <span class="prompt">root@fw:~#</span> nano /etc/bind/db.lks
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('cp /etc/bind/db.local /etc/bind/db.lks', '<b>Copy Template.</b><br>Daripada mengetik dari nol yang rawan salah, kita menyalin template database localhost (db.local) menjadi file database kita (db.lks).')">cp /etc/bind/db.local /etc/bind/db.lks</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/bind/db.lks', '<b>Isi Record DNS.</b><br>Di sini kita memetakan <b>www.lks2026.id</b> ke IP Address tujuan.')">nano /etc/bind/db.lks</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-2">Edit menjadi:</p>
                     <div class="file-content">
@@ -346,8 +368,8 @@ www     IN      A       172.16.10.1</div>
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">4. Restart & Cek</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> systemctl restart bind9<br>
-                        <span class="prompt">root@fw:~#</span> nslookup www.lks2026.id localhost
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart bind9', '<b>Restart DNS.</b><br>Wajib dilakukan setiap kali mengubah file zona atau database agar perubahan aktif.')">systemctl restart bind9</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nslookup www.lks2026.id localhost', '<b>Tes DNS Lokal.</b><br>Bertanya kepada server sendiri (localhost): <i>Siapa IP dari www.lks2026.id?</i>. Jika menjawab 172.16.10.1, berarti sukses.')">nslookup www.lks2026.id localhost</span>
                     </div>
                 </div>
 
@@ -368,7 +390,7 @@ www     IN      A       172.16.10.1</div>
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Nginx di Router</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> apt install nginx -y
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install nginx -y', '<b>Install Nginx.</b><br>Kali ini Nginx diinstall di Router BUKAN sebagai Web Server biasa, tapi sebagai <b>Reverse Proxy / Load Balancer</b>.')">apt install nginx -y</span>
                     </div>
                 </div>
 
@@ -376,7 +398,7 @@ www     IN      A       172.16.10.1</div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Konfigurasi Load Balancer</h4>
                     <p class="text-xs text-slate-500 mb-1">Hapus semua isi file default, lalu ganti total.</p>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> nano /etc/nginx/sites-available/default
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/nginx/sites-available/default', '<b>Edit Config Nginx.</b><br>Kita menghapus konfigurasi default yang menampilkan halaman <i>Welcome to Nginx</i>, dan menggantinya dengan skrip pembagi beban.')">nano /etc/nginx/sites-available/default</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-2">Hapus semuanya (Ctrl+K), lalu paste:</p>
                     <div class="file-content">
@@ -401,10 +423,10 @@ server {
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">3. Restart & Test</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> systemctl restart nginx<br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart nginx', '<b>Restart Nginx.</b><br>Menerapkan konfigurasi Load Balancer.')">systemctl restart nginx</span><br>
                         <span class="comment"># Cek apakah load balancer jalan (hasil harus berubah-ubah):</span><br>
-                        <span class="prompt">root@fw:~#</span> curl 172.16.10.1<br>
-                        <span class="prompt">root@fw:~#</span> curl 172.16.10.1
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('curl 172.16.10.1', '<b>Tes Akses 1.</b><br>Mengakses IP Gateway DMZ. Harusnya muncul tulisan <i>Ini Server WEB 01</i> (atau 02).')">curl 172.16.10.1</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('curl 172.16.10.1', '<b>Tes Akses 2.</b><br>Mengakses lagi. Harusnya muncul tulisan server yang berbeda (misal tadi 01, sekarang 02). Ini membuktikan beban dibagi rata.')">curl 172.16.10.1</span>
                     </div>
                 </div>
 

@@ -21,8 +21,8 @@
             border-left: 4px solid #3b82f6;
             margin: 0.75rem 0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow-x: auto; /* Allow horizontal scroll on mobile */
-            white-space: pre-wrap; /* Wrap long lines if possible, or scroll */
+            overflow-x: auto;
+            white-space: pre-wrap;
         }
         .file-content {
             background-color: #fffbeb;
@@ -31,13 +31,35 @@
             font-family: 'Roboto Mono', monospace;
             padding: 1rem;
             border-radius: 0.5rem;
-            font-size: 0.8rem; /* Slightly smaller font for mobile code blocks */
+            font-size: 0.8rem;
             white-space: pre;
             overflow-x: auto;
         }
         .prompt { color: #22c55e; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
         .important { color: #f43f5e; font-weight: bold; }
+
+        /* INTERACTIVE CODE HINT STYLE */
+        .interactive-code {
+            cursor: pointer;
+            border-bottom: 1px dashed #60a5fa; /* Garis putus-putus biru */
+            transition: all 0.2s;
+            position: relative;
+        }
+        .interactive-code:hover {
+            background-color: rgba(59, 130, 246, 0.2); /* Highlight saat hover */
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+        .interactive-code::after {
+            content: '\f059'; /* FontAwesome Question Icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.6rem;
+            margin-left: 4px;
+            color: #60a5fa;
+            opacity: 0.7;
+        }
 
         /* Step Styling */
         .step-badge {
@@ -62,7 +84,7 @@
             font-size: 0.9rem;
             margin-left: 0.5rem;
             transition: color 0.2s;
-            display: inline-block; /* Agar mudah diklik di HP */
+            display: inline-block;
             padding: 4px;
         }
         .hint-btn:hover { color: #1d4ed8; }
@@ -71,21 +93,21 @@
         .modal {
             display: none;
             position: fixed;
-            z-index: 999; /* Higher z-index for mobile */
+            z-index: 999;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.6); /* Darker overlay */
+            background-color: rgba(0,0,0,0.6);
             backdrop-filter: blur(3px);
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 20% auto; /* More margin top for mobile */
+            margin: 20% auto;
             padding: 1.5rem;
             border: 1px solid #888;
-            width: 90%; /* Wider on mobile */
+            width: 90%;
             max-width: 600px;
             border-radius: 1rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -254,16 +276,16 @@
                 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cek Interface</h4>
-                    <p class="text-xs text-slate-500 mb-2">Lihat nama asli (ens33/37/etc):</p>
+                    <p class="text-xs text-slate-500 mb-2">Lihat nama asli (ens33/37/etc) - Klik kode untuk info:</p>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> ip link show
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('ip link show', '<b>Cek Daftar Kartu Jaringan.</b><br>Perintah ini menampilkan semua adapter jaringan yang terpasang. Catat namanya (misal: ens33, ens37, ens38, ens39) karena kita butuh nama ini untuk konfigurasi IP.')">ip link show</span>
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Edit File Interfaces</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> nano /etc/network/interfaces
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/network/interfaces', '<b>Edit Konfigurasi IP.</b><br>Kita akan membuka file pengaturan jaringan utama Debian. Di sini kita menentukan mana IP yang statis (manual) dan mana yang DHCP.')">nano /etc/network/interfaces</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-2">Hapus semua, Paste kode ini (Sesuaikan nama 'ens' Anda):</p>
                     
@@ -295,8 +317,8 @@ iface ens39 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">3. Apply Config</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> systemctl restart networking<br>
-                        <span class="prompt">root@fw:~#</span> ip a
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart networking', '<b>Terapkan IP Baru.</b><br>Merestart layanan jaringan agar perubahan file interfaces tadi langsung aktif tanpa perlu reboot komputer.')">systemctl restart networking</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('ip a', '<b>Verifikasi IP.</b><br>Mengecek apakah IP Address yang kita ketik tadi sudah benar-benar menempel di kartu jaringan.')">ip a</span>
                     </div>
                 </div>
 
@@ -318,7 +340,7 @@ iface ens39 inet static
                     <h4 class="font-bold text-yellow-800 text-sm mb-2"><i class="fas fa-compact-disc"></i> Persiapan DVD</h4>
                     <p class="text-xs text-slate-700 mb-2">Masukkan DVD-1 (Binary) ke VMware sebelum lanjut.</p>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> apt-cdrom add
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Daftarkan DVD.</b><br>Meminta Debian membaca isi DVD yang sedang dimasukkan agar bisa digunakan untuk menginstall paket aplikasi secara offline.')">apt-cdrom add</span>
                     </div>
     
                 </div>
@@ -326,27 +348,27 @@ iface ens39 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. IP Forwarding</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> nano /etc/sysctl.conf
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/sysctl.conf', '<b>Aktifkan Mode Router.</b><br>Secara default, Linux menolak meneruskan paket data orang lain. Kita harus mengedit file ini untuk mengizinkan penerusan data (forwarding).')">nano /etc/sysctl.conf</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-1">Hapus pagar (#) di baris:</p>
                     <div class="file-content py-2">net.ipv4.ip_forward=1</div>
                     <div class="terminal mt-1">
-                        <span class="prompt">root@fw:~#</span> sysctl -p
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('sysctl -p', '<b>Reload Konfigurasi Kernel.</b><br>Menerapkan perubahan ip_forward tadi secara langsung.')">sysctl -p</span>
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. NAT Masquerade</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> apt install iptables iptables-persistent -y
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install iptables iptables-persistent -y', '<b>Install Firewall Tools.</b><br>Menginstall program IPTables (pengatur lalu lintas) dan IPTables-Persistent (alat penyimpan aturan permanen).')">apt install iptables iptables-persistent -y</span>
                     </div>
                     <p class="text-xs text-slate-400 italic mb-2">*Pilih YES saat ditanya simpan rule. Jika minta DVD-2, ganti ISO di Settings.</p>
                     
                     <div class="terminal">
                         <span class="comment"># Rule NAT ke ens33 (Internet)</span><br>
-                        <span class="prompt">root@fw:~#</span> iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE<br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('iptables -t nat -A POSTROUTING ...', '<b>Buat Aturan NAT.</b><br><b>-t nat:</b> Tabel NAT.<br><b>-A POSTROUTING:</b> Aturan setelah routing.<br><b>-o ens33:</b> Output ke internet.<br><b>-j MASQUERADE:</b> Menyamarkan IP Client menjadi IP Router agar bisa internetan.')">iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE</span><br>
                         <span class="comment"># Simpan Permanen</span><br>
-                        <span class="prompt">root@fw:~#</span> netfilter-persistent save
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('netfilter-persistent save', '<b>Simpan Permanen.</b><br>Menyimpan aturan IPTables yang baru dibuat agar tidak hilang saat komputer direstart.')">netfilter-persistent save</span>
                     </div>
                 </div>
 
@@ -367,8 +389,8 @@ iface ens39 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install & Set Interface</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> apt install isc-dhcp-server -y
-                        <span class="prompt">root@fw:~#</span> nano /etc/default/isc-dhcp-server
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install isc-dhcp-server -y', '<b>Install DHCP Server.</b><br>Menginstall paket aplikasi ISC-DHCP-SERVER yang bertugas membagikan IP otomatis.')">apt install isc-dhcp-server -y</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/default/isc-dhcp-server', '<b>Pilih Interface DHCP.</b><br>Kita harus menentukan di kabel mana DHCP Server boleh bekerja. Kita isi dengan ens39 (arah Client).')">nano /etc/default/isc-dhcp-server</span>
                     </div>
                     <div class="file-content py-2">INTERFACESv4="ens39"</div>
                     <p class="text-xs text-slate-400 mt-1">*Isi dengan interface Client (ens39/ens36).</p>
@@ -377,7 +399,7 @@ iface ens39 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Config Subnet</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> nano /etc/dhcp/dhcpd.conf
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/dhcp/dhcpd.conf', '<b>Konfigurasi Pool IP.</b><br>File utama DHCP. Di sini kita menentukan range IP (dari berapa sampai berapa), Gateway, dan DNS yang akan diberikan ke Client.')">nano /etc/dhcp/dhcpd.conf</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-2">Scroll paling bawah, tambahkan:</p>
                     <div class="file-content">
@@ -391,8 +413,8 @@ subnet 10.10.10.0 netmask 255.255.255.0 {
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">3. Start Service</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> systemctl restart isc-dhcp-server<br>
-                        <span class="prompt">root@fw:~#</span> systemctl status isc-dhcp-server
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart isc-dhcp-server', '<b>Restart DHCP.</b><br>Menjalankan ulang service DHCP agar konfigurasi baru diterapkan.')">systemctl restart isc-dhcp-server</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl status isc-dhcp-server', '<b>Cek Status.</b><br>Memastikan tidak ada error. Pastikan statusnya Active (Running) berwarna hijau.')">systemctl status isc-dhcp-server</span>
                     </div>
                 </div>
 
