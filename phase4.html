@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase 4: Verifikasi Client & Network - LKS 2026</title>
+    <title>Fase 4: Verifikasi Client Fisik - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -35,17 +35,17 @@
         /* INTERACTIVE CODE HINT STYLE - AMBER THEME */
         .interactive-code {
             cursor: pointer;
-            border-bottom: 1px dashed #fbbf24; /* Garis putus-putus amber */
+            border-bottom: 1px dashed #fbbf24;
             transition: all 0.2s;
             position: relative;
         }
         .interactive-code:hover {
-            background-color: rgba(245, 158, 11, 0.2); /* Highlight amber */
+            background-color: rgba(245, 158, 11, 0.2);
             color: #ffffff;
             border-bottom: 1px solid #ffffff;
         }
         .interactive-code::after {
-            content: '\f059'; /* FontAwesome Question Icon */
+            content: '\f059';
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             font-size: 0.6rem;
@@ -152,10 +152,10 @@
                     <span class="text-xs text-slate-500 md:hidden">Client Testing</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">Verifikasi & Quality Control</span>
+                <span class="hidden md:inline font-bold text-slate-800">Pengujian Client Fisik</span>
             </div>
             <span class="bg-amber-100 text-amber-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
-                Checkpoint
+                Real Device
             </span>
         </div>
     </nav>
@@ -163,9 +163,9 @@
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Pembuktian Kebenaran</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Pembuktian (Laptop Fisik)</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Sebelum masuk ke layanan tingkat lanjut (Mail & LDAP), kita wajib memastikan fondasi jaringan (Router, DNS, Web, Load Balancer) sudah 100% solid.
+                Anda menggunakan <strong>Strategi B</strong>. Kita akan menguji apakah Laptop Anda yang terhubung kabel LAN bisa mengakses Server Virtual yang ada di PC ini.
             </p>
         </header>
 
@@ -175,60 +175,22 @@
             </h2>
             <div class="grid md:grid-cols-2 gap-6 text-sm">
                 <div>
-                    <h4 class="font-bold text-amber-700 mb-2">Target Client:</h4>
+                    <h4 class="font-bold text-amber-700 mb-2">Persiapan Hardware:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
-                        <li><strong>VM Name:</strong> Client / Budi-Clt</li>
-                        <li><strong>OS:</strong> Windows 11 (Sesuai Kisi-kisi)</li>
-                        <li><strong>Network:</strong> VMnet12 (Wajib!)</li>
-                        <li><strong>IP Address:</strong> DHCP (Otomatis)</li>
+                        <li><strong>PC Server:</strong> Menjalankan VMware (Router fw).</li>
+                        <li><strong>Laptop Client:</strong> Windows Asli.</li>
+                        <li><strong>Koneksi:</strong> Kabel LAN (UTP) Direct/Switch.</li>
+                        <li><strong>Setting:</strong> Wi-Fi Laptop harus OFF.</li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-amber-700 mb-2 mt-4 md:mt-0">Checklist Sukses:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
-                        <li><i class="fas fa-check-square text-amber-500"></i> Mendapat IP 10.10.10.x.</li>
+                        <li><i class="fas fa-check-square text-amber-500"></i> Laptop dapat IP 10.10.10.x.</li>
                         <li><i class="fas fa-check-square text-amber-500"></i> Ping ke Gateway 10.10.10.1 (OK).</li>
                         <li><i class="fas fa-check-square text-amber-500"></i> Buka Web <code>www.lks2026.id</code> (OK).</li>
-                        <li><i class="fas fa-check-square text-amber-500"></i> Refresh Web -> Konten berubah (LB OK).</li>
                     </ul>
                 </div>
-            </div>
-        </section>
-
-        <section class="mb-10 md:mb-12">
-            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
-                <div class="step-badge">0</div>
-                <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Persiapan VM (Install Windows)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Langkah awal membuat mesin Client.</p>
-                </div>
-            </div>
-
-            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                
-                <div class="border-l-4 border-slate-200 pl-4">
-                    <h4 class="font-bold text-slate-800 text-sm">1. Buat VM Baru</h4>
-                    <p class="text-xs text-slate-600 mt-1">Di VMware Workstation, klik <strong>File > New Virtual Machine</strong>.</p>
-                    <ul class="list-disc ml-5 text-xs text-slate-600 mt-2 space-y-1">
-                        <li><strong>Installer Disc Image:</strong> Pilih file ISO Windows 11 (atau Win 10/7 untuk latihan ringan).</li>
-                        <li><strong>Full Name:</strong> Siswa / Budi</li>
-                        <li><strong>Virtual Machine Name:</strong> <code>Client-Windows</code></li>
-                        <li><strong>Disk Size:</strong> 60 GB (Store virtual disk as a single file).</li>
-                    </ul>
-                </div>
-
-                <div class="border-l-4 border-amber-400 pl-4 bg-amber-50 p-2 rounded-r">
-                    <h4 class="font-bold text-amber-800 text-sm">2. Setting Network (SANGAT PENTING!)</h4>
-                    <p class="text-xs text-slate-700 mt-1">Sebelum klik Finish, klik tombol <strong>Customize Hardware</strong>.</p>
-                    <p class="text-xs text-slate-700 mt-1">Pilih <strong>Network Adapter</strong> -> Ganti ke <strong>Custom: VMnet12</strong>.</p>
-                    <p class="text-[10px] text-slate-500 italic mt-1">*Jika salah network (misal NAT/Bridged), Client tidak akan dapat IP dari Router Debian kita.</p>
-                </div>
-
-                <div class="border-l-4 border-slate-200 pl-4">
-                    <h4 class="font-bold text-slate-800 text-sm">3. Jalankan Instalasi</h4>
-                    <p class="text-xs text-slate-600 mt-1">Klik Finish, lalu jalankan VM. Ikuti proses instalasi Windows sampai masuk ke Desktop.</p>
-                </div>
-
             </div>
         </section>
 
@@ -236,26 +198,31 @@
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">1</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi IP (DHCP)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Meminta IP otomatis dari Router.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Koneksi Fisik & Network</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Persiapan di Laptop Client.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                 
                 <div class="border-l-4 border-slate-200 pl-4">
-                    <h4 class="font-bold text-slate-800 text-sm">1. Buka Network Connections</h4>
-                    <p class="text-xs text-slate-600 mt-1">Di Windows Client, tekan <strong>Win + R</strong>, ketik <code>ncpa.cpl</code>, lalu Enter.</p>
+                    <h4 class="font-bold text-slate-800 text-sm">1. Matikan Wi-Fi</h4>
+                    <p class="text-xs text-slate-600 mt-1">Agar tidak bentrok gateway, matikan Wi-Fi di Laptop Anda sekarang.</p>
                 </div>
 
                 <div class="border-l-4 border-slate-200 pl-4">
-                    <h4 class="font-bold text-slate-800 text-sm">2. Setting IPv4</h4>
-                    <ul class="list-disc ml-5 text-xs text-slate-600 mt-1">
-                        <li>Klik Kanan Adapter Ethernet > <strong>Properties</strong>.</li>
-                        <li>Double-klik <strong>Internet Protocol Version 4 (TCP/IPv4)</strong>.</li>
-                        <li>Pastikan pilih: <strong>Obtain an IP address automatically</strong>.</li>
-                        <li>Pastikan pilih: <strong>Obtain DNS server address automatically</strong>.</li>
-                        <li>Klik OK dan OK.</li>
+                    <h4 class="font-bold text-slate-800 text-sm">2. Hubungkan Kabel LAN</h4>
+                    <p class="text-xs text-slate-600 mt-1">Colokkan kabel LAN dari Laptop ke Port LAN PC Server. Pastikan lampu indikator LAN menyala.</p>
+                </div>
+
+                <div class="border-l-4 border-amber-400 pl-4 bg-amber-50 p-2 rounded-r">
+                    <h4 class="font-bold text-amber-800 text-sm">3. Setting IP (DHCP)</h4>
+                    <p class="text-xs text-slate-700 mt-1">Di Laptop Client:</p>
+                    <ul class="list-disc ml-5 text-xs text-slate-700 mt-1">
+                        <li>Tekan <strong>Win + R</strong>, ketik <code>ncpa.cpl</code>.</li>
+                        <li>Klik Kanan <strong>Ethernet</strong> > Properties > IPv4.</li>
+                        <li>Pilih <strong>Obtain an IP address automatically</strong>.</li>
+                        <li>Klik OK.</li>
                     </ul>
                 </div>
 
@@ -266,8 +233,8 @@
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Tes Koneksi (Ping & IP)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Memastikan Router & DHCP bekerja.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Tes Koneksi (CMD Laptop)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Buka Command Prompt di Laptop Fisik.</p>
                 </div>
             </div>
 
@@ -275,26 +242,23 @@
                 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cek IP Address</h4>
-                    <p class="text-xs text-slate-500 mb-1">Buka CMD di Windows, ketik:</p>
+                    <p class="text-xs text-slate-500 mb-1">Ketik di CMD Laptop:</p>
                     <div class="terminal cmd-win">
-                        <span class="prompt-win">C:\Users\Siswa></span> <span class="interactive-code" onclick="showHint('ipconfig', '<b>Cek IP Windows.</b><br>Menampilkan informasi IP Address yang didapat oleh komputer Windows. Kita mencari bagian <b>IPv4 Address</b>.')">ipconfig</span>
+                        <span class="prompt-win">C:\Users\LaptopSaya></span> <span class="interactive-code" onclick="showHint('ipconfig', '<b>Cek IP Windows.</b><br>Lihat pada bagian Ethernet adapter. Apakah IPv4 Address mendapat angka <b>10.10.10.x</b>? Jika ya, selamat! Kabel fisik sukses terhubung ke Router Virtual.')">ipconfig</span>
                     </div>
                     <div class="bg-green-50 text-green-800 p-2 rounded text-xs border border-green-200 mt-2">
-                        <strong>Target:</strong> IPv4 Address harus <code>10.10.10.x</code> (antara 10-100).<br>
-                        Gateway harus <code>10.10.10.1</code>.
+                        <strong>Target:</strong> IPv4: <code>10.10.10.x</code> | Gateway: <code>10.10.10.1</code>
                     </div>
-                    <button class="text-xs text-amber-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('IP Masih 169.254.x.x?', 'Jika IP Anda 169.x.x.x (APIPA), berarti DHCP Gagal. <br>1. Cek VMnet Client harus VMnet12.<br>2. Cek service DHCP di Router: <code>systemctl status isc-dhcp-server</code>.<br>3. Matikan Firewall Windows sementara.')">
+                    <button class="text-xs text-amber-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Dapat IP 169.254.x.x?', 'Ini IP APIPA (Gagal DHCP).<br>1. Cek kabel LAN (lampu nyala?).<br>2. Cek VM Router (fw): Adapter 4 harus <b>Bridged</b>.<br>3. Cek Virtual Network Editor di PC Server: VMnet0 harus Bridged ke LAN Card Realtek/Intel (bukan Auto).')">
                         <i class="fas fa-exclamation-triangle"></i> IP Tidak Muncul?
                     </button>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Ping Gateway & Internet</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Ping Gateway</h4>
                     <div class="terminal cmd-win">
-                        <span class="prompt-win">C:\Users\Siswa></span> <span class="interactive-code" onclick="showHint('ping 10.10.10.1', '<b>Tes Koneksi Router.</b><br>Mengecek apakah Windows bisa menghubungi Router (Gateway). Jika Reply, berarti kabel virtual VMnet12 sudah tersambung benar.')">ping 10.10.10.1</span><br>
-                        <span class="prompt-win">C:\Users\Siswa></span> <span class="interactive-code" onclick="showHint('ping 8.8.8.8', '<b>Tes Koneksi Internet.</b><br>Mengecek apakah Windows bisa tembus sampai ke Google. Jika Reply, berarti konfigurasi <b>NAT Masquerade</b> di Router sudah berhasil.')">ping 8.8.8.8</span>
+                        <span class="prompt-win">C:\Users\LaptopSaya></span> <span class="interactive-code" onclick="showHint('ping 10.10.10.1', '<b>Tes ke Router.</b><br>Mencoba menghubungi Router Debian (fw). Jika Reply, berarti Laptop Anda sukses menembus masuk ke dalam VMware di PC sebelah.')">ping 10.10.10.1</span>
                     </div>
-                    <p class="text-xs text-slate-500 italic mt-1">*Ping 8.8.8.8 hanya akan Reply jika Laptop Asli Anda terhubung internet.</p>
                 </div>
 
             </div>
@@ -304,8 +268,8 @@
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">3</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Tes DNS & Web (Final)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Momen penentuan keberhasilan.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Tes Layanan (Browser)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Pengujian Web & DNS dari Laptop.</p>
                 </div>
             </div>
 
@@ -313,21 +277,15 @@
                 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Tes Domain (Nslookup)</h4>
-                    <p class="text-xs text-slate-500 mb-1">Pastikan Client mengenal nama domain kita:</p>
+                    <p class="text-xs text-slate-500 mb-1">Pastikan Laptop mendapat DNS Server yang benar:</p>
                     <div class="terminal cmd-win">
-                        <span class="prompt-win">C:\Users\Siswa></span> <span class="interactive-code" onclick="showHint('nslookup www.lks2026.id', '<b>Cek Domain dari Client.</b><br>Memastikan Windows bertanya ke DNS Server kita (10.10.10.1) dan mendapatkan jawaban IP Load Balancer (172.16.10.1).')">nslookup www.lks2026.id</span>
+                        <span class="prompt-win">C:\Users\LaptopSaya></span> <span class="interactive-code" onclick="showHint('nslookup www.lks2026.id', '<b>Cek DNS.</b><br>Harus dijawab oleh Server: 10.10.10.1. Address: 172.16.10.1.')">nslookup www.lks2026.id</span>
                     </div>
-                    <div class="file-content">
-Server:  UnKnown
-Address:  10.10.10.1  <-- DNS Server (Router)
-
-Name:    www.lks2026.id
-Address:  172.16.10.1 <-- IP Load Balancer (Gateway DMZ)</div>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Tes Web Browser & Load Balancing</h4>
-                    <p class="text-xs text-slate-500 mb-2">Buka Chrome/Edge, akses <code>http://www.lks2026.id</code>.</p>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Buka Website</h4>
+                    <p class="text-xs text-slate-500 mb-2">Buka Chrome di Laptop, akses <code>http://www.lks2026.id</code>.</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="border p-3 rounded bg-slate-50 text-center">
@@ -342,7 +300,7 @@ Address:  172.16.10.1 <-- IP Load Balancer (Gateway DMZ)</div>
                     
                     <p class="text-xs text-green-600 font-bold mt-3 flex items-center gap-2">
                         <i class="fas fa-check-circle text-lg"></i>
-                        Jika tampilan berubah-ubah, Fondasi Anda sudah KUAT!
+                        Jika bisa dibuka dari Laptop Fisik, Setting Bridged Anda 100% SUKSES!
                     </p>
                 </div>
 
@@ -351,26 +309,27 @@ Address:  172.16.10.1 <-- IP Load Balancer (Gateway DMZ)</div>
 
         <section class="bg-red-50 border border-red-200 rounded-xl p-5 md:p-6 mb-12 shadow-sm">
             <h2 class="text-red-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-tools"></i> Troubleshooting Akhir
+                <i class="fas fa-tools"></i> Troubleshooting Fisik
             </h2>
             <div class="space-y-3">
                 <details class="bg-white p-3 rounded border border-red-100 group">
                     <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
-                        Ping Reply, tapi Web tidak bisa dibuka
+                        Dapat IP tapi tidak bisa Ping / Buka Web
                         <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
                     </summary>
                     <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        <strong>Solusi:</strong> Cek konfigurasi Nginx Load Balancer di Router. Pastikan `proxy_pass` mengarah ke IP `172.16.10.10` dan `172.16.10.20`. Cek juga apakah firewall (iptables) tidak memblokir port 80.
+                        <strong>Firewall:</strong> Coba matikan Windows Firewall di Laptop Client dan di PC Server (Host).<br>
+                        <strong>Routing:</strong> Cek di Router fw, apakah `iptables -t nat` sudah benar?
                     </div>
                 </details>
                 
                 <details class="bg-white p-3 rounded border border-red-100 group">
                     <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
-                        Hanya bisa akses IP, Domain gagal
+                        Tidak dapat IP sama sekali (Unidentified Network)
                         <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
                     </summary>
                     <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        <strong>Solusi:</strong> Masalah ada di DNS (Bind9). Cek file `db.lks`. Pastikan di Windows Client, DNS Server yang didapat adalah IP Router (10.10.10.1). Coba `ipconfig /flushdns` di CMD.
+                        <strong>Bridging Salah:</strong> Buka Virtual Network Editor di PC Server. Pastikan <strong>VMnet0</strong> diset ke <strong>Bridged</strong> dan pilih nama LAN Card yang benar (jangan Auto).
                     </div>
                 </details>
             </div>
@@ -378,7 +337,7 @@ Address:  172.16.10.1 <-- IP Load Balancer (Gateway DMZ)</div>
 
         <div class="text-center py-8">
             <h3 class="text-xl font-bold text-slate-800 mb-2">🎉 Tahap Awal Selesai!</h3>
-            <p class="text-sm text-slate-600 mb-6">Fondasi sudah kuat. Saatnya kita membangun layanan tingkat lanjut (Mail Server).</p>
+            <p class="text-sm text-slate-600 mb-6">Koneksi Fisik ke Virtual (Bridging) berhasil. Lanjut ke Mail Server.</p>
             <div class="flex flex-col md:flex-row justify-center gap-4">
                 <a href="index.html" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
                     Kembali ke Dashboard

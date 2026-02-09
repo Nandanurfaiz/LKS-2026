@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase 2: Router & Network (Offline DVD) - LKS 2026</title>
+    <title>Fase 2: Router & Network (Strategy B) - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
         
-        /* Terminal & Code Styles - Responsive Scroll */
+        /* Terminal & Code Styles */
         .terminal {
             background-color: #1e293b;
             color: #e2e8f0;
@@ -37,22 +37,21 @@
         }
         .prompt { color: #22c55e; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
-        .important { color: #f43f5e; font-weight: bold; }
-
+        
         /* INTERACTIVE CODE HINT STYLE */
         .interactive-code {
             cursor: pointer;
-            border-bottom: 1px dashed #60a5fa; /* Garis putus-putus biru */
+            border-bottom: 1px dashed #60a5fa;
             transition: all 0.2s;
             position: relative;
         }
         .interactive-code:hover {
-            background-color: rgba(59, 130, 246, 0.2); /* Highlight saat hover */
+            background-color: rgba(59, 130, 246, 0.2);
             color: #ffffff;
             border-bottom: 1px solid #ffffff;
         }
         .interactive-code::after {
-            content: '\f059'; /* FontAwesome Question Icon */
+            content: '\f059';
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             font-size: 0.6rem;
@@ -89,7 +88,7 @@
         }
         .hint-btn:hover { color: #1d4ed8; }
         
-        /* Modal for explanation */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -123,7 +122,6 @@
             cursor: pointer;
             line-height: 1;
         }
-        .close:hover { color: #0f172a; }
     </style>
     <script>
         function showHint(title, text) {
@@ -135,9 +133,7 @@
             document.getElementById('myModal').style.display = "none";
         }
         window.onclick = function(event) {
-            if (event.target == document.getElementById('myModal')) {
-                closeModal();
-            }
+            if (event.target == document.getElementById('myModal')) { closeModal(); }
         }
     </script>
 </head>
@@ -173,9 +169,9 @@
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Jantung Jaringan (Mode Offline)</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Jantung Jaringan (Mode Fisik)</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Kita akan mengubah VM Master menjadi <strong>Router (fw)</strong> yang menghubungkan semua zona, menggunakan instalasi paket berbasis <strong>DVD</strong>.
+                Kita akan mengubah VM Master menjadi <strong>Router (fw)</strong> yang menghubungkan Server Virtual dengan <strong>Laptop Client Fisik</strong>.
             </p>
         </header>
 
@@ -191,16 +187,16 @@
                             <li>eth0 (ISP) : DHCP (Bridged)</li>
                             <li>eth1 (DMZ) : 172.16.10.1/24</li>
                             <li>eth2 (INT) : 192.168.10.1/24</li>
-                            <li>eth3 (Cli) : 10.10.10.1/24</li>
+                            <li><strong>eth3 (Cli) : 10.10.10.1/24 (Fisik)</strong></li>
                         </ul>
                     </div>
                 </div>
                 <div>
                     <h4 class="font-bold text-blue-700 mb-2 mt-4 md:mt-0">Tugas Utama:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
-                        <li>Aktifkan <strong>IP Forwarding</strong>.</li>
-                        <li>Config <strong>NAT (Masquerade)</strong>.</li>
-                        <li>Install <strong>DHCP Server</strong> (Via DVD).</li>
+                        <li>Setting Adapter <strong>Bridged</strong> ke Laptop.</li>
+                        <li>Aktifkan <strong>IP Forwarding</strong> & NAT.</li>
+                        <li>Install <strong>DHCP Server</strong> untuk Laptop.</li>
                     </ul>
                 </div>
             </div>
@@ -210,8 +206,8 @@
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">1</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Cloning & Hardware</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Gandakan Master jadi VM "fw".</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Cloning & Hardware (PENTING!)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan "Kabel Fisik" ke Client.</p>
                 </div>
             </div>
 
@@ -223,12 +219,12 @@
                     </p>
                 </div>
                 
-                <div class="border-l-4 border-slate-200 pl-3 md:pl-4">
-                    <h4 class="font-bold text-slate-800 text-sm">2. Network Adapter</h4>
-                    <p class="text-xs md:text-sm text-slate-600 mt-1 mb-2">Atur 4 Adapter di VM Settings:</p>
-                    <div class="overflow-x-auto rounded border border-slate-100">
+                <div class="border-l-4 border-blue-500 bg-blue-50 pl-3 md:pl-4 py-3 rounded-r">
+                    <h4 class="font-bold text-blue-800 text-sm">2. Network Adapter (Mode Bridged)</h4>
+                    <p class="text-xs md:text-sm text-slate-700 mt-1 mb-2">Atur 4 Adapter di VM Settings. Perhatikan <strong>Adapter 4</strong>:</p>
+                    <div class="overflow-x-auto rounded border border-blue-200 bg-white">
                         <table class="w-full text-xs text-left">
-                            <thead class="bg-slate-100 font-bold text-slate-700">
+                            <thead class="bg-blue-100 font-bold text-blue-900">
                                 <tr>
                                     <th class="p-2 border-b">No</th>
                                     <th class="p-2 border-b">Setting</th>
@@ -238,27 +234,28 @@
                             <tbody>
                                 <tr>
                                     <td class="p-2 border-b">1</td>
-                                    <td class="p-2 border-b font-bold text-green-600">Bridged</td>
-                                    <td class="p-2 border-b">Internet</td>
+                                    <td class="p-2 border-b">Bridged</td>
+                                    <td class="p-2 border-b">Internet (ISP)</td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 border-b">2</td>
-                                    <td class="p-2 border-b text-blue-600">VMnet10</td>
-                                    <td class="p-2 border-b">DMZ</td>
+                                    <td class="p-2 border-b">VMnet10</td>
+                                    <td class="p-2 border-b">DMZ (Web/Mail)</td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 border-b">3</td>
-                                    <td class="p-2 border-b text-blue-600">VMnet11</td>
-                                    <td class="p-2 border-b">Internal</td>
+                                    <td class="p-2 border-b">VMnet11</td>
+                                    <td class="p-2 border-b">Internal Server</td>
                                 </tr>
-                                <tr>
-                                    <td class="p-2 border-b">4</td>
-                                    <td class="p-2 border-b text-blue-600">VMnet12</td>
-                                    <td class="p-2 border-b">Client</td>
+                                <tr class="bg-yellow-50">
+                                    <td class="p-2 border-b font-bold">4</td>
+                                    <td class="p-2 border-b font-bold text-red-600">Bridged (LAN Card)</td>
+                                    <td class="p-2 border-b font-bold">Ke Laptop Fisik</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    <p class="text-[10px] text-slate-500 mt-2 italic">*Pastikan kabel LAN sudah tercolok antara PC Server dan Laptop Client.</p>
                 </div>
             </div>
         </section>
@@ -278,14 +275,14 @@
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cek Interface</h4>
                     <p class="text-xs text-slate-500 mb-2">Lihat nama asli (ens33/37/etc) - Klik kode untuk info:</p>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('ip link show', '<b>Cek Daftar Kartu Jaringan.</b><br>Perintah ini menampilkan semua adapter jaringan yang terpasang. Catat namanya (misal: ens33, ens37, ens38, ens39) karena kita butuh nama ini untuk konfigurasi IP.')">ip link show</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('ip link show', '<b>Cek Daftar Kartu Jaringan.</b><br>Perintah ini menampilkan semua adapter jaringan. Pastikan ada 4 interface (selain lo). Catat namanya untuk config.')">ip link show</span>
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Edit File Interfaces</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/network/interfaces', '<b>Edit Konfigurasi IP.</b><br>Kita akan membuka file pengaturan jaringan utama Debian. Di sini kita menentukan mana IP yang statis (manual) dan mana yang DHCP.')">nano /etc/network/interfaces</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/network/interfaces', '<b>Edit Konfigurasi IP.</b><br>Meskipun Client fisik, settingan IP di Debian tetap sama (10.10.10.1). Debian tidak peduli kabelnya virtual atau asli.')">nano /etc/network/interfaces</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-2">Hapus semua, Paste kode ini (Sesuaikan nama 'ens' Anda):</p>
                     
@@ -308,7 +305,7 @@ auto ens38
 iface ens38 inet static
     address 192.168.10.1/24
 
-# CLIENT (PC Siswa Gateway)
+# CLIENT (Fisik via LAN Card)
 auto ens39
 iface ens39 inet static
     address 10.10.10.1/24</div>
@@ -317,8 +314,8 @@ iface ens39 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">3. Apply Config</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart networking', '<b>Terapkan IP Baru.</b><br>Merestart layanan jaringan agar perubahan file interfaces tadi langsung aktif tanpa perlu reboot komputer.')">systemctl restart networking</span><br>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('ip a', '<b>Verifikasi IP.</b><br>Mengecek apakah IP Address yang kita ketik tadi sudah benar-benar menempel di kartu jaringan.')">ip a</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart networking', '<b>Terapkan IP Baru.</b><br>Merestart layanan jaringan agar perubahan file interfaces tadi langsung aktif.')">systemctl restart networking</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('ip a', '<b>Verifikasi IP.</b><br>Mengecek apakah IP Address sudah benar-benar menempel di kartu jaringan.')">ip a</span>
                     </div>
                 </div>
 
@@ -340,35 +337,34 @@ iface ens39 inet static
                     <h4 class="font-bold text-yellow-800 text-sm mb-2"><i class="fas fa-compact-disc"></i> Persiapan DVD</h4>
                     <p class="text-xs text-slate-700 mb-2">Masukkan DVD-1 (Binary) ke VMware sebelum lanjut.</p>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Daftarkan DVD.</b><br>Meminta Debian membaca isi DVD yang sedang dimasukkan agar bisa digunakan untuk menginstall paket aplikasi secara offline.')">apt-cdrom add</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Daftarkan DVD.</b><br>Meminta Debian membaca isi DVD agar bisa menginstall paket.')">apt-cdrom add</span>
                     </div>
-    
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. IP Forwarding</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/sysctl.conf', '<b>Aktifkan Mode Router.</b><br>Secara default, Linux menolak meneruskan paket data orang lain. Kita harus mengedit file ini untuk mengizinkan penerusan data (forwarding).')">nano /etc/sysctl.conf</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/sysctl.conf', '<b>Aktifkan Mode Router.</b><br>Mengizinkan Linux meneruskan paket data dari satu kabel ke kabel lain.')">nano /etc/sysctl.conf</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-1">Hapus pagar (#) di baris:</p>
                     <div class="file-content py-2">net.ipv4.ip_forward=1</div>
                     <div class="terminal mt-1">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('sysctl -p', '<b>Reload Konfigurasi Kernel.</b><br>Menerapkan perubahan ip_forward tadi secara langsung.')">sysctl -p</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('sysctl -p', '<b>Reload Konfigurasi Kernel.</b><br>Menerapkan perubahan ip_forward secara langsung.')">sysctl -p</span>
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. NAT Masquerade</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install iptables iptables-persistent -y', '<b>Install Firewall Tools.</b><br>Menginstall program IPTables (pengatur lalu lintas) dan IPTables-Persistent (alat penyimpan aturan permanen).')">apt install iptables iptables-persistent -y</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install iptables iptables-persistent -y', '<b>Install Firewall Tools.</b><br>Menginstall program IPTables dan alat penyimpan aturan permanen.')">apt install iptables iptables-persistent -y</span>
                     </div>
-                    <p class="text-xs text-slate-400 italic mb-2">*Pilih YES saat ditanya simpan rule. Jika minta DVD-2, ganti ISO di Settings.</p>
+                    <p class="text-xs text-slate-400 italic mb-2">*Pilih YES saat ditanya simpan rule.</p>
                     
                     <div class="terminal">
                         <span class="comment"># Rule NAT ke ens33 (Internet)</span><br>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('iptables -t nat -A POSTROUTING ...', '<b>Buat Aturan NAT.</b><br><b>-t nat:</b> Tabel NAT.<br><b>-A POSTROUTING:</b> Aturan setelah routing.<br><b>-o ens33:</b> Output ke internet.<br><b>-j MASQUERADE:</b> Menyamarkan IP Client menjadi IP Router agar bisa internetan.')">iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('iptables -t nat -A POSTROUTING ...', '<b>Buat Aturan NAT.</b><br>Menyamarkan IP Client (10.10.10.x) menjadi IP Router saat mengakses internet atau jaringan lain.')">iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE</span><br>
                         <span class="comment"># Simpan Permanen</span><br>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('netfilter-persistent save', '<b>Simpan Permanen.</b><br>Menyimpan aturan IPTables yang baru dibuat agar tidak hilang saat komputer direstart.')">netfilter-persistent save</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('netfilter-persistent save', '<b>Simpan Permanen.</b><br>Menyimpan aturan IPTables agar tidak hilang saat restart.')">netfilter-persistent save</span>
                     </div>
                 </div>
 
@@ -380,7 +376,7 @@ iface ens39 inet static
                 <div class="step-badge">4</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">DHCP Server</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">IP Otomatis untuk Client.</p>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Memberi IP otomatis ke Laptop Fisik.</p>
                 </div>
             </div>
 
@@ -389,17 +385,16 @@ iface ens39 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install & Set Interface</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install isc-dhcp-server -y', '<b>Install DHCP Server.</b><br>Menginstall paket aplikasi ISC-DHCP-SERVER yang bertugas membagikan IP otomatis.')">apt install isc-dhcp-server -y</span>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/default/isc-dhcp-server', '<b>Pilih Interface DHCP.</b><br>Kita harus menentukan di kabel mana DHCP Server boleh bekerja. Kita isi dengan ens39 (arah Client).')">nano /etc/default/isc-dhcp-server</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install isc-dhcp-server -y', '<b>Install DHCP Server.</b><br>Menginstall paket ISC-DHCP-SERVER.')">apt install isc-dhcp-server -y</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/default/isc-dhcp-server', '<b>Pilih Interface.</b><br>Tentukan kabel mana yang boleh membagi IP. Isi dengan interface Bridged (ens39).')">nano /etc/default/isc-dhcp-server</span>
                     </div>
                     <div class="file-content py-2">INTERFACESv4="ens39"</div>
-                    <p class="text-xs text-slate-400 mt-1">*Isi dengan interface Client (ens39/ens36).</p>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Config Subnet</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/dhcp/dhcpd.conf', '<b>Konfigurasi Pool IP.</b><br>File utama DHCP. Di sini kita menentukan range IP (dari berapa sampai berapa), Gateway, dan DNS yang akan diberikan ke Client.')">nano /etc/dhcp/dhcpd.conf</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/dhcp/dhcpd.conf', '<b>Konfigurasi Pool IP.</b><br>Menentukan range IP (10-100), Gateway, dan DNS untuk Laptop Client.')">nano /etc/dhcp/dhcpd.conf</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-2">Scroll paling bawah, tambahkan:</p>
                     <div class="file-content">
@@ -413,8 +408,8 @@ subnet 10.10.10.0 netmask 255.255.255.0 {
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">3. Start Service</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart isc-dhcp-server', '<b>Restart DHCP.</b><br>Menjalankan ulang service DHCP agar konfigurasi baru diterapkan.')">systemctl restart isc-dhcp-server</span><br>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl status isc-dhcp-server', '<b>Cek Status.</b><br>Memastikan tidak ada error. Pastikan statusnya Active (Running) berwarna hijau.')">systemctl status isc-dhcp-server</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart isc-dhcp-server', '<b>Restart DHCP.</b><br>Menjalankan layanan DHCP.')">systemctl restart isc-dhcp-server</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl status isc-dhcp-server', '<b>Cek Status.</b><br>Pastikan status Active (Running).')">systemctl status isc-dhcp-server</span>
                     </div>
                 </div>
 
@@ -428,11 +423,11 @@ subnet 10.10.10.0 netmask 255.255.255.0 {
             <div class="grid md:grid-cols-2 gap-3 md:gap-4">
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>Repo DVD:</strong> Apt install sukses (tanpa internet).</div>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>Repo DVD:</strong> Apt install sukses.</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>IP OK:</strong> Semua interface (ens37-39) punya IP.</div>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>IP OK:</strong> Semua interface (termasuk arah fisik) punya IP.</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
@@ -440,7 +435,7 @@ subnet 10.10.10.0 netmask 255.255.255.0 {
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>DHCP:</strong> Status Active (Running).</div>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>DHCP:</strong> Running (Siap melayani Laptop).</div>
                 </div>
             </div>
         </section>
