@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase 4: Client & Testing - LKS 2026</title>
+    <title>Fase 4: Verifikasi Client & Network - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #ffffbeb; color: #334155; }
+        body { font-family: 'Inter', sans-serif; background-color: #fffbeb; color: #334155; }
         
         /* Terminal & Code Styles */
         .terminal {
@@ -32,7 +32,7 @@
         }
         .prompt-win { color: #ccc; }
         
-        /* Step Styling - Amber Theme */
+        /* Step Badge - Amber Theme */
         .step-badge {
             width: 2.5rem;
             height: 2.5rem;
@@ -130,10 +130,10 @@
                     <span class="text-xs text-slate-500 md:hidden">Client Testing</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">Verifikasi & Pengujian Akhir</span>
+                <span class="hidden md:inline font-bold text-slate-800">Verifikasi & Quality Control</span>
             </div>
             <span class="bg-amber-100 text-amber-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
-                Bobot 30%
+                Checkpoint
             </span>
         </div>
     </nav>
@@ -143,7 +143,7 @@
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Pembuktian Kebenaran</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Saatnya berperan sebagai Siswa/Client. Kita akan menggunakan VM Windows untuk memastikan semua konfigurasi Server (DHCP, NAT, DNS, Web, LB) berjalan sempurna.
+                Sebelum masuk ke layanan tingkat lanjut (Mail & LDAP), kita wajib memastikan fondasi jaringan (Router, DNS, Web, Load Balancer) sudah 100% solid.
             </p>
         </header>
 
@@ -153,20 +153,21 @@
             </h2>
             <div class="grid md:grid-cols-2 gap-6 text-sm">
                 <div>
-                    <h4 class="font-bold text-amber-700 mb-2">Persiapan VM Client:</h4>
+                    <h4 class="font-bold text-amber-700 mb-2">Target Client:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
-                        <li><strong>OS:</strong> Windows 7 / 10 / 11 (Teringan Win 7).</li>
-                        <li><strong>Network:</strong> VMnet12 (Client Area).</li>
-                        <li><strong>IP Address:</strong> DHCP (Otomatis).</li>
+                        <li><strong>VM Name:</strong> Client / Budi-Clt</li>
+                        <li><strong>OS:</strong> Windows 11 (Sesuai Kisi-kisi)</li>
+                        <li><strong>Network:</strong> VMnet12 (Wajib!)</li>
+                        <li><strong>IP Address:</strong> DHCP (Otomatis)</li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-amber-700 mb-2 mt-4 md:mt-0">Checklist Sukses:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
                         <li><i class="fas fa-check-square text-amber-500"></i> Mendapat IP 10.10.10.x.</li>
-                        <li><i class="fas fa-check-square text-amber-500"></i> Bisa Ping ke Google (8.8.8.8).</li>
-                        <li><i class="fas fa-check-square text-amber-500"></i> Bisa Buka Web <code>www.lks2026.id</code>.</li>
-                        <li><i class="fas fa-check-square text-amber-500"></i> Web berubah (LB) saat di-refresh.</li>
+                        <li><i class="fas fa-check-square text-amber-500"></i> Ping ke Gateway 10.10.10.1 (OK).</li>
+                        <li><i class="fas fa-check-square text-amber-500"></i> Buka Web <code>www.lks2026.id</code> (OK).</li>
+                        <li><i class="fas fa-check-square text-amber-500"></i> Refresh Web -> Konten berubah (LB OK).</li>
                     </ul>
                 </div>
             </div>
@@ -174,28 +175,65 @@
 
         <section class="mb-10 md:mb-12">
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
-                <div class="step-badge">1</div>
+                <div class="step-badge">0</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Setup VM Client</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan komputer penguji.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Persiapan VM (Install Windows)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Langkah awal membuat mesin Client.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                 
                 <div class="border-l-4 border-slate-200 pl-4">
-                    <h4 class="font-bold text-slate-800 text-sm">1. Atur Network Adapter</h4>
-                    <p class="text-xs text-slate-600 mt-1">Matikan VM Windows Client Anda. Buka <strong>Settings</strong> > <strong>Network Adapter</strong>. Ubah menjadi <strong>Custom: VMnet12</strong>.</p>
+                    <h4 class="font-bold text-slate-800 text-sm">1. Buat VM Baru</h4>
+                    <p class="text-xs text-slate-600 mt-1">Di VMware Workstation, klik <strong>File > New Virtual Machine</strong>.</p>
+                    <ul class="list-disc ml-5 text-xs text-slate-600 mt-2 space-y-1">
+                        <li><strong>Installer Disc Image:</strong> Pilih file ISO Windows 11 (atau Win 10/7 untuk latihan ringan).</li>
+                        <li><strong>Full Name:</strong> Siswa / Budi</li>
+                        <li><strong>Virtual Machine Name:</strong> <code>Client-Windows</code></li>
+                        <li><strong>Disk Size:</strong> 60 GB (Store virtual disk as a single file).</li>
+                    </ul>
+                </div>
+
+                <div class="border-l-4 border-amber-400 pl-4 bg-amber-50 p-2 rounded-r">
+                    <h4 class="font-bold text-amber-800 text-sm">2. Setting Network (SANGAT PENTING!)</h4>
+                    <p class="text-xs text-slate-700 mt-1">Sebelum klik Finish, klik tombol <strong>Customize Hardware</strong>.</p>
+                    <p class="text-xs text-slate-700 mt-1">Pilih <strong>Network Adapter</strong> -> Ganti ke <strong>Custom: VMnet12</strong>.</p>
+                    <p class="text-[10px] text-slate-500 italic mt-1">*Jika salah network (misal NAT/Bridged), Client tidak akan dapat IP dari Router Debian kita.</p>
                 </div>
 
                 <div class="border-l-4 border-slate-200 pl-4">
-                    <h4 class="font-bold text-slate-800 text-sm">2. Setting IP Windows (DHCP)</h4>
-                    <p class="text-xs text-slate-600 mt-1">Nyalakan VM Windows. Masuk ke Control Panel Network:</p>
+                    <h4 class="font-bold text-slate-800 text-sm">3. Jalankan Instalasi</h4>
+                    <p class="text-xs text-slate-600 mt-1">Klik Finish, lalu jalankan VM. Ikuti proses instalasi Windows sampai masuk ke Desktop.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">1</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi IP (DHCP)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Meminta IP otomatis dari Router.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                
+                <div class="border-l-4 border-slate-200 pl-4">
+                    <h4 class="font-bold text-slate-800 text-sm">1. Buka Network Connections</h4>
+                    <p class="text-xs text-slate-600 mt-1">Di Windows Client, tekan <strong>Win + R</strong>, ketik <code>ncpa.cpl</code>, lalu Enter.</p>
+                </div>
+
+                <div class="border-l-4 border-slate-200 pl-4">
+                    <h4 class="font-bold text-slate-800 text-sm">2. Setting IPv4</h4>
                     <ul class="list-disc ml-5 text-xs text-slate-600 mt-1">
-                        <li>Buka <code>ncpa.cpl</code> (Run).</li>
-                        <li>Klik Kanan Adapter > Properties > IPv4.</li>
-                        <li>Pilih <strong>Obtain an IP address automatically</strong>.</li>
-                        <li>Pilih <strong>Obtain DNS server address automatically</strong>.</li>
+                        <li>Klik Kanan Adapter Ethernet > <strong>Properties</strong>.</li>
+                        <li>Double-klik <strong>Internet Protocol Version 4 (TCP/IPv4)</strong>.</li>
+                        <li>Pastikan pilih: <strong>Obtain an IP address automatically</strong>.</li>
+                        <li>Pastikan pilih: <strong>Obtain DNS server address automatically</strong>.</li>
+                        <li>Klik OK dan OK.</li>
                     </ul>
                 </div>
 
@@ -262,7 +300,7 @@ Server:  UnKnown
 Address:  10.10.10.1  <-- DNS Server (Router)
 
 Name:    www.lks2026.id
-Address:  172.16.10.1 <-- IP Load Balancer</div>
+Address:  172.16.10.1 <-- IP Load Balancer (Gateway DMZ)</div>
                 </div>
 
                 <div>
@@ -282,7 +320,7 @@ Address:  172.16.10.1 <-- IP Load Balancer</div>
                     
                     <p class="text-xs text-green-600 font-bold mt-3 flex items-center gap-2">
                         <i class="fas fa-check-circle text-lg"></i>
-                        Jika tampilan berubah-ubah, SELAMAT! Anda LULUS Modul Ini.
+                        Jika tampilan berubah-ubah, Fondasi Anda sudah KUAT!
                     </p>
                 </div>
 
@@ -300,7 +338,7 @@ Address:  172.16.10.1 <-- IP Load Balancer</div>
                         <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
                     </summary>
                     <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        <strong>Solusi:</strong> Cek konfigurasi Nginx Load Balancer di Router. Pastikan `proxy_pass` mengarah ke upstream yang benar. Cek juga apakah Web01 dan Web02 Nginx-nya menyala.
+                        <strong>Solusi:</strong> Cek konfigurasi Nginx Load Balancer di Router. Pastikan `proxy_pass` mengarah ke IP `172.16.10.10` dan `172.16.10.20`. Cek juga apakah firewall (iptables) tidak memblokir port 80.
                     </div>
                 </details>
                 
@@ -310,18 +348,23 @@ Address:  172.16.10.1 <-- IP Load Balancer</div>
                         <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
                     </summary>
                     <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        <strong>Solusi:</strong> Masalah ada di DNS (Bind9). Cek file `db.lks`. Pastikan di Windows Client DNS Server yang didapat dari DHCP adalah IP Router (10.10.10.1), bukan 8.8.8.8 saja.
+                        <strong>Solusi:</strong> Masalah ada di DNS (Bind9). Cek file `db.lks`. Pastikan di Windows Client, DNS Server yang didapat adalah IP Router (10.10.10.1). Coba `ipconfig /flushdns` di CMD.
                     </div>
                 </details>
             </div>
         </section>
 
         <div class="text-center py-8">
-            <h3 class="text-xl font-bold text-slate-800 mb-2">🎉 Selamat!</h3>
-            <p class="text-sm text-slate-600 mb-6">Anda telah menyelesaikan konfigurasi Router, DNS, Web Server, dan Load Balancer dengan Metode DVD Offline.</p>
-            <a href="index.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-slate-800 text-white hover:bg-slate-900 shadow-lg transition font-bold text-sm">
-                <i class="fas fa-home"></i> Kembali ke Dashboard Utama
-            </a>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">🎉 Tahap Awal Selesai!</h3>
+            <p class="text-sm text-slate-600 mb-6">Fondasi sudah kuat. Saatnya kita membangun layanan tingkat lanjut (Mail Server).</p>
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <a href="index.html" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
+                    Kembali ke Dashboard
+                </a>
+                <a href="phase5.html" class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition font-bold text-sm">
+                    Lanjut ke Fase 5 (Mail Server) <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
 
     </main>
