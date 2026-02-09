@@ -149,7 +149,7 @@
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Layanan Publik (Mode DVD)</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Kita akan membangun Web Server dan DNS menggunakan paket instalasi dari DVD (Offline) untuk menghindari masalah koneksi internet.
+                Kita akan membangun Web Server dan DNS menggunakan paket instalasi dari DVD (Offline), serta menggunakan <strong>Nginx</strong> sebagai Load Balancer.
             </p>
         </header>
 
@@ -174,7 +174,7 @@
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
                         <li>Install <strong>Nginx</strong> di Web01 & Web02 (via DVD).</li>
                         <li>Config <strong>DNS Server</strong> (Bind9) di Router.</li>
-                        <li>Config <strong>Load Balancer</strong> (HAProxy) di Router.</li>
+                        <li>Config <strong>Load Balancer</strong> (Nginx) di Router.</li>
                     </ul>
                 </div>
             </div>
@@ -255,7 +255,7 @@ iface ens33 inet static
                         <span class="comment"># Masukkan DVD-1 di VMware, lalu:</span><br>
                         <span class="prompt">root@web01:~#</span> apt-cdrom add<br>
                         <span class="prompt">root@web01:~#</span> apt update <br><br>
-                        <span class="comment">Lakukan hal yang sama untuk DVD-2</span><br>
+                        <span class="comment"># Lakukan hal yang sama untuk DVD-2 jika diperlukan</span><br>
                     </div>
                 </div>
 
@@ -338,7 +338,7 @@ $TTL    604800
 @       IN      NS      lks2026.id.
 @       IN      A       172.16.10.1
 www     IN      A       172.16.10.1</div>
-                    <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Kenapa IP 172.16.10.1?', 'Kita mengarahkan domain www.lks2026.id ke IP Router (DMZ Gateway), karena nanti di Router inilah kita akan memasang Load Balancer (HAProxy) yang membagi trafik ke Web01 dan Web02.')">
+                    <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Kenapa IP 172.16.10.1?', 'Kita mengarahkan domain www.lks2026.id ke IP Router (DMZ Gateway), karena nanti di Router inilah kita akan memasang Load Balancer yang membagi trafik ke Web01 dan Web02.')">
                         <i class="fas fa-info-circle"></i> Kenapa IP-nya 172.16.10.1?
                     </button>
                 </div>
@@ -358,44 +358,53 @@ www     IN      A       172.16.10.1</div>
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">4</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Load Balancer (HAProxy)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Membagi beban trafik di Router.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Load Balancer (NGINX)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Kita pakai Nginx karena DVD-1 pasti punya paketnya.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
                 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install HAProxy</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Nginx di Router</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> apt install haproxy -y
+                        <span class="prompt">root@fw:~#</span> apt install nginx -y
                     </div>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Konfigurasi Frontend & Backend</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Konfigurasi Load Balancer</h4>
+                    <p class="text-xs text-slate-500 mb-1">Hapus semua isi file default, lalu ganti total.</p>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> nano /etc/haproxy/haproxy.cfg
+                        <span class="prompt">root@fw:~#</span> nano /etc/nginx/sites-available/default
                     </div>
-                    <p class="text-xs text-slate-500 mb-2">Tambahkan di baris paling bawah:</p>
+                    <p class="text-xs text-slate-500 mb-2">Hapus semuanya (Ctrl+K), lalu paste:</p>
                     <div class="file-content">
-frontend http_front
-    bind *:80
-    default_backend http_back
+upstream backend_lks {
+    server 172.16.10.10;
+    server 172.16.10.20;
+}
 
-backend http_back
-    balance roundrobin
-    server web01 172.16.10.10:80 check
-    server web02 172.16.10.20:80 check</div>
-                    <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Penjelasan HAProxy', '<b>frontend</b>: Pintu masuk. Menerima request di port 80 (HTTP) pada router.<br><b>default_backend</b>: Melempar request ke grup server di belakang.<br><b>balance roundrobin</b>: Algoritma pembagian secara bergilir (Satu ke Web01, Satu ke Web02, dst).')">
-                        <i class="fas fa-info-circle"></i> Jelaskan kode HAProxy
+server {
+    listen 80;
+    server_name lks2026.id www.lks2026.id;
+
+    location / {
+        proxy_pass http://backend_lks;
+    }
+}</div>
+                    <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Penjelasan Nginx LB', '<b>upstream</b>: Grup server tujuan (Web01 & Web02).<br><b>proxy_pass</b>: Perintah untuk melempar (pass) semua request yang masuk ke Router, diteruskan ke grup upstream tadi.')">
+                        <i class="fas fa-info-circle"></i> Jelaskan kode Nginx ini
                     </button>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Restart HAProxy</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Restart & Test</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> systemctl restart haproxy
+                        <span class="prompt">root@fw:~#</span> systemctl restart nginx<br>
+                        <span class="comment"># Cek apakah load balancer jalan (hasil harus berubah-ubah):</span><br>
+                        <span class="prompt">root@fw:~#</span> curl 172.16.10.1<br>
+                        <span class="prompt">root@fw:~#</span> curl 172.16.10.1
                     </div>
                 </div>
 
@@ -420,12 +429,12 @@ backend http_back
                 
                 <details class="bg-white p-3 rounded border border-red-100 group">
                     <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
-                        Web Server tidak bisa install nginx (Failed to fetch)
+                        Nginx Gagal Restart (Job failed)
                         <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
                     </summary>
                     <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        <strong>Penyebab:</strong> Repo internet masih aktif tapi tidak ada koneksi.<br>
-                        <strong>Solusi:</strong> Edit <code>/etc/apt/sources.list</code>, beri pagar (#) pada semua baris 'deb http://'. Pastikan baris 'cdrom' aktif.
+                        <strong>Penyebab:</strong> Salah ketik (typo) di file config atau kurang titik koma (;).<br>
+                        <strong>Solusi:</strong> Cek `nginx -t` untuk melihat baris mana yang error. Pastikan kurung kurawal `{}` lengkap.
                     </div>
                 </details>
             </div>
