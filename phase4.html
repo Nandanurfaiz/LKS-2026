@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 4: Client & Testing - LKS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #ffffbeb; color: #334155; }
+        
+        /* Terminal & Code Styles */
+        .terminal {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            border-left: 4px solid #f59e0b;
+            margin: 0.75rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .cmd-win {
+            background-color: #000;
+            color: #ccc;
+            font-family: 'Consolas', 'Courier New', monospace;
+            border-left: 4px solid #ccc;
+        }
+        .prompt-win { color: #ccc; }
+        
+        /* Step Styling - Amber Theme */
+        .step-badge {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Tooltip / Hint Style */
+        .hint-btn {
+            cursor: pointer;
+            color: #d97706;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+            transition: color 0.2s;
+            display: inline-block;
+            padding: 4px;
+        }
+        .hint-btn:hover { color: #b45309; }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 20% auto;
+            padding: 1.5rem;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+        .close {
+            color: #64748b;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+    </style>
+    <script>
+        function showHint(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerHTML = text;
+            document.getElementById('myModal').style.display = "block";
+        }
+        function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('myModal')) { closeModal(); }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-3 border-b pb-2">Penjelasan</h3>
+            <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+        </div>
+    </div>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-slate-400 hover:text-amber-600 transition p-2">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </a>
+                <div class="flex flex-col">
+                    <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase 4</span>
+                    <span class="text-xs text-slate-500 md:hidden">Client Testing</span>
+                </div>
+                <span class="hidden md:inline text-slate-300">|</span>
+                <span class="hidden md:inline font-bold text-slate-800">Verifikasi & Pengujian Akhir</span>
+            </div>
+            <span class="bg-amber-100 text-amber-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
+                Bobot 30%
+            </span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
+
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Pembuktian Kebenaran</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Saatnya berperan sebagai Siswa/Client. Kita akan menggunakan VM Windows untuk memastikan semua konfigurasi Server (DHCP, NAT, DNS, Web, LB) berjalan sempurna.
+            </p>
+        </header>
+
+        <section class="bg-amber-50 border border-amber-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
+            <h2 class="text-amber-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-tasks"></i> Misi Pengujian
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <h4 class="font-bold text-amber-700 mb-2">Persiapan VM Client:</h4>
+                    <ul class="list-disc ml-5 text-slate-700 space-y-1">
+                        <li><strong>OS:</strong> Windows 7 / 10 / 11 (Teringan Win 7).</li>
+                        <li><strong>Network:</strong> VMnet12 (Client Area).</li>
+                        <li><strong>IP Address:</strong> DHCP (Otomatis).</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-amber-700 mb-2 mt-4 md:mt-0">Checklist Sukses:</h4>
+                    <ul class="list-disc ml-5 text-slate-700 space-y-1">
+                        <li><i class="fas fa-check-square text-amber-500"></i> Mendapat IP 10.10.10.x.</li>
+                        <li><i class="fas fa-check-square text-amber-500"></i> Bisa Ping ke Google (8.8.8.8).</li>
+                        <li><i class="fas fa-check-square text-amber-500"></i> Bisa Buka Web <code>www.lks2026.id</code>.</li>
+                        <li><i class="fas fa-check-square text-amber-500"></i> Web berubah (LB) saat di-refresh.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">1</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Setup VM Client</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan komputer penguji.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                
+                <div class="border-l-4 border-slate-200 pl-4">
+                    <h4 class="font-bold text-slate-800 text-sm">1. Atur Network Adapter</h4>
+                    <p class="text-xs text-slate-600 mt-1">Matikan VM Windows Client Anda. Buka <strong>Settings</strong> > <strong>Network Adapter</strong>. Ubah menjadi <strong>Custom: VMnet12</strong>.</p>
+                </div>
+
+                <div class="border-l-4 border-slate-200 pl-4">
+                    <h4 class="font-bold text-slate-800 text-sm">2. Setting IP Windows (DHCP)</h4>
+                    <p class="text-xs text-slate-600 mt-1">Nyalakan VM Windows. Masuk ke Control Panel Network:</p>
+                    <ul class="list-disc ml-5 text-xs text-slate-600 mt-1">
+                        <li>Buka <code>ncpa.cpl</code> (Run).</li>
+                        <li>Klik Kanan Adapter > Properties > IPv4.</li>
+                        <li>Pilih <strong>Obtain an IP address automatically</strong>.</li>
+                        <li>Pilih <strong>Obtain DNS server address automatically</strong>.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">2</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Tes Koneksi (Ping & IP)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Memastikan Router & DHCP bekerja.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cek IP Address</h4>
+                    <p class="text-xs text-slate-500 mb-1">Buka CMD di Windows, ketik:</p>
+                    <div class="terminal cmd-win">
+                        <span class="prompt-win">C:\Users\Siswa></span> ipconfig
+                    </div>
+                    <div class="bg-green-50 text-green-800 p-2 rounded text-xs border border-green-200 mt-2">
+                        <strong>Target:</strong> IPv4 Address harus <code>10.10.10.x</code> (antara 10-100).<br>
+                        Gateway harus <code>10.10.10.1</code>.
+                    </div>
+                    <button class="text-xs text-amber-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('IP Masih 169.254.x.x?', 'Jika IP Anda 169.x.x.x (APIPA), berarti DHCP Gagal. <br>1. Cek VMnet Client harus VMnet12.<br>2. Cek service DHCP di Router: <code>systemctl status isc-dhcp-server</code>.<br>3. Matikan Firewall Windows sementara.')">
+                        <i class="fas fa-exclamation-triangle"></i> IP Tidak Muncul?
+                    </button>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Ping Gateway & Internet</h4>
+                    <div class="terminal cmd-win">
+                        <span class="prompt-win">C:\Users\Siswa></span> ping 10.10.10.1<br>
+                        <span class="prompt-win">C:\Users\Siswa></span> ping 8.8.8.8
+                    </div>
+                    <p class="text-xs text-slate-500 italic mt-1">*Ping 8.8.8.8 hanya akan Reply jika Laptop Asli Anda terhubung internet.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">3</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Tes DNS & Web (Final)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Momen penentuan keberhasilan.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Tes Domain (Nslookup)</h4>
+                    <p class="text-xs text-slate-500 mb-1">Pastikan Client mengenal nama domain kita:</p>
+                    <div class="terminal cmd-win">
+                        <span class="prompt-win">C:\Users\Siswa></span> nslookup www.lks2026.id
+                    </div>
+                    <div class="file-content">
+Server:  UnKnown
+Address:  10.10.10.1  <-- DNS Server (Router)
+
+Name:    www.lks2026.id
+Address:  172.16.10.1 <-- IP Load Balancer</div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Tes Web Browser & Load Balancing</h4>
+                    <p class="text-xs text-slate-500 mb-2">Buka Chrome/Edge, akses <code>http://www.lks2026.id</code>.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border p-3 rounded bg-slate-50 text-center">
+                            <span class="block font-bold text-xs text-slate-400 uppercase mb-1">Refresh Pertama</span>
+                            <h1 class="text-xl font-bold text-slate-800">Ini Server WEB 01</h1>
+                        </div>
+                        <div class="border p-3 rounded bg-slate-50 text-center">
+                            <span class="block font-bold text-xs text-slate-400 uppercase mb-1">Refresh Kedua (F5)</span>
+                            <h1 class="text-xl font-bold text-slate-800">Ini Server WEB 02</h1>
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-green-600 font-bold mt-3 flex items-center gap-2">
+                        <i class="fas fa-check-circle text-lg"></i>
+                        Jika tampilan berubah-ubah, SELAMAT! Anda LULUS Modul Ini.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-red-50 border border-red-200 rounded-xl p-5 md:p-6 mb-12 shadow-sm">
+            <h2 class="text-red-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-tools"></i> Troubleshooting Akhir
+            </h2>
+            <div class="space-y-3">
+                <details class="bg-white p-3 rounded border border-red-100 group">
+                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
+                        Ping Reply, tapi Web tidak bisa dibuka
+                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
+                        <strong>Solusi:</strong> Cek konfigurasi Nginx Load Balancer di Router. Pastikan `proxy_pass` mengarah ke upstream yang benar. Cek juga apakah Web01 dan Web02 Nginx-nya menyala.
+                    </div>
+                </details>
+                
+                <details class="bg-white p-3 rounded border border-red-100 group">
+                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
+                        Hanya bisa akses IP, Domain gagal
+                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
+                        <strong>Solusi:</strong> Masalah ada di DNS (Bind9). Cek file `db.lks`. Pastikan di Windows Client DNS Server yang didapat dari DHCP adalah IP Router (10.10.10.1), bukan 8.8.8.8 saja.
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <div class="text-center py-8">
+            <h3 class="text-xl font-bold text-slate-800 mb-2">🎉 Selamat!</h3>
+            <p class="text-sm text-slate-600 mb-6">Anda telah menyelesaikan konfigurasi Router, DNS, Web Server, dan Load Balancer dengan Metode DVD Offline.</p>
+            <a href="index.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-slate-800 text-white hover:bg-slate-900 shadow-lg transition font-bold text-sm">
+                <i class="fas fa-home"></i> Kembali ke Dashboard Utama
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>
