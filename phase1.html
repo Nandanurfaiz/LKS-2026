@@ -39,6 +39,28 @@
         .comment { color: #94a3b8; font-style: italic; }
         .cmd { color: #e2e8f0; }
 
+        /* INTERACTIVE CODE HINT STYLE */
+        .interactive-code {
+            cursor: pointer;
+            border-bottom: 1px dashed #60a5fa; /* Garis putus-putus biru */
+            transition: all 0.2s;
+            position: relative;
+        }
+        .interactive-code:hover {
+            background-color: rgba(59, 130, 246, 0.2); /* Highlight saat hover */
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+        .interactive-code::after {
+            content: '\f059'; /* FontAwesome Question Icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.6rem;
+            margin-left: 4px;
+            color: #60a5fa;
+            opacity: 0.7;
+        }
+
         /* Step Numbering */
         .step-badge {
             width: 2.5rem;
@@ -240,22 +262,22 @@
                                         <td class="px-3 py-2">-</td>
                                         <td class="px-3 py-2">Internet</td>
                                     </tr>
-                                    <tr>
-                                        <td class="px-3 py-2 font-bold">VMnet10</td>
+                                    <tr onclick="showHint('VMnet10 (DMZ)', 'DMZ (Demilitarized Zone) adalah area untuk server yang boleh diakses publik (seperti Web Server). Kita pakai segmen IP 172.16.10.0/24.')" class="cursor-pointer hover:bg-blue-50">
+                                        <td class="px-3 py-2 font-bold">VMnet10 <i class="fas fa-info-circle text-blue-400 text-[10px]"></i></td>
                                         <td class="px-3 py-2">Host-only</td>
                                         <td class="px-3 py-2 font-bold text-blue-600">172.16.10.0</td>
                                         <td class="px-3 py-2 text-red-600 font-bold">UNCHECK</td>
                                         <td class="px-3 py-2">DMZ</td>
                                     </tr>
-                                    <tr>
-                                        <td class="px-3 py-2 font-bold">VMnet11</td>
+                                    <tr onclick="showHint('VMnet11 (INT)', 'INT (Internal) adalah area privat khusus karyawan/staff. Tidak boleh diakses langsung dari luar. Kita pakai segmen 192.168.10.0/24.')" class="cursor-pointer hover:bg-blue-50">
+                                        <td class="px-3 py-2 font-bold">VMnet11 <i class="fas fa-info-circle text-blue-400 text-[10px]"></i></td>
                                         <td class="px-3 py-2">Host-only</td>
                                         <td class="px-3 py-2 font-bold text-blue-600">192.168.10.0</td>
                                         <td class="px-3 py-2 text-red-600 font-bold">UNCHECK</td>
                                         <td class="px-3 py-2">INT</td>
                                     </tr>
-                                    <tr>
-                                        <td class="px-3 py-2 font-bold">VMnet12</td>
+                                    <tr onclick="showHint('VMnet12 (Client)', 'Jalur khusus untuk komputer Client (Windows). Nantinya Client akan minta IP otomatis (DHCP) lewat kabel ini. IP 10.10.10.0/24.')" class="cursor-pointer hover:bg-blue-50">
+                                        <td class="px-3 py-2 font-bold">VMnet12 <i class="fas fa-info-circle text-blue-400 text-[10px]"></i></td>
                                         <td class="px-3 py-2">Host-only</td>
                                         <td class="px-3 py-2 font-bold text-blue-600">10.10.10.0</td>
                                         <td class="px-3 py-2 text-red-600 font-bold">UNCHECK</td>
@@ -378,11 +400,11 @@
                 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">3.1 Login Pertama & Akses Root</h4>
-                    <p class="text-xs text-slate-500 mb-2">Login menggunakan user <code>siswa</code>, lalu masuk ke mode superuser.</p>
+                    <p class="text-xs text-slate-500 mb-2">Login menggunakan user <code>siswa</code>, lalu masuk ke mode superuser (Klik kode untuk info).</p>
                     <div class="terminal">
                         <span class="prompt">master login:</span> siswa<br>
                         <span class="prompt">Password:</span> 123<br>
-                        <span class="prompt">siswa@master:~$</span> su -<br>
+                        <span class="prompt">siswa@master:~$</span> <span class="interactive-code" onclick="showHint('su -', '<b>Switch User (dengan environment).</b><br>Perintah ini digunakan untuk berpindah dari akun biasa (siswa) menjadi akun Administrator (Root). Tanda minus (-) penting agar kita mendapatkan path environment root.')">su -</span><br>
                         <span class="prompt">Password:</span> 123<br>
                         <span class="prompt">root@master:~#</span> <span class="comment"># Prompt berubah jadi pagar (#) artinya Root</span>
                     </div>
@@ -392,11 +414,11 @@
                     <h4 class="font-bold text-slate-800 text-sm">3.2 Cek Repositori DVD</h4>
                     <p class="text-xs text-slate-500 mb-2">Pastikan repo internet mati agar install offline lancar:</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> nano /etc/apt/sources.list<br>
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/apt/sources.list', '<b>Edit Sumber Paket.</b><br>Nano adalah editor teks. File <i>sources.list</i> berisi alamat toko aplikasi. Kita membukanya untuk mematikan alamat online dan memastikan DVD aktif.')">nano /etc/apt/sources.list</span><br>
                         <span class="comment"># Pastikan baris 'deb http://...' DIBERI PAGAR (#)</span><br>
                         <span class="comment"># Pastikan baris 'deb cdrom:...' TIDAK dipagar</span><br>
                         <span class="comment"># Simpan: Ctrl+O, Enter, Ctrl+X</span><br>
-                        <span class="prompt">root@master:~#</span> apt update
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('apt update', '<b>Refresh Daftar Belanja.</b><br>Perintah ini menyuruh Debian membaca ulang isi kaset DVD 1, 2, dan 3 yang sudah didaftarkan, agar Debian tahu aplikasi apa saja yang tersedia di dalam DVD tersebut.')">apt update</span>
                     </div>
                 </div>
 
@@ -404,14 +426,14 @@
                     <h4 class="font-bold text-slate-800 text-sm">3.3 Install Paket Wajib (Tools)</h4>
                     <p class="text-xs text-slate-500 mb-2">Install semua alat yang ada di DVD-1.</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> apt install nano vim net-tools dnsutils iputils-ping curl wget zip unzip -y
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('apt install ... -y', '<b>Install Aplikasi.</b><br><b>nano/vim:</b> Editor teks.<br><b>net-tools:</b> Perintah ifconfig.<br><b>dnsutils:</b> Perintah nslookup.<br><b>iputils-ping:</b> Perintah ping.<br><b>curl/wget:</b> Download file.<br><b>-y:</b> Jawab Yes otomatis.')">apt install nano vim net-tools dnsutils iputils-ping curl wget zip unzip -y</span>
                     </div>
                 </div>
 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">3.4 Aktifkan SSH Root Login</h4>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> nano /etc/ssh/sshd_config
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/ssh/sshd_config', '<b>Edit Konfigurasi SSH.</b><br>Kita mengedit file pengaturan server SSH agar mengizinkan user Root login dari jarak jauh (PuTTY).')">nano /etc/ssh/sshd_config</span>
                     </div>
                     <div class="bg-slate-800 text-slate-300 p-3 rounded font-mono text-xs mb-2 border border-slate-600">
                         Cari baris:<br>
@@ -420,7 +442,7 @@
                         <span class="text-green-400">PermitRootLogin yes</span>
                     </div>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> systemctl restart ssh
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart ssh', '<b>Restart Service SSH.</b><br>Setiap kali mengubah file konfigurasi (.conf), kita wajib me-restart layanannya agar perubahan tersebut diterapkan.')">systemctl restart ssh</span>
                     </div>
                 </div>
 
@@ -428,8 +450,8 @@
                     <h4 class="font-bold text-slate-800 text-sm">3.5 Finalisasi</h4>
                     <p class="text-xs text-slate-500 mb-2">Matikan VM. Master siap dikloning.</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> apt clean<br>
-                        <span class="prompt">root@master:~#</span> poweroff
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('apt clean', '<b>Bersihkan Cache.</b><br>Menghapus file installer sementara (.deb) yang tersimpan di cache agar ukuran VM menjadi lebih kecil dan hemat tempat.')">apt clean</span><br>
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('poweroff', '<b>Matikan Mesin.</b><br>Mematikan sistem operasi Debian secara aman. Kita perlu mematikan VM ini sebelum melakukan Cloning ke VM Router dan Server lain.')">poweroff</span>
                     </div>
                 </div>
 
