@@ -335,9 +335,11 @@ iface ens39 inet static
                 
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                     <h4 class="font-bold text-yellow-800 text-sm mb-2"><i class="fas fa-compact-disc"></i> Persiapan DVD</h4>
-                    <p class="text-xs text-slate-700 mb-2">Masukkan DVD-1 (Binary) ke VMware sebelum lanjut.</p>
+                    <p class="text-xs text-slate-700 mb-2">Masukkan DVD-1 & DVD-2 (Binary) ke VMware sebelum lanjut.</p>
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Daftarkan DVD.</b><br>Meminta Debian membaca isi DVD agar bisa menginstall paket.')">apt-cdrom add</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Refresh Database.</b><br>Membaca ulang daftar isi aplikasi di dalam DVD.')">apt update</span>
+
                     </div>
                 </div>
 
@@ -401,7 +403,7 @@ iface ens39 inet static
 subnet 10.10.10.0 netmask 255.255.255.0 {
     range 10.10.10.10 10.10.10.100;
     option routers 10.10.10.1;
-    option domain-name-servers 8.8.8.8;
+    option domain-name-servers 10.10.10.1;
 }</div>
                 </div>
 
