@@ -3,197 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard LKS IT Network 2026</title>
+    <title>Dashboard LKS 2026 - IT Network System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        .card-hover:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .phase-card { transition: all 0.3s ease; cursor: pointer; }
+        .phase-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <header class="gradient-bg text-white pb-24 pt-12 px-6">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-                <span class="bg-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">LKP Indo Jaya Kebumen</span>
-                <h1 class="text-3xl md:text-5xl font-bold mt-3 mb-2">Roadmap LKS 2026</h1>
-                <p class="text-slate-400 text-lg">IT Network System Administration (Strategi Client Fisik)</p>
+    <nav class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-network-wired text-emerald-400 text-xl"></i>
+                <span class="font-bold text-lg tracking-tight">LKS KEBUMEN 2026</span>
             </div>
-            <a href="soal.html" class="group bg-white text-slate-900 px-6 py-4 rounded-xl font-bold shadow-lg flex items-center gap-4 hover:bg-blue-50 transition transform hover:scale-105 border-l-8 border-blue-600">
-                <div class="bg-blue-100 p-3 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
-                    <i class="fas fa-file-contract text-2xl"></i>
+            <div class="text-xs font-mono bg-slate-800 px-3 py-1 rounded text-slate-400">
+                Modul A: Linux Environment (70%)
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-10 pb-20">
+
+        <header class="mb-10 text-center">
+            <h1 class="text-3xl font-extrabold text-slate-900 mb-3">Roadmap Pengerjaan</h1>
+            <p class="text-slate-500 max-w-2xl mx-auto">
+                Panduan langkah demi langkah berdasarkan Kisi-Kisi LKS IT Network System Administration 2026.
+                <br><span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold mt-2 inline-block">Status: Semua Fase Terbuka</span>
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <a href="phase1.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">INFRASTRUKTUR</span>
+                    <i class="fas fa-server text-slate-300 group-hover:text-blue-500 transition"></i>
                 </div>
-                <div class="text-left">
-                    <div class="text-xs text-slate-500 uppercase font-semibold">Dokumen Utama</div>
-                    <div class="text-xl">Buka Naskah Soal</div>
-                </div>
-                <i class="fas fa-chevron-right text-slate-300 group-hover:text-blue-600 ml-2"></i>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">1. Master VM & Repo</h3>
+                <p class="text-sm text-slate-500">Installasi Debian 12 CLI & Konfigurasi Repository Offline (DVD).</p>
             </a>
+
+            <a href="phase2.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">NETWORK</span>
+                    <i class="fas fa-ethernet text-slate-300 group-hover:text-blue-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">2. IP & Bridging</h3>
+                <p class="text-sm text-slate-500">Menghubungkan Router VM ke Laptop Client Fisik.</p>
+            </a>
+
+            <a href="phase3.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-purple-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">PUBLIC SERVICE</span>
+                    <i class="fas fa-globe text-slate-300 group-hover:text-purple-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">3. DNS & Web Server</h3>
+                <p class="text-sm text-slate-500">Bind9 (Domain) & Nginx Multi-Server (Web01, Web02).</p>
+            </a>
+
+            <a href="phase4.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-yellow-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded">QUALITY CONTROL</span>
+                    <i class="fas fa-check-circle text-slate-300 group-hover:text-yellow-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">4. Verifikasi Client</h3>
+                <p class="text-sm text-slate-500">Pengujian Koneksi, Ping & Akses Web Dasar.</p>
+            </a>
+
+            <a href="phase5.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-red-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded">COMMUNICATION</span>
+                    <i class="fas fa-envelope text-slate-300 group-hover:text-red-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">5. Mail Server</h3>
+                <p class="text-sm text-slate-500">Postfix, Dovecot & Telnet/Thunderbird Test.</p>
+            </a>
+
+            <a href="phase6.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-emerald-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded">INTERNAL</span>
+                    <i class="fas fa-folder-open text-slate-300 group-hover:text-emerald-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">6. File Server & NTP</h3>
+                <p class="text-sm text-slate-500">Samba (SMB2) & Sinkronisasi Waktu.</p>
+            </a>
+
+            <a href="phase7.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-indigo-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-1 rounded">ADVANCED</span>
+                    <i class="fas fa-random text-slate-300 group-hover:text-indigo-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">7. HAProxy (LB)</h3>
+                <p class="text-sm text-slate-500">Load Balancing Traffic ke Web01 & Web02.</p>
+            </a>
+
+            <a href="phase8.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-orange-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2 py-1 rounded">SECURITY</span>
+                    <i class="fas fa-shield-alt text-slate-300 group-hover:text-orange-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">8. Firewall & Router</h3>
+                <p class="text-sm text-slate-500">NAT, Block Ping, & Port Security.</p>
+            </a>
+
+            <a href="phase9.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-cyan-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-cyan-100 text-cyan-700 text-xs font-bold px-2 py-1 rounded">ACCESS</span>
+                    <i class="fas fa-key text-slate-300 group-hover:text-cyan-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">9. VPN Server</h3>
+                <p class="text-sm text-slate-500">Remote Access via Tunneling.</p>
+            </a>
+
+             <a href="phase10.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-rose-400 group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-rose-100 text-rose-700 text-xs font-bold px-2 py-1 rounded">MANAGEMENT</span>
+                    <i class="fas fa-users-cog text-slate-300 group-hover:text-rose-500 transition"></i>
+                </div>
+                <h3 class="font-bold text-lg text-slate-800 mb-1">10. LDAP</h3>
+                <p class="text-sm text-slate-500">Manajemen User Terpusat.</p>
+            </a>
+
         </div>
-    </header>
 
-    <main class="max-w-6xl mx-auto px-6 -mt-16 pb-20">
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div class="lg:col-span-2 relative">
-                
-                <div class="flex items-center justify-between text-white mb-4 px-2">
-                    <h3 class="font-semibold text-lg"><i class="fab fa-linux mr-2"></i>Modul A: Linux Environment</h3>
-                    <span class="text-xs bg-green-500 px-3 py-1 rounded-full text-white font-bold shadow">Bobot 70%</span>
-                </div>
+        <footer class="mt-12 pt-6 border-t border-slate-200 text-center text-slate-400 text-sm">
+            <p>&copy; 2026 IT Network System Admin - Persiapan LKS Kab. Kebumen</p>
+        </footer>
 
-                <div class="space-y-4 mb-12">
-                    
-                    <a href="phase1.html" class="block bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500 card-hover transition relative group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg flex-shrink-0">1</div>
-                            <div class="flex-1">
-                                <span class="text-xs font-bold text-blue-600 uppercase mb-1 block">Infrastruktur</span>
-                                <h4 class="text-lg font-bold group-hover:text-blue-700 transition">Master VM & Repo DVD</h4>
-                                <p class="text-slate-500 text-sm">Installasi Debian 12 CLI & Konfigurasi Repository Offline.</p>
-                            </div>
-                            <i class="fas fa-arrow-right text-slate-300 group-hover:text-blue-500 transition"></i>
-                        </div>
-                    </a>
-
-                    <a href="phase2.html" class="block bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500 card-hover transition relative group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg flex-shrink-0">2</div>
-                            <div class="flex-1">
-                                <span class="text-xs font-bold text-blue-600 uppercase mb-1 block">Router & Network</span>
-                                <h4 class="text-lg font-bold text-slate-800 group-hover:text-blue-700 transition">IP, NAT & Bridging</h4>
-                                <p class="text-slate-500 text-sm mt-1">Menghubungkan Virtual Network ke Client Fisik (Laptop).</p>
-                            </div>
-                            <i class="fas fa-arrow-right text-slate-300 group-hover:text-blue-500 transition"></i>
-                        </div>
-                    </a>
-
-                    <a href="phase3.html" class="block bg-white p-5 rounded-xl shadow-sm border-l-4 border-purple-500 card-hover transition relative group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg flex-shrink-0">3</div>
-                            <div class="flex-1">
-                                <span class="text-xs font-bold text-purple-600 uppercase mb-1 block">Public Services (DMZ)</span>
-                                <h4 class="text-lg font-bold text-slate-800 group-hover:text-purple-700 transition">DNS & Web Server</h4>
-                                <p class="text-slate-500 text-sm">Bind9, Nginx Web Server & Load Balancer.</p>
-                            </div>
-                            <i class="fas fa-arrow-right text-slate-300 group-hover:text-purple-500 transition"></i>
-                        </div>
-                    </a>
-
-                    <a href="phase4.html" class="block bg-white p-5 rounded-xl shadow-sm border-l-4 border-amber-500 card-hover transition relative group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-lg flex-shrink-0">4</div>
-                            <div class="flex-1">
-                                <span class="text-xs font-bold text-amber-600 uppercase mb-1 block">Quality Control</span>
-                                <h4 class="text-lg font-bold text-slate-800 group-hover:text-amber-700 transition">Verifikasi Client Fisik</h4>
-                                <p class="text-slate-500 text-sm">Pengujian Koneksi, Ping & Web Akses dari Laptop Asli.</p>
-                            </div>
-                            <i class="fas fa-arrow-right text-slate-300 group-hover:text-amber-500 transition"></i>
-                        </div>
-                    </a>
-
-                    <a href="phase5.html" class="block bg-white p-5 rounded-xl shadow-sm border-l-4 border-rose-500 card-hover transition relative group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-lg flex-shrink-0">5</div>
-                            <div class="flex-1">
-                                <span class="text-xs font-bold text-rose-600 uppercase mb-1 block">Communication</span>
-                                <h4 class="text-lg font-bold text-slate-800 group-hover:text-rose-700 transition">Mail Server & Webmail</h4>
-                                <p class="text-slate-500 text-sm">Postfix, Dovecot & Roundcube (Kirim Email via Web).</p>
-                            </div>
-                            <i class="fas fa-arrow-right text-slate-300 group-hover:text-rose-500 transition"></i>
-                        </div>
-                    </a>
-
-                    <a href="phase6.html" class="block bg-white p-5 rounded-xl shadow-sm border-l-4 border-teal-500 card-hover transition relative group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-lg flex-shrink-0">6</div>
-                            <div class="flex-1">
-                                <span class="text-xs font-bold text-teal-600 uppercase mb-1 block">Internal & Security</span>
-                                <h4 class="text-lg font-bold text-slate-800 group-hover:text-teal-700 transition">Samba & HTTPS</h4>
-                                <p class="text-slate-500 text-sm">File Sharing & Secure Web Access (SSL).</p>
-                            </div>
-                            <i class="fas fa-arrow-right text-slate-300 group-hover:text-teal-500 transition"></i>
-                        </div>
-                    </a>
-
-                </div>
-
-                <div class="flex items-center justify-between text-slate-800 mb-4 px-2 pt-4 border-t border-slate-300">
-                    <h3 class="font-semibold text-lg"><i class="fas fa-network-wired mr-2 text-indigo-600"></i>Modul B: Cisco Packet Tracer</h3>
-                    <span class="text-xs bg-indigo-500 px-3 py-1 rounded-full text-white font-bold shadow">Bobot 30%</span>
-                </div>
-
-                <div class="space-y-4">
-                    <a href="#" class="block bg-slate-50 p-5 rounded-xl shadow-sm border-l-4 border-indigo-300 border-slate-200 hover:bg-white transition relative group opacity-75 hover:opacity-100">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-400 flex items-center justify-center font-bold text-lg flex-shrink-0">7</div>
-                            <div class="flex-1">
-                                <span class="text-xs font-bold text-indigo-600 uppercase mb-1 block">Cisco Part 1</span>
-                                <h4 class="text-lg font-bold text-slate-800 group-hover:text-indigo-700 transition">Switching & Basic Routing</h4>
-                                <p class="text-slate-400 text-sm">VLAN, Trunking, Inter-VLAN.</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#" class="block bg-slate-50 p-5 rounded-xl shadow-sm border-l-4 border-indigo-300 border-slate-200 hover:bg-white transition relative group opacity-75 hover:opacity-100">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-400 flex items-center justify-center font-bold text-lg flex-shrink-0">8</div>
-                            <div class="flex-1">
-                                <span class="text-xs font-bold text-indigo-600 uppercase mb-1 block">Cisco Part 2</span>
-                                <h4 class="text-lg font-bold text-slate-800 group-hover:text-indigo-700 transition">Advanced Services</h4>
-                                <p class="text-slate-400 text-sm">OSPF, ACL, NAT, DHCP Snooping.</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-            </div>
-
-            <div class="space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h4 class="font-bold text-slate-700 mb-2 flex items-center gap-2">
-                        <i class="fas fa-book text-indigo-500"></i> Dokumen Referensi
-                    </h4>
-                    <p class="text-sm text-slate-500 mb-4">Pelajari standar kompetensi dan aturan lomba resmi.</p>
-                    <a href="kisi-kisi.pdf" target="_blank" class="block w-full text-center bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg transition text-sm flex items-center justify-center gap-2">
-                        <i class="fas fa-file-pdf text-red-400"></i> Lihat PDF Kisi-Kisi
-                    </a>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h4 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <i class="fas fa-server text-blue-500"></i> Status VM (Strategy B)
-                    </h4>
-                    <div class="space-y-3">
-                         <div class="flex items-center justify-between text-sm border-b pb-2">
-                            <span class="text-slate-500">Master VM</span>
-                            <span class="text-green-600 font-bold"><i class="fas fa-check-circle"></i> Ready</span>
-                        </div>
-                        <div class="flex items-center justify-between text-sm border-b pb-2">
-                            <span class="text-slate-500">Router (Bridged)</span>
-                            <span class="text-orange-500 font-bold">Configuring...</span>
-                        </div>
-                        <div class="flex items-center justify-between text-sm border-b pb-2">
-                            <span class="text-slate-500">Laptop Client</span>
-                            <span class="text-slate-400 font-bold">Waiting...</span>
-                        </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-slate-500">Mail/Web Server</span>
-                            <span class="text-slate-400 font-bold">Pending</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
-
-    <footer class="text-center py-8 text-slate-400 text-sm">
-        &copy; 2026 Simulation Dashboard for LKS Kabupaten Kebumen
-    </footer>
-
 </body>
 </html>

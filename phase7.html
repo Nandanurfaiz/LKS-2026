@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 7: HAProxy Load Balancer - LKS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #eef2ff; color: #334155; }
+        
+        /* Terminal & Code Styles */
+        .terminal {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            border-left: 4px solid #6366f1; /* Indigo-500 */
+            margin: 0.75rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .file-content {
+            background-color: #f5f3ff; /* Indigo-50 */
+            border: 1px solid #a5b4fc;
+            color: #312e81;
+            font-family: 'Roboto Mono', monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .prompt { color: #818cf8; font-weight: bold; }
+        .comment { color: #94a3b8; font-style: italic; }
+        
+        /* Interactive Code */
+        .interactive-code {
+            cursor: pointer;
+            border-bottom: 1px dashed #818cf8;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .interactive-code:hover {
+            background-color: rgba(99, 102, 241, 0.2);
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+        .interactive-code::after {
+            content: '\f059';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.6rem;
+            margin-left: 4px;
+            color: #818cf8;
+            opacity: 0.7;
+        }
+
+        /* Step Badge - Indigo Theme */
+        .step-badge {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); 
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+        .modal-content { background-color: #fefefe; margin: 20% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 1rem; position: relative; }
+        .close { color: #64748b; position: absolute; top: 10px; right: 15px; font-size: 2rem; font-weight: bold; cursor: pointer; }
+    </style>
+    <script>
+        function showHint(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerHTML = text;
+            document.getElementById('myModal').style.display = "block";
+        }
+        function closeModal() { document.getElementById('myModal').style.display = "none"; }
+        window.onclick = function(e) { if (e.target == document.getElementById('myModal')) closeModal(); }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-3 border-b pb-2">Penjelasan</h3>
+            <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+        </div>
+    </div>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-slate-400 hover:text-indigo-600 transition p-2">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </a>
+                <div class="flex flex-col">
+                    <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase 7</span>
+                    <span class="text-xs text-slate-500 md:hidden">Advanced Network</span>
+                </div>
+                <span class="hidden md:inline text-slate-300">|</span>
+                <span class="hidden md:inline font-bold text-slate-800">HAProxy (Load Balancer)</span>
+            </div>
+            <span class="bg-indigo-100 text-indigo-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
+                High Availability
+            </span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
+
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">High Availability Proxy</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Menggantikan Nginx Load Balancer dengan <strong>HAProxy</strong> (sesuai standar industri dan soal LKS) untuk membagi beban trafik ke Web01 dan Web02 secara adil.
+            </p>
+        </header>
+
+        <section class="bg-indigo-50 border border-indigo-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
+            <h2 class="text-indigo-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-random"></i> Target Configuration
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <h4 class="font-bold text-indigo-700 mb-2">Peran Router (fw):</h4>
+                    <div class="bg-white p-3 rounded border border-indigo-100 overflow-x-auto">
+                        <ul class="space-y-1 font-mono text-xs md:text-sm text-slate-700">
+                            <li><strong>IP Public:</strong> 172.16.10.1 (DMZ GW)</li>
+                            <li><strong>Backend 1:</strong> 172.16.10.10 (Web01)</li>
+                            <li><strong>Backend 2:</strong> 172.16.10.20 (Web02)</li>
+                            <li><strong>Algorithm:</strong> Round Robin (Gantian)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-indigo-700 mb-2 mt-4 md:mt-0">Persiapan Wajib:</h4>
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 p-2 text-xs text-yellow-800">
+                        <strong>PERINGATAN:</strong> Di Fase 3 kita menginstall Nginx di Router. <br>
+                        Sekarang kita harus <strong>MEMATIKAN NGINX</strong> tersebut agar Port 80 bisa dipakai oleh HAProxy.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge bg-red-500">1</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Matikan Nginx Lama</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Langkah Kunci: Mencegah bentrok Port 80.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-600 mb-2">Lakukan ini di <strong>Router (fw)</strong>:</p>
+                <div class="terminal">
+                    <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl stop nginx', '<b>Stop Nginx.</b><br>Menghentikan layanan Nginx yang berjalan agar Port 80 bebas.')">systemctl stop nginx</span><br>
+                    <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl disable nginx', '<b>Disable Nginx.</b><br>Mencegah Nginx menyala otomatis saat komputer direstart.')">systemctl disable nginx</span><br>
+                    <span class="comment"># Pastikan port 80 kosong:</span><br>
+                    <span class="prompt">root@fw:~#</span> netstat -tulpn | grep :80
+                </div>
+                <p class="text-[10px] text-slate-500 mt-1 italic">*Jika perintah netstat tidak muncul apa-apa, berarti port 80 aman (kosong).</p>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">2</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Install HAProxy</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Paket Load Balancer yang ringan dan stabil.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="terminal">
+                    <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install haproxy', '<b>Install HAProxy.</b><br>Pastikan DVD-1/2 siap. HAProxy adalah software khusus Load Balancing.')">apt install haproxy -y</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">3</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi Load Balancing</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Otak dari sistem HAProxy.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">Edit File Config</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/haproxy/haproxy.cfg', '<b>Edit Config.</b><br>File ini mengatur bagaimana trafik dibagi.')">nano /etc/haproxy/haproxy.cfg</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-2">Tambahkan baris berikut di <strong>PALING BAWAH</strong> file:</p>
+                    
+                    <div class="file-content">
+# 1. MONITORING (Bonus Nilai Plus)
+listen stats
+    bind :8080
+    stats enable
+    stats uri /monitor
+    stats auth admin:123
+
+# 2. FRONTEND (Pintu Masuk)
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+# 3. BACKEND (Tujuan Server)
+backend http_back
+    balance roundrobin
+    server web01 172.16.10.10:80 check
+    server web02 172.16.10.20:80 check</div>
+
+                    <button class="text-xs text-indigo-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Penjelasan Kode', '<b>stats:</b> Membuat halaman monitoring di port 8080.<br><b>frontend:</b> Menangkap trafik user di port 80.<br><b>backend:</b> Daftar server tujuan.<br><b>roundrobin:</b> Algoritma bagi rata (1 untuk A, 1 untuk B).<br><b>check:</b> Fitur health check (jika server mati, otomatis diskip).')">
+                        <i class="fas fa-info-circle"></i> Penjelasan Detail Kode
+                    </button>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">Restart Service</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart haproxy', '<b>Restart HAProxy.</b><br>Menerapkan konfigurasi baru. Jika error, cek salah ketik di file cfg.')">systemctl restart haproxy</span><br>
+                        <span class="prompt">root@fw:~#</span> systemctl status haproxy
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-indigo-50 border-l-4 border-indigo-500 p-5 md:p-6 mb-12 shadow-sm">
+            <h2 class="text-indigo-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fab fa-windows"></i> Pengujian (Laptop Client)
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded border border-indigo-100">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">1. Tes Load Balancing (Browser)</h4>
+                    <ul class="text-xs text-slate-600 list-decimal ml-5 space-y-1">
+                        <li>Buka Browser, akses: <code>http://www.lks2026.id</code></li>
+                        <li>Tekan <strong>Refresh (F5)</strong> berkali-kali.</li>
+                        <li><strong>Target:</strong> Tulisan harus berubah antara "Ini Server WEB 01" dan "Ini Server WEB 02".</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-4 rounded border border-indigo-100">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">2. Tes Failover (Simulasi Server Mati)</h4>
+                    <ul class="text-xs text-slate-600 list-decimal ml-5 space-y-1">
+                        <li>Matikan VM <strong>web01</strong> (Suspend/Poweroff).</li>
+                        <li>Refresh browser lagi.</li>
+                        <li><strong>Target:</strong> Website tetap jalan, tapi HANYA menampilkan "WEB 02". (HAProxy otomatis membuang web01 dari daftar).</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-4 rounded border border-indigo-100">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">3. Cek Monitoring (Nilai Plus)</h4>
+                    <p class="text-xs text-slate-600 mb-1">Akses: <code>http://172.16.10.1:8080/monitor</code></p>
+                    <p class="text-xs text-slate-600">Login: <strong>admin</strong> | Password: <strong>123</strong>. Anda akan melihat tabel status server yang hijau/merah.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-red-50 border border-red-200 rounded-xl p-5 md:p-6 mb-12 shadow-sm">
+            <h2 class="text-red-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-tools"></i> Troubleshooting
+            </h2>
+            <div class="space-y-3">
+                <details class="bg-white p-3 rounded border border-red-100 group">
+                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
+                        Error: "Job for haproxy.service failed"
+                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
+                        <strong>Penyebab 1:</strong> Salah ketik di <code>haproxy.cfg</code>. Cek spasi/tab.<br>
+                        <strong>Penyebab 2:</strong> Port 80 masih dipakai Nginx. Pastikan sudah <code>systemctl stop nginx</code>.
+                    </div>
+                </details>
+                
+                <details class="bg-white p-3 rounded border border-red-100 group">
+                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
+                        Website tidak berubah (Selalu Web 01)
+                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
+                        Coba pakai Mode Incognito (Ctrl+Shift+N) karena browser sering menyimpan cache. Atau gunakan <code>curl 172.16.10.1</code> di CMD untuk hasil yang lebih akurat.
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="phase6.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
+                <i class="fas fa-arrow-left"></i> Kembali ke Fase 6
+            </a>
+            <a href="index.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
+                Selesai / Ke Dashboard <i class="fas fa-home"></i>
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>

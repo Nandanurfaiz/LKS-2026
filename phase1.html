@@ -96,18 +96,6 @@
         .sub-step.active { border-left-color: #3b82f6; }
         .sub-step.active::before { background: #3b82f6; }
 
-        /* Tooltip / Hint Style */
-        .hint-btn {
-            cursor: pointer;
-            color: #3b82f6;
-            font-size: 0.9rem;
-            margin-left: 0.5rem;
-            transition: color 0.2s;
-            display: inline-block;
-            padding: 4px;
-        }
-        .hint-btn:hover { color: #1d4ed8; }
-        
         /* Modal */
         .modal {
             display: none;
@@ -190,27 +178,30 @@
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Membangun Fondasi Lab</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Fase ini menentukan keberhasilan fase berikutnya. Kita akan membangun "kabel virtual" dan menginstall Master VM menggunakan <strong>Metode DVD (Offline)</strong>.
+                Fase ini menentukan keberhasilan fase berikutnya. Kita akan membangun "Jalur Kabel Virtual" sesuai soal <strong>LKS 2026</strong> dan menginstall Master VM.
             </p>
         </header>
 
         <section class="bg-indigo-50 border border-indigo-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
             <h2 class="text-indigo-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-file-contract"></i> Konteks Soal (Mengapa kita melakukan ini?)
+                <i class="fas fa-file-contract"></i> Target Soal (LKS 2026)
             </h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
-                    <h4 class="text-xs font-bold text-indigo-500 uppercase mb-1">Kutipan Skenario:</h4>
-                    <p class="text-xs md:text-sm text-slate-700 italic bg-white p-3 rounded border border-indigo-100">
-                        "...Anda diminta membangun infrastruktur jaringan yang aman dengan memisahkan layanan publik (DMZ), layanan internal (INT), dan Client..."
-                    </p>
+                    <h4 class="text-xs font-bold text-indigo-500 uppercase mb-1">Identitas Jaringan:</h4>
+                    <div class="bg-white p-3 rounded border border-indigo-100 text-xs md:text-sm text-slate-700 space-y-1">
+                        <div class="flex justify-between border-b pb-1"><span>Domain:</span> <span class="font-mono font-bold text-blue-600">lks2026.id</span></div>
+                        <div class="flex justify-between border-b py-1"><span>IP DMZ (Web):</span> <span class="font-mono font-bold text-blue-600">172.16.10.x</span></div>
+                        <div class="flex justify-between border-b py-1"><span>IP INT (Server):</span> <span class="font-mono font-bold text-blue-600">192.168.10.x</span></div>
+                        <div class="flex justify-between pt-1"><span>IP Client (Laptop):</span> <span class="font-mono font-bold text-green-600">10.10.10.x</span></div>
+                    </div>
                 </div>
                 <div>
-                    <h4 class="text-xs font-bold text-indigo-500 uppercase mb-1">Logika IP Address:</h4>
+                    <h4 class="text-xs font-bold text-indigo-500 uppercase mb-1">Logika Topologi:</h4>
                     <ul class="list-disc ml-5 mt-2 text-xs text-slate-600 space-y-1">
-                        <li>Soal minta Web Server IP: <code>172.16.10.10</code> -> Maka kita buat Network <strong>172.16.10.0</strong> (DMZ).</li>
-                        <li>Soal minta Int Server IP: <code>192.168.10.10</code> -> Maka kita buat Network <strong>192.168.10.0</strong> (INT).</li>
-                        <li>Soal minta Client IP: <code>10.10.10.x</code> -> Maka kita buat Network <strong>10.10.10.0</strong> (Client).</li>
+                        <li><strong>DMZ:</strong> Zona Publik untuk Web Server & Mail Server.</li>
+                        <li><strong>INT:</strong> Zona Internal untuk File Server (Samba).</li>
+                        <li><strong>Bridged (VMnet0):</strong> Wajib ada agar Laptop Fisik bisa terhubung ke Router VM.</li>
                     </ul>
                 </div>
             </div>
@@ -223,7 +214,7 @@
                 <div class="step-badge">1</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Setting Virtual Network Editor</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Langkah ini wajib dilakukan <strong>sebelum</strong> membuat VM apapun.</p>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Langkah Kunci untuk <strong>Strategi B (Client Fisik)</strong>.</p>
                 </div>
             </div>
 
@@ -236,12 +227,12 @@
 
                     <div class="border-l-4 border-slate-200 pl-3 md:pl-4">
                         <h4 class="font-bold text-sm text-slate-800">2. Aktifkan Mode Edit</h4>
-                        <p class="text-xs text-slate-500 mt-1">Jika tombol-tombol terlihat abu-abu (mati), klik tombol <strong>Change Settings</strong> di pojok kanan bawah jendela.</p>
+                        <p class="text-xs text-slate-500 mt-1">Klik tombol <strong>Change Settings</strong> di pojok kanan bawah jendela agar bisa mengedit.</p>
                     </div>
 
                     <div class="border-l-4 border-blue-500 pl-3 md:pl-4 bg-blue-50 py-2 rounded-r">
-                        <h4 class="font-bold text-sm text-blue-800">3. Tambahkan Network Baru (Ulangi 3x)</h4>
-                        <p class="text-xs text-blue-700 mt-1 mb-2">Klik tombol <strong>Add Network...</strong>, pilih VMnet yang sesuai, lalu atur detailnya:</p>
+                        <h4 class="font-bold text-sm text-blue-800">3. Atur 3 Jalur Utama (PENTING!)</h4>
+                        <p class="text-xs text-blue-700 mt-1 mb-2">Pastikan konfigurasi VMnet persis seperti tabel di bawah ini:</p>
                         
                         <div class="overflow-x-auto bg-white rounded border border-blue-200">
                             <table class="w-full text-xs text-left">
@@ -255,33 +246,26 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-blue-50 text-slate-700">
-                                    <tr>
-                                        <td class="px-3 py-2 font-bold">VMnet0</td>
-                                        <td class="px-3 py-2">Bridged</td>
+                                    <tr onclick="showHint('VMnet0 (Bridged)', '<b>WAJIB BRIDGED!</b><br>Ini adalah jembatan ke Laptop Fisik. Di bagian `Bridged to`, pilih nama LAN Card / Ethernet Controller laptop Anda (Realtek/Intel). Jangan pilih Auto!')" class="cursor-pointer bg-yellow-50 hover:bg-yellow-100 font-bold border-l-4 border-yellow-400">
+                                        <td class="px-3 py-2">VMnet0 <i class="fas fa-exclamation-circle text-yellow-600"></i></td>
+                                        <td class="px-3 py-2 text-yellow-700">Bridged</td>
                                         <td class="px-3 py-2">-</td>
                                         <td class="px-3 py-2">-</td>
-                                        <td class="px-3 py-2">Internet</td>
+                                        <td class="px-3 py-2">Client Fisik</td>
                                     </tr>
-                                    <tr onclick="showHint('VMnet10 (DMZ)', 'DMZ (Demilitarized Zone) adalah area untuk server yang boleh diakses publik (seperti Web Server). Kita pakai segmen IP 172.16.10.0/24.')" class="cursor-pointer hover:bg-blue-50">
-                                        <td class="px-3 py-2 font-bold">VMnet10 <i class="fas fa-info-circle text-blue-400 text-[10px]"></i></td>
+                                    <tr onclick="showHint('VMnet10 (DMZ)', 'Zona DMZ untuk Web & Mail Server.<br>IP: 172.16.10.0/24')" class="cursor-pointer hover:bg-blue-50">
+                                        <td class="px-3 py-2 font-bold">VMnet10</td>
                                         <td class="px-3 py-2">Host-only</td>
                                         <td class="px-3 py-2 font-bold text-blue-600">172.16.10.0</td>
                                         <td class="px-3 py-2 text-red-600 font-bold">UNCHECK</td>
-                                        <td class="px-3 py-2">DMZ</td>
+                                        <td class="px-3 py-2">DMZ (Web/Mail)</td>
                                     </tr>
-                                    <tr onclick="showHint('VMnet11 (INT)', 'INT (Internal) adalah area privat khusus karyawan/staff. Tidak boleh diakses langsung dari luar. Kita pakai segmen 192.168.10.0/24.')" class="cursor-pointer hover:bg-blue-50">
-                                        <td class="px-3 py-2 font-bold">VMnet11 <i class="fas fa-info-circle text-blue-400 text-[10px]"></i></td>
+                                    <tr onclick="showHint('VMnet11 (INT)', 'Zona Internal untuk File Server.<br>IP: 192.168.10.0/24')" class="cursor-pointer hover:bg-blue-50">
+                                        <td class="px-3 py-2 font-bold">VMnet11</td>
                                         <td class="px-3 py-2">Host-only</td>
                                         <td class="px-3 py-2 font-bold text-blue-600">192.168.10.0</td>
                                         <td class="px-3 py-2 text-red-600 font-bold">UNCHECK</td>
-                                        <td class="px-3 py-2">INT</td>
-                                    </tr>
-                                    <tr onclick="showHint('VMnet12 (Client)', 'Jalur khusus untuk komputer Client (Windows). Nantinya Client akan minta IP otomatis (DHCP) lewat kabel ini. IP 10.10.10.0/24.')" class="cursor-pointer hover:bg-blue-50">
-                                        <td class="px-3 py-2 font-bold">VMnet12 <i class="fas fa-info-circle text-blue-400 text-[10px]"></i></td>
-                                        <td class="px-3 py-2">Host-only</td>
-                                        <td class="px-3 py-2 font-bold text-blue-600">10.10.10.0</td>
-                                        <td class="px-3 py-2 text-red-600 font-bold">UNCHECK</td>
-                                        <td class="px-3 py-2">Client</td>
+                                        <td class="px-3 py-2">INT (Server)</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -290,7 +274,7 @@
 
                     <div class="border-l-4 border-slate-200 pl-3 md:pl-4">
                         <h4 class="font-bold text-sm text-slate-800">4. Simpan</h4>
-                        <p class="text-xs text-slate-500 mt-1">Klik <strong>Apply</strong> dan tunggu proses restart network driver selesai, lalu klik OK.</p>
+                        <p class="text-xs text-slate-500 mt-1">Klik <strong>Apply</strong>, tunggu restart network, lalu <strong>OK</strong>.</p>
                     </div>
                 </div>
             </div>
@@ -301,7 +285,7 @@
                 <div class="step-badge">2</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Instalasi Master VM (Offline)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Panduan instalasi Debian 12 menggunakan DVD.</p>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Membuat induk untuk semua server.</p>
                 </div>
             </div>
 
@@ -309,28 +293,22 @@
                 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">2.1 Setup Awal VM</h4>
-                    <p class="text-xs text-slate-600 mb-2">Buat VM Baru di VMware dengan spesifikasi:</p>
                     <ul class="text-xs md:text-sm list-disc ml-5 text-slate-600 mb-2">
-                        <li><strong>ISO Image:</strong> `debian-12.x.x-amd64-DVD-1.iso` (Wajib DVD-1 Binary!)</li>
+                        <li><strong>ISO Image:</strong> `debian-12.x.x-amd64-DVD-1.iso`</li>
                         <li><strong>VM Name:</strong> `Debian-Master`</li>
-                        <li><strong>Disk Size:</strong> `20 GB` (Single file)</li>
-                        <li><strong>Memory:</strong> `1024 MB` (1 GB)</li>
-                        <li><strong>Network Adapter:</strong> Pilih `NAT` (Sementara, agar bisa konek internet jika mendesak).</li>
+                        <li><strong>Disk Size:</strong> `20 GB` (Store virtual disk as a single file)</li>
+                        <li><strong>Memory:</strong> `1024 MB` (1 GB cukup untuk master CLI)</li>
+                        <li><strong>Network Adapter:</strong> Pilih `NAT` dulu (hanya saat install, nanti diubah).</li>
                     </ul>
                 </div>
 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">2.2 Booting & Bahasa</h4>
-                    <ul class="text-xs md:text-sm list-decimal ml-5 text-slate-600 space-y-1">
-                        <li>Pilih menu <strong>Install</strong> (Jangan <em>Graphical Install</em> agar proses lebih cepat).</li>
-                        <li><strong>Language:</strong> English</li>
-                        <li><strong>Location:</strong> Other -> Asia -> Indonesia.</li>
-                        <li><strong>Keyboard:</strong> American English.</li>
-                    </ul>
+                    <p class="text-xs text-slate-600">Pilih <strong>Install</strong> (Mode Teks), Bahasa <strong>English</strong>, Lokasi <strong>Indonesia</strong>.</p>
                 </div>
 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800 text-sm">2.3 Identitas & Akun</h4>
+                    <h4 class="font-bold text-slate-800 text-sm">2.3 Identitas (Sesuai Soal)</h4>
                     <div class="grid grid-cols-2 gap-4 text-sm mb-2 mt-2">
                         <div class="bg-slate-50 p-2 rounded border">
                             <span class="block text-xs text-slate-400 font-bold uppercase">Hostname</span>
@@ -338,19 +316,19 @@
                         </div>
                         <div class="bg-slate-50 p-2 rounded border">
                             <span class="block text-xs text-slate-400 font-bold uppercase">Domain Name</span>
-                            <span class="font-mono font-bold text-blue-600">lks.kabupaten</span>
+                            <span class="font-mono font-bold text-blue-600">lks2026.id</span>
                         </div>
                     </div>
                     <ul class="text-xs md:text-sm list-decimal ml-5 text-slate-600 space-y-1">
-                        <li><strong>Root Password:</strong> <code>123</code> (Konfirmasi: 123)</li>
+                        <li><strong>Root Password:</strong> <code>123</code> (Biar cepat saat lomba)</li>
                         <li><strong>Full Name/User:</strong> <code>siswa</code></li>
-                        <li><strong>User Password:</strong> <code>123</code> (Konfirmasi: 123)</li>
+                        <li><strong>User Password:</strong> <code>123</code></li>
                     </ul>
                 </div>
 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">2.4 Partisi Disk</h4>
-                    <p class="text-xs md:text-sm text-slate-600">Pilih <strong>Guided - use entire disk</strong> -> Pilih Harddisk -> <strong>All files in one partition</strong> -> <strong>Finish partitioning and write changes to disk</strong> -> Pilih <strong>Yes</strong>.</p>
+                    <p class="text-xs md:text-sm text-slate-600"><strong>Guided - use entire disk</strong> -> All files in one partition -> Finish -> <strong>Yes</strong>.</p>
                 </div>
 
                 <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
@@ -358,30 +336,30 @@
                     <ul class="text-xs md:text-sm list-decimal ml-5 text-slate-700 space-y-1">
                         <li>
                             Scan extra installation media? -> <strong>YES</strong>
-                            <button class="text-xs text-blue-600 font-bold ml-1 hover:underline cursor-pointer" onclick="showHint('Cara Ganti DVD di Tengah Jalan', 'Saat Anda pilih YES, layar akan meminta DVD-2. Jangan tekan Enter dulu!<br>1. Tekan Ctrl+Alt untuk keluar dari VM.<br>2. Klik menu VM > Settings > CD/DVD > Browse > Pilih ISO DVD-2.<br>3. Klik OK, kembali ke VM, baru tekan Enter.')">
+                            <button class="text-xs text-blue-600 font-bold ml-1 hover:underline cursor-pointer" onclick="showHint('Cara Ganti DVD di Tengah Jalan', 'Saat pilih YES, layar akan meminta DVD-2. <br>1. Tekan Ctrl+Alt (keluar kursor).<br>2. Klik menu VM > Settings > CD/DVD > Browse > Pilih ISO DVD-2.<br>3. Pastikan `Connected` dicentang.<br>4. Klik OK, kembali ke VM, tekan Enter.')">
                                 <i class="fas fa-question-circle"></i> Cara Scan DVD 2?
                             </button>
                         </li>
-                        <li>Use a network mirror? -> <strong>NO</strong> (Kita pakai DVD sepenuhnya).</li>
+                        <li>Use a network mirror? -> <strong>NO</strong> (Wajib Offline).</li>
+                        <li>Participate in package survey? -> <strong>NO</strong>.</li>
                     </ul>
                 </div>
 
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-                    <h4 class="font-bold text-red-700 text-sm mb-2"><i class="fas fa-exclamation-triangle"></i> 2.6 SOFTWARE SELECTION (SANGAT PENTING!)</h4>
-                    <p class="text-xs text-red-600 mb-2">Salah di sini akan membuat VM berat. Saat muncul menu "Software selection", atur centang persis seperti ini (Gunakan SPASI untuk centang):</p>
+                    <h4 class="font-bold text-red-700 text-sm mb-2"><i class="fas fa-exclamation-triangle"></i> 2.6 SOFTWARE SELECTION (WAJIB TELITI)</h4>
+                    <p class="text-xs text-red-600 mb-2">Gunakan tombol SPASI untuk uncheck/check. Pastikan <strong>HANYA 2</strong> yang dicentang:</p>
                     <div class="bg-white p-3 rounded border border-red-200 font-mono text-xs md:text-sm text-slate-700">
                         [ ] Debian desktop environment<br>
                         [ ] ... GNOME<br>
-                        [ ] ... Xfce<br>
                         [ ] Web server<br>
-                        [*] SSH server &nbsp;&nbsp;&lt;-- WAJIB DICENTANG<br>
-                        [*] Standard system utilities &nbsp;&nbsp;&lt;-- WAJIB DICENTANG
+                        [*] SSH server &nbsp;&nbsp;&lt;-- YES<br>
+                        [*] Standard system utilities &nbsp;&nbsp;&lt;-- YES
                     </div>
                 </div>
 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">2.7 Bootloader & Finish</h4>
-                    <p class="text-xs md:text-sm text-slate-600">Install GRUB boot loader? -> <strong>Yes</strong> -> Pilih device <strong>/dev/sda</strong> (bukan manual). <br> Tunggu selesai, lalu <strong>Reboot</strong>.</p>
+                    <p class="text-xs md:text-sm text-slate-600">Install GRUB -> <strong>Yes</strong> -> Pilih <strong>/dev/sda</strong>. <br> Reboot.</p>
                 </div>
 
             </div>
@@ -392,57 +370,53 @@
                 <div class="step-badge">3</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi Pasca-Install</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan Repositori DVD.</p>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan Repositori & Tools.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-8 rounded-xl border border-slate-200 shadow-sm">
                 
                 <div class="sub-step active">
-                    <h4 class="font-bold text-slate-800 text-sm">3.1 Login Pertama & Akses Root</h4>
-                    <p class="text-xs text-slate-500 mb-2">Login menggunakan user <code>siswa</code>, lalu masuk ke mode superuser (Klik kode untuk info).</p>
+                    <h4 class="font-bold text-slate-800 text-sm">3.1 Login & Root</h4>
                     <div class="terminal">
                         <span class="prompt">master login:</span> siswa<br>
                         <span class="prompt">Password:</span> 123<br>
-                        <span class="prompt">siswa@master:~$</span> <span class="interactive-code" onclick="showHint('su -', '<b>Switch User (dengan environment).</b><br>Perintah ini digunakan untuk berpindah dari akun biasa (siswa) menjadi akun Administrator (Root). Tanda minus (-) penting agar kita mendapatkan path environment root.')">su -</span><br>
-                        <span class="prompt">Password:</span> 123<br>
-                        <span class="prompt">root@master:~#</span> <span class="comment"># Prompt berubah jadi pagar (#) artinya Root</span>
+                        <span class="prompt">siswa@master:~$</span> <span class="interactive-code" onclick="showHint('su -', '<b>Switch User.</b><br>Masuk sebagai Superuser (Root) untuk bisa menginstall aplikasi.')">su -</span><br>
+                        <span class="prompt">Password:</span> 123
                     </div>
                 </div>
 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">3.2 Cek Repositori DVD</h4>
-                    <p class="text-xs text-slate-500 mb-2">Pastikan repo internet mati agar install offline lancar:</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/apt/sources.list', '<b>Edit Sumber Paket.</b><br>Nano adalah editor teks. File <i>sources.list</i> berisi alamat toko aplikasi. Kita membukanya untuk mematikan alamat online dan memastikan DVD aktif.')">nano /etc/apt/sources.list</span><br>
-                        <span class="comment"># Pastikan baris 'deb http://...' DIBERI PAGAR (#)</span><br>
-                        <span class="comment"># Pastikan baris 'deb cdrom:...' TIDAK dipagar</span><br>
-                        <span class="comment"># Simpan: Ctrl+O, Enter, Ctrl+X</span><br>
-                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('apt update', '<b>Refresh Daftar Belanja.</b><br>Perintah ini menyuruh Debian membaca ulang isi kaset DVD 1, 2, dan 3 yang sudah didaftarkan, agar Debian tahu aplikasi apa saja yang tersedia di dalam DVD tersebut.')">apt update</span>
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/apt/sources.list', '<b>Edit Sources.</b><br>Pastikan semua baris yang berawalan `deb http://` atau `deb-src` diberi tanda pagar (#) di depannya. Biarkan `deb cdrom:` tetap aktif.')">nano /etc/apt/sources.list</span><br>
+                        <span class="comment"># Matikan semua link online (beri pagar #)</span><br>
+                        <span class="prompt">root@master:~#</span> apt update
                     </div>
                 </div>
 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">3.3 Install Paket Wajib (Tools)</h4>
-                    <p class="text-xs text-slate-500 mb-2">Install semua alat yang ada di DVD-1.</p>
+                    <p class="text-xs text-slate-500 mb-2">Pastikan DVD-1 dimasukkan di VM Settings sebelum perintah ini.</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('apt install ... -y', '<b>Install Aplikasi.</b><br><b>nano/vim:</b> Editor teks.<br><b>net-tools:</b> Perintah ifconfig.<br><b>dnsutils:</b> Perintah nslookup.<br><b>iputils-ping:</b> Perintah ping.<br><b>curl/wget:</b> Download file.<br><b>-y:</b> Jawab Yes otomatis.')">apt install nano vim net-tools dnsutils iputils-ping curl wget zip unzip -y</span>
+                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('apt install ... -y', '<b>Install Paket Dasar.</b><br>Ini adalah alat-alat perang wajib: editor teks, alat cek jaringan, dns tool, dan zip.')">apt install nano vim net-tools dnsutils iputils-ping curl wget zip unzip -y</span>
                     </div>
                 </div>
 
                 <div class="sub-step active">
                     <h4 class="font-bold text-slate-800 text-sm">3.4 Aktifkan SSH Root Login</h4>
+                    <p class="text-xs text-slate-500 mb-2">Agar nanti bisa diremote pakai PuTTY/CMD.</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/ssh/sshd_config', '<b>Edit Konfigurasi SSH.</b><br>Kita mengedit file pengaturan server SSH agar mengizinkan user Root login dari jarak jauh (PuTTY).')">nano /etc/ssh/sshd_config</span>
+                        <span class="prompt">root@master:~#</span> nano /etc/ssh/sshd_config
                     </div>
                     <div class="bg-slate-800 text-slate-300 p-3 rounded font-mono text-xs mb-2 border border-slate-600">
-                        Cari baris:<br>
-                        <span class="text-slate-500">#PermitRootLogin prohibit-password</span><br><br>
-                        Ubah menjadi (Hapus pagar & ganti text):<br>
+                        Cari & Ubah:<br>
+                        <span class="text-slate-500">#PermitRootLogin prohibit-password</span><br>
+                        Menjadi:<br>
                         <span class="text-green-400">PermitRootLogin yes</span>
                     </div>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart ssh', '<b>Restart Service SSH.</b><br>Setiap kali mengubah file konfigurasi (.conf), kita wajib me-restart layanannya agar perubahan tersebut diterapkan.')">systemctl restart ssh</span>
+                        <span class="prompt">root@master:~#</span> systemctl restart ssh
                     </div>
                 </div>
 
@@ -450,8 +424,8 @@
                     <h4 class="font-bold text-slate-800 text-sm">3.5 Finalisasi</h4>
                     <p class="text-xs text-slate-500 mb-2">Matikan VM. Master siap dikloning.</p>
                     <div class="terminal">
-                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('apt clean', '<b>Bersihkan Cache.</b><br>Menghapus file installer sementara (.deb) yang tersimpan di cache agar ukuran VM menjadi lebih kecil dan hemat tempat.')">apt clean</span><br>
-                        <span class="prompt">root@master:~#</span> <span class="interactive-code" onclick="showHint('poweroff', '<b>Matikan Mesin.</b><br>Mematikan sistem operasi Debian secara aman. Kita perlu mematikan VM ini sebelum melakukan Cloning ke VM Router dan Server lain.')">poweroff</span>
+                        <span class="prompt">root@master:~#</span> apt clean<br>
+                        <span class="prompt">root@master:~#</span> poweroff
                     </div>
                 </div>
 
@@ -460,24 +434,24 @@
 
         <section class="bg-green-50 border border-green-200 rounded-2xl p-8 mb-12">
             <h2 class="text-base md:text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-check-circle"></i> Checklist Selesai Fase 1
+                <i class="fas fa-check-circle"></i> Checklist Fase 1
             </h2>
             <div class="grid md:grid-cols-2 gap-4">
                 <div class="flex gap-3 text-xs md:text-sm text-slate-700">
                     <i class="fas fa-check text-green-600 mt-1"></i>
-                    <span>Virtual Network Editor OK (VMnet10, 11, 12).</span>
+                    <span>VMnet0 diset <strong>Bridged</strong> (Ke Laptop Fisik).</span>
                 </div>
                 <div class="flex gap-3 text-xs md:text-sm text-slate-700">
                     <i class="fas fa-check text-green-600 mt-1"></i>
-                    <span>VM Master Debian terinstall (CLI Only).</span>
+                    <span>VMnet10 (DMZ) & VMnet11 (INT) terbuat.</span>
                 </div>
                 <div class="flex gap-3 text-xs md:text-sm text-slate-700">
                     <i class="fas fa-check text-green-600 mt-1"></i>
-                    <span>Repository DVD OK (apt update tidak error).</span>
+                    <span>Master VM Domain: <code>lks2026.id</code>.</span>
                 </div>
                 <div class="flex gap-3 text-xs md:text-sm text-slate-700">
                     <i class="fas fa-check text-green-600 mt-1"></i>
-                    <span>VM Master dalam kondisi mati (Poweroff).</span>
+                    <span>Repo DVD OK & SSH Root OK.</span>
                 </div>
             </div>
         </section>

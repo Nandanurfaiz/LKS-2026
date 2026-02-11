@@ -76,18 +76,6 @@
             box-shadow: 0 2px 4px rgba(225, 29, 72, 0.3);
         }
 
-        /* Tooltip / Hint Style */
-        .hint-btn {
-            cursor: pointer;
-            color: #e11d48;
-            font-size: 0.9rem;
-            margin-left: 0.5rem;
-            transition: color 0.2s;
-            display: inline-block;
-            padding: 4px;
-        }
-        .hint-btn:hover { color: #be123c; }
-        
         /* Modal */
         .modal {
             display: none;
@@ -193,7 +181,7 @@
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
                         <li><strong>Utama:</strong> Telnet via CMD Laptop.</li>
                         <li><strong>Alternatif:</strong> Thunderbird / Outlook.</li>
-                        <li><strong>Bonus:</strong> Roundcube (Jika paket tersedia).</li>
+                        <li><strong>Bonus:</strong> Roundcube (Jika paket tersedia di DVD).</li>
                     </ul>
                 </div>
             </div>
@@ -243,7 +231,7 @@ iface ens33 inet static
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/bind/db.lks', '<b>Edit DNS.</b><br>Tambahkan record MX (Surat) dan A (Alamat IP).')">nano /etc/bind/db.lks</span>
                     </div>
-                    <p class="text-xs text-slate-500 mb-2">Gunakan format pendek (Cara 1) yang aman:</p>
+                    <p class="text-xs text-slate-500 mb-2">Tambahkan 2 baris ini di paling bawah:</p>
                     <div class="file-content">
 @       IN      MX      10      mail
 mail    IN      A       172.16.10.30</div>
@@ -271,7 +259,7 @@ mail    IN      A       172.16.10.30</div>
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Paket Inti</h4>
                     <div class="terminal">
-                        <span class="prompt">root@mail:~#</span> <span class="interactive-code" onclick="showHint('apt install postfix ...', '<b>Install.</b><br>Pilih Site: <b>Internet Site</b>.<br>System mail name: <b>lks2026.id</b>')">apt install postfix dovecot-imapd dovecot-pop3d -y</span>
+                        <span class="prompt">root@mail:~#</span> <span class="interactive-code" onclick="showHint('apt install postfix ...', '<b>Install.</b><br>Jika diminta DVD-2, ganti ISO di VM Settings lalu tekan Enter.<br>Pilih Site: <b>Internet Site</b>.<br>System mail name: <b>lks2026.id</b> (Domain Induk)')">apt install postfix dovecot-imapd dovecot-pop3d -y</span>
                     </div>
                 </div>
 
@@ -284,11 +272,9 @@ mail    IN      A       172.16.10.30</div>
                     <div class="file-content">
 home_mailbox = Maildir/
 myhostname = mail.lks2026.id
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.10.0/24 10.10.10.0/24</div>
+mynetworks = 127.0.0.0/8 172.16.10.0/24 10.10.10.0/24</div>
                     <ul class="text-[10px] text-rose-700 mt-2 list-disc ml-4 italic">
-                        <li><code>home_mailbox</code>: Format penyimpanan folder.</li>
-                        <li><code>myhostname</code>: Agar server menyapa dengan nama keren "mail.lks2026.id" (bukan main.localdomain).</li>
-                        <li><code>mynetworks</code>: Izin agar IP Laptop (10.10.10.x) boleh numpang kirim email.</li>
+                        <li><code>mynetworks</code>: Wajib ada <strong>10.10.10.0/24</strong> agar Laptop Client diizinkan kirim email.</li>
                     </ul>
                     <div class="terminal mt-2">
                         <span class="prompt">root@mail:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart postfix', '<b>Restart Postfix.</b><br>Terapkan config.')">systemctl restart postfix</span>
@@ -300,13 +286,13 @@ mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.10.0/24 10.10.1
                     
                     <p class="text-xs text-slate-500 mt-2 mb-1">A. Lokasi Surat:</p>
                     <div class="terminal">
-                        <span class="prompt">root@mail:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/dovecot/conf.d/10-mail.conf', '<b>10-mail.conf</b>')">nano /etc/dovecot/conf.d/10-mail.conf</span>
+                        <span class="prompt">root@mail:~#</span> nano /etc/dovecot/conf.d/10-mail.conf
                     </div>
                     <div class="file-content">mail_location = maildir:~/Maildir</div>
 
                     <p class="text-xs text-slate-500 mt-3 mb-1">B. Izin Plaintext (PENTING!):</p>
                     <div class="terminal">
-                        <span class="prompt">root@mail:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/dovecot/conf.d/10-auth.conf', '<b>10-auth.conf</b>')">nano /etc/dovecot/conf.d/10-auth.conf</span>
+                        <span class="prompt">root@mail:~#</span> nano /etc/dovecot/conf.d/10-auth.conf
                     </div>
                     <div class="file-content">disable_plaintext_auth = no</div>
 
@@ -319,7 +305,8 @@ mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.10.0/24 10.10.1
                     <h4 class="font-bold text-slate-700 text-sm mb-1">4. Buat User Siswa</h4>
                     <div class="terminal">
                         <span class="prompt">root@mail:~#</span> <span class="interactive-code" onclick="showHint('adduser siswa', '<b>Buat User.</b><br>Password: 1')">adduser siswa</span><br>
-                        <span class="prompt">root@mail:~#</span> <span class="interactive-code" onclick="showHint('maildirmake.dovecot ...', '<b>Pancing Maildir.</b>')">maildirmake.dovecot /etc/skel/Maildir</span>
+                        <span class="comment"># Buat folder mail (Pancingan agar tidak error saat login pertama)</span><br>
+                        <span class="prompt">root@mail:~#</span> maildirmake.dovecot /etc/skel/Maildir
                     </div>
                 </div>
             </div>
@@ -330,7 +317,7 @@ mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.10.0/24 10.10.1
                 <div class="step-badge bg-gray-400">4</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-500">Webmail (Opsional)</h2>
-                    <p class="text-slate-400 text-xs md:text-sm mt-0.5">Lompati jika paket tidak ada.</p>
+                    <p class="text-slate-400 text-xs md:text-sm mt-0.5">Roundcube. Lompati jika paket tidak ada di DVD.</p>
                 </div>
             </div>
 
@@ -341,7 +328,7 @@ mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.10.0/24 10.10.1
                 <div class="terminal">
                     <span class="prompt">root@mail:~#</span> apt install mariadb-server roundcube roundcube-mysql -y
                 </div>
-                <p class="text-xs text-slate-500">Jika berhasil: Edit <code>/etc/apache2/conf-available/roundcube.conf</code> (Uncomment Alias), lalu reload apache2.</p>
+                <p class="text-xs text-slate-500">Jika berhasil: Jawab 'Yes' saat dbconfig-common, lalu masukkan password mysql baru.</p>
             </div>
         </section>
 
@@ -358,17 +345,16 @@ mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.10.0/24 10.10.1
                 
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
                     <h4 class="font-bold text-blue-800 text-sm mb-2"><i class="fas fa-network-wired"></i> Cek Koneksi Dulu</h4>
-                    <p class="text-xs text-slate-700 mb-2">Pastikan Laptop Fisik sudah aman:</p>
                     <ul class="text-xs text-slate-700 list-disc ml-5">
-                        <li><strong>IP Laptop:</strong> 10.10.10.x (DHCP atau Manual).</li>
-                        <li><strong>Gateway Laptop:</strong> 10.10.10.1.</li>
+                        <li><strong>IP Laptop:</strong> 10.10.10.x (DHCP).</li>
                         <li><strong>Ping:</strong> <code>ping 172.16.10.30</code> harus Reply.</li>
+                        <li><strong>Ping:</strong> <code>ping mail.lks2026.id</code> harus Reply (jika DNS sukses).</li>
                     </ul>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">Metode A: Telnet (CMD Windows)</h4>
-                    <p class="text-xs text-slate-500 mb-2">Cara paling cepat dan keren di mata Juri.</p>
+                    <p class="text-xs text-slate-500 mb-2">Cara paling cepat dan keren di mata Juri untuk membuktikan SMTP & POP3 jalan.</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="border p-3 rounded bg-slate-50">
@@ -390,8 +376,6 @@ C:\> telnet 172.16.10.30 110
                         <i class="fas fa-check-circle"></i> Jika kedua tulisan hijau itu muncul, ANDA LULUS!
                     </p>
                 </div>
-
-                
 
             </div>
         </section>

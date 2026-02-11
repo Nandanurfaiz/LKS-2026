@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase 6: File Server (Strategy B) - LKS 2026</title>
+    <title>Fase 6: File Server & NTP (Strategy B) - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -18,16 +18,16 @@
             border-radius: 0.5rem;
             font-family: 'Roboto Mono', monospace;
             font-size: 0.85rem;
-            border-left: 4px solid #22c55e;
+            border-left: 4px solid #10b981; /* Emerald-500 */
             margin: 0.75rem 0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
             white-space: pre-wrap;
         }
         .file-content {
-            background-color: #fffbeb;
-            border: 1px solid #fcd34d;
-            color: #92400e;
+            background-color: #ecfdf5;
+            border: 1px solid #6ee7b7;
+            color: #064e3b;
             font-family: 'Roboto Mono', monospace;
             padding: 1rem;
             border-radius: 0.5rem;
@@ -35,18 +35,18 @@
             white-space: pre;
             overflow-x: auto;
         }
-        .prompt { color: #22c55e; font-weight: bold; }
+        .prompt { color: #34d399; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
         
         /* INTERACTIVE CODE HINT STYLE */
         .interactive-code {
             cursor: pointer;
-            border-bottom: 1px dashed #86efac;
+            border-bottom: 1px dashed #34d399;
             transition: all 0.2s;
             position: relative;
         }
         .interactive-code:hover {
-            background-color: rgba(34, 197, 94, 0.2);
+            background-color: rgba(16, 185, 129, 0.2);
             color: #ffffff;
             border-bottom: 1px solid #ffffff;
         }
@@ -56,15 +56,15 @@
             font-weight: 900;
             font-size: 0.6rem;
             margin-left: 4px;
-            color: #86efac;
+            color: #34d399;
             opacity: 0.7;
         }
 
-        /* Step Styling - Green Theme */
+        /* Step Styling - Emerald Theme */
         .step-badge {
             width: 2.5rem;
             height: 2.5rem;
-            background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
             color: white;
             border-radius: 50%;
             display: flex;
@@ -73,21 +73,9 @@
             font-weight: bold;
             flex-shrink: 0;
             font-size: 1.1rem;
-            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
         }
 
-        /* Tooltip / Hint Style */
-        .hint-btn {
-            cursor: pointer;
-            color: #16a34a;
-            font-size: 0.9rem;
-            margin-left: 0.5rem;
-            transition: color 0.2s;
-            display: inline-block;
-            padding: 4px;
-        }
-        .hint-btn:hover { color: #15803d; }
-        
         /* Modal */
         .modal {
             display: none;
@@ -150,7 +138,7 @@
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="index.html" class="text-slate-400 hover:text-green-600 transition p-2">
+                <a href="index.html" class="text-slate-400 hover:text-emerald-600 transition p-2">
                     <i class="fas fa-arrow-left text-lg"></i>
                 </a>
                 <div class="flex flex-col">
@@ -158,10 +146,10 @@
                     <span class="text-xs text-slate-500 md:hidden">File Services</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">Samba & Internal Server</span>
+                <span class="hidden md:inline font-bold text-slate-800">Samba & NTP Server</span>
             </div>
-            <span class="bg-green-100 text-green-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
-                Storage
+            <span class="bg-emerald-100 text-emerald-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
+                Modul B
             </span>
         </div>
     </nav>
@@ -169,34 +157,33 @@
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Layanan File Server (Samba)</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">File Sharing & Time Sync</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Kita akan membuat server "Gudang Data" di zona Internal agar Client bisa menyimpan dan mengambil file, lengkap dengan autentikasi password.
+                Membangun <strong>Internal Server</strong> untuk berbagi file (Samba) ke Client Windows dan menyinkronkan waktu (NTP).
             </p>
         </header>
 
-        <section class="bg-green-50 border border-green-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
-            <h2 class="text-green-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-server"></i> Target Configuration
+        <section class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
+            <h2 class="text-emerald-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-network-wired"></i> Target Configuration
             </h2>
             <div class="grid md:grid-cols-2 gap-6 text-sm">
                 <div>
-                    <h4 class="font-bold text-green-700 mb-2">VM Info (Internal):</h4>
-                    <div class="bg-white p-3 rounded border border-green-100 overflow-x-auto">
+                    <h4 class="font-bold text-emerald-700 mb-2">VM Info (Internal):</h4>
+                    <div class="bg-white p-3 rounded border border-emerald-100 overflow-x-auto">
                         <ul class="space-y-1 font-mono text-xs md:text-sm text-slate-700">
                             <li><strong>Hostname:</strong> int-srv</li>
                             <li><strong>IP Address:</strong> 192.168.10.20 (Internal)</li>
                             <li><strong>Gateway:</strong> 192.168.10.1 (Router fw)</li>
-                            <li><strong>Share Name:</strong> /data-kantor</li>
+                            <li><strong>Folder:</strong> /home/siswa/share</li>
                         </ul>
                     </div>
                 </div>
                 <div>
-                    <h4 class="font-bold text-green-700 mb-2 mt-4 md:mt-0">Skenario Akses:</h4>
+                    <h4 class="font-bold text-emerald-700 mb-2 mt-4 md:mt-0">Paket Software:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
-                        <li><strong>Read Only:</strong> Semua orang bisa baca.</li>
-                        <li><strong>Read Write:</strong> Hanya user tertentu (dengan password).</li>
-                        <li><strong>Akses Client:</strong> Via Windows Run (\\IP).</li>
+                        <li><strong>Samba:</strong> File Sharing untuk Windows.</li>
+                        <li><strong>NTP (Sec):</strong> Network Time Protocol (Wajib untuk sinkronisasi log).</li>
                     </ul>
                 </div>
             </div>
@@ -207,20 +194,20 @@
                 <div class="step-badge">1</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Setup VM Internal</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Clone & Config IP (VMnet11).</p>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Clone & Config Network.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cloning & Adapter</h4>
-                    <p class="text-xs text-slate-600">Clone <code>Debian-Master</code> jadi <strong>int-srv</strong>.</p>
-                    <p class="text-xs text-green-600 font-bold mt-1">PENTING: Ubah Network Adapter ke Custom: VMnet11 (Internal). Jangan salah pilih!</p>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cloning</h4>
+                    <p class="text-xs text-slate-600">Clone <code>Debian-Master</code> menjadi <strong>int-srv</strong>.</p>
+                    <p class="text-xs text-emerald-600 font-bold mt-1">NETWORK ADAPTER: Pilih Custom: VMnet11 (Internal).</p>
                 </div>
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Konfigurasi IP Static</h4>
                     <div class="terminal">
-                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/network/interfaces', '<b>Edit IP Address.</b><br>Setting IP statis untuk Internal Server.')">nano /etc/network/interfaces</span>
+                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/network/interfaces', '<b>Edit IP.</b><br>Setting IP khusus jaringan Internal.')">nano /etc/network/interfaces</span>
                     </div>
                     <div class="file-content">
 auto ens33
@@ -229,8 +216,8 @@ iface ens33 inet static
     gateway 192.168.10.1
     dns-nameservers 192.168.10.1</div>
                     <div class="terminal mt-2">
-                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('hostnamectl set-hostname int-srv', '<b>Ganti Hostname.</b><br>Agar tidak tertukar dengan server lain.')">hostnamectl set-hostname int-srv</span><br>
-                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart networking', '<b>Terapkan IP.</b><br>Pastikan adapter di VMware sudah benar-benar VMnet11.')">systemctl restart networking</span>
+                        <span class="prompt">root@int-srv:~#</span> hostnamectl set-hostname int-srv<br>
+                        <span class="prompt">root@int-srv:~#</span> systemctl restart networking
                     </div>
                 </div>
             </div>
@@ -240,8 +227,8 @@ iface ens33 inet static
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Install & Config Samba</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan Folder Sharing.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Instalasi & Config Samba</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Jantung dari Modul B.</p>
                 </div>
             </div>
 
@@ -250,37 +237,50 @@ iface ens33 inet static
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Paket</h4>
                     <div class="terminal">
-                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('apt install samba', '<b>Install Samba.</b><br>Pastikan DVD-1 sudah dimasukkan dan di-scan.')">apt install samba -y</span>
+                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('apt install samba smbclient', '<b>Install Samba.</b><br>Pastikan DVD-1 siap.')">apt install samba smbclient -y</span>
                     </div>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Buat Folder & User</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Buat Folder & User (PENTING!)</h4>
+                    <p class="text-xs text-slate-500 mb-1">User Linux 'siswa' sudah ada dari Master, tapi harus didaftarkan ke Samba.</p>
                     <div class="terminal">
-                        <span class="comment"># Buat folder yang mau dishare:</span><br>
-                        <span class="prompt">root@int-srv:~#</span> mkdir -p /home/data-kantor<br>
-                        <span class="prompt">root@int-srv:~#</span> chmod 777 /home/data-kantor<br><br>
-                        <span class="comment"># Buat user khusus Samba:</span><br>
-                        <span class="prompt">root@int-srv:~#</span> useradd smbuser<br>
-                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('smbpasswd -a smbuser', '<b>Password Samba.</b><br>PENTING: Ini password untuk akses folder dari Windows. Isi yg mudah, misal: 1')">smbpasswd -a smbuser</span>
+                        <span class="comment"># 1. Buat folder yang mau dishare</span><br>
+                        <span class="prompt">root@int-srv:~#</span> mkdir -p /home/siswa/share<br>
+                        <span class="prompt">root@int-srv:~#</span> chmod -R 777 /home/siswa/share<br><br>
+                        
+                        <span class="comment"># 2. Daftar User ke Samba (Wajib!)</span><br>
+                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('smbpasswd -a siswa', '<b>Daftar Password Samba.</b><br>Perintah ini membuat password khusus share. Masukkan password yang mudah, misal: 1')">smbpasswd -a siswa</span>
                     </div>
                 </div>
 
-                <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Konfigurasi Share</h4>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                    <h4 class="font-bold text-yellow-800 text-sm mb-1"><i class="fas fa-exclamation-triangle"></i> 3. Konfigurasi Anti-Gagal (Windows 10/11)</h4>
+                    <p class="text-xs text-slate-700 mb-2">Tanpa setting ini, Laptop Client sering kena error <strong>"System Error 64"</strong>.</p>
                     <div class="terminal">
-                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/samba/smb.conf', '<b>Edit Config Samba.</b><br>Scroll ke paling bawah file, lalu tambahkan konfigurasi ini.')">nano /etc/samba/smb.conf</span>
+                        <span class="prompt">root@int-srv:~#</span> nano /etc/samba/smb.conf
                     </div>
-                    <p class="text-xs text-slate-500 mb-1">Tambahkan di baris paling bawah:</p>
+                    
+                    <p class="text-xs text-slate-700 font-bold mt-2">A. Bagian [global] (Cari di atas):</p>
                     <div class="file-content">
-[DataKantor]
-    path = /home/data-kantor
-    browsable = yes
-    writable = yes
-    guest ok = no
-    read only = no</div>
+workgroup = WORKGROUP
+# Tambahkan baris sakti ini di bawah workgroup:
+server min protocol = SMB2
+client min protocol = SMB2
+client max protocol = SMB3
+ntlm auth = yes</div>
+
+                    <p class="text-xs text-slate-700 font-bold mt-2">B. Bagian Paling Bawah (Definisi Share):</p>
+                    <div class="file-content">
+[DataSiswa]
+path = /home/siswa/share
+browseable = yes
+writable = yes
+guest ok = no
+read only = no</div>
+
                     <div class="terminal mt-2">
-                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart smbd', '<b>Restart Samba.</b><br>Terapkan perubahan.')">systemctl restart smbd</span>
+                        <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart smbd', '<b>Restart Service.</b><br>Agar konfigurasi baru terbaca.')">systemctl restart smbd nmbd</span>
                     </div>
                 </div>
 
@@ -291,86 +291,62 @@ iface ens33 inet static
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">3</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Pembuktian (Laptop Fisik)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Strategi CMD (Anti-Gagal).</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">NTP Server (Waktu)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Agar jam Client sinkron.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
-                
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
-                    <h4 class="font-bold text-blue-800 text-sm mb-2"><i class="fas fa-network-wired"></i> Cek Koneksi Dulu</h4>
-                    <p class="text-xs text-slate-700 mb-2">Pastikan Laptop bisa "melihat" Server Internal (melewati Router):</p>
-                    <div class="terminal" style="font-size: 0.75rem;">
-C:\> ping 192.168.10.20
-<span class="text-green-400">Reply from 192.168.10.20: bytes=32 time<1ms TTL=63</span>
-                    </div>
-                    <p class="text-[10px] text-slate-500 mt-1">Jika RTO: Cek IP Forwarding di Router (`net.ipv4.ip_forward=1`) atau Firewall Windows.</p>
-                </div>
-
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">Metode 1: Map Drive via CMD (Sangat Disarankan!)</h4>
-                    <p class="text-xs text-slate-500 mb-2">Ini lebih akurat daripada File Explorer biasa karena menampilkan pesan error jika gagal.</p>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install & Config</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@int-srv:~#</span> apt install ntp -y<br>
+                        <span class="prompt">root@int-srv:~#</span> nano /etc/ntpsec/ntp.conf
+                    </div>
+                    <p class="text-xs text-slate-500 mb-1">Ubah pool menjadi ID:</p>
+                    <div class="file-content">pool 0.id.pool.ntp.org iburst</div>
+                    <p class="text-xs text-slate-500 mb-1">Izinkan Client mengakses (Uncomment/Tambah):</p>
+                    <div class="file-content">restrict 192.168.10.0 mask 255.255.255.0 nomodify notrap</div>
                     
-                    <div class="terminal" style="font-size: 0.75rem;">
-<span class="comment"># Format: net use [HurufDrive]: \\[IP_Server]\[NamaShare] /user:[User] [Password]</span>
-C:\> net use Z: \\192.168.10.20\DataKantor /user:smbuser 1
-<span class="text-green-400">The command completed successfully.</span>
+                    <div class="terminal mt-2">
+                        <span class="prompt">root@int-srv:~#</span> systemctl restart ntp
                     </div>
-                    <p class="text-xs text-green-600 font-bold mt-2">
-                        <i class="fas fa-check-circle"></i> Jika sukses, buka File Explorer, Drive Z: akan muncul!
-                    </p>
                 </div>
-
-                <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">Metode 2: Windows Run (Standard)</h4>
-                    <ul class="text-xs text-slate-700 list-decimal ml-5 space-y-1">
-                        <li>Tekan <strong>Windows + R</strong> di keyboard.</li>
-                        <li>Ketik: <code>\\192.168.10.20</code> lalu Enter.</li>
-                        <li>Jika diminta login, masukkan user: <strong>smbuser</strong>, password: <strong>1</strong>.</li>
-                        <li>Buka folder <strong>DataKantor</strong>.</li>
-                        <li>Coba <strong>Klik Kanan > New > Text Document</strong> (Tes Write Access).</li>
-                    </ul>
-                </div>
-
             </div>
         </section>
 
-        <section class="bg-red-50 border border-red-200 rounded-xl p-5 md:p-6 mb-12 shadow-sm">
-            <h2 class="text-red-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-tools"></i> Troubleshooting
+        <section class="bg-blue-50 border-l-4 border-blue-500 p-5 md:p-6 mb-12 shadow-sm">
+            <h2 class="text-blue-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fab fa-windows"></i> Pengujian (Laptop Client)
             </h2>
-            <div class="space-y-3">
-                <details class="bg-white p-3 rounded border border-red-100 group">
-                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
-                        Ping RTO ke 192.168.10.20
-                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
-                    </summary>
-                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        1. <strong>Cek Router (fw):</strong> Apakah Routing aktif? `sysctl net.ipv4.ip_forward`.<br>
-                        2. <strong>Cek Firewall Windows:</strong> Matikan dulu.<br>
-                        3. <strong>Cek Gateway:</strong> Di Server Internal, `ip route` harus `default via 192.168.10.1`.
-                    </div>
-                </details>
-                
-                <details class="bg-white p-3 rounded border border-red-100 group">
-                    <summary class="font-bold text-red-600 text-sm cursor-pointer flex justify-between items-center">
-                        "System error 53 has occurred" / "Network path not found"
-                        <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
-                    </summary>
-                    <div class="mt-2 text-xs text-slate-600 leading-relaxed">
-                        Ini berarti Laptop tidak bisa menghubungi port Samba. Pastikan IP Server Internal benar dan service samba hidup (`systemctl status smbd`).
-                    </div>
-                </details>
+            
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded border border-blue-100">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">1. Cek Koneksi (Ping)</h4>
+                    <code class="block bg-slate-800 text-green-400 p-2 rounded mt-1 text-xs font-mono">ping 192.168.10.20</code>
+                </div>
+
+                <div class="bg-white p-4 rounded border border-blue-100">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">2. Akses Samba (Cara Paling Stabil)</h4>
+                    <p class="text-xs text-slate-600 mb-2">Gunakan <strong>Map Network Drive</strong> via CMD untuk melihat error yang jelas:</p>
+                    <code class="block bg-slate-800 text-green-400 p-2 rounded mt-1 text-xs font-mono">net use Z: \\192.168.10.20\DataSiswa /user:siswa 1</code>
+                    <p class="text-[10px] text-slate-500 mt-1 italic">*Ganti '1' dengan password smbpasswd Anda.</p>
+                    <p class="text-xs text-green-600 font-bold mt-2">Target: "The command completed successfully". Cek File Explorer drive Z:.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded border border-blue-100">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">3. Cek NTP</h4>
+                    <p class="text-xs text-slate-600">Control Panel > Date and Time > Internet Time > Change Settings. Masukkan IP <code>192.168.10.20</code> lalu Update Now.</p>
+                </div>
             </div>
         </section>
 
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <a href="phase5.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
-                Kembali ke Fase 5
+                <i class="fas fa-arrow-left"></i> Kembali ke Fase 5
             </a>
-            <a href="index.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
-                Selesai (Kembali ke Dashboard) <i class="fas fa-check"></i>
+            <a href="phase7.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
+                Lanjut ke Fase 7 (HAProxy) <i class="fas fa-arrow-right"></i>
             </a>
         </div>
 

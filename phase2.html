@@ -76,18 +76,6 @@
             box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
         }
 
-        /* Tooltip / Hint Style */
-        .hint-btn {
-            cursor: pointer;
-            color: #3b82f6;
-            font-size: 0.9rem;
-            margin-left: 0.5rem;
-            transition: color 0.2s;
-            display: inline-block;
-            padding: 4px;
-        }
-        .hint-btn:hover { color: #1d4ed8; }
-        
         /* Modal */
         .modal {
             display: none;
@@ -171,7 +159,7 @@
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Jantung Jaringan (Mode Fisik)</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Kita akan mengubah VM Master menjadi <strong>Router (fw)</strong> yang menghubungkan Server Virtual dengan <strong>Laptop Client Fisik</strong>.
+                [cite_start]Kita akan mengubah VM Master menjadi <strong>Router (fw)</strong> yang menghubungkan Server Virtual dengan <strong>Laptop Client Fisik</strong>[cite: 184].
             </p>
         </header>
 
@@ -184,19 +172,19 @@
                     <h4 class="font-bold text-blue-700 mb-2">Target IP (fw):</h4>
                     <div class="bg-white p-3 rounded border border-blue-100 overflow-x-auto">
                         <ul class="space-y-1 font-mono text-xs md:text-sm text-slate-700">
-                            <li>eth0 (ISP) : DHCP (Bridged)</li>
-                            <li>eth1 (DMZ) : 172.16.10.1/24</li>
-                            <li>eth2 (INT) : 192.168.10.1/24</li>
-                            <li><strong>eth3 (Cli) : 10.10.10.1/24 (Fisik)</strong></li>
+                            [cite_start]<li>ens33 (ISP) : DHCP (NAT/Bridged) [cite: 187, 230]</li>
+                            [cite_start]<li>ens37 (DMZ) : 172.16.10.1/24 [cite: 188, 234]</li>
+                            [cite_start]<li>ens38 (INT) : 192.168.10.1/24 [cite: 189, 239]</li>
+                            [cite_start]<li><strong>ens39 (Cli) : 10.10.10.1/24 (Fisik)</strong> [cite: 190, 242]</li>
                         </ul>
                     </div>
                 </div>
                 <div>
                     <h4 class="font-bold text-blue-700 mb-2 mt-4 md:mt-0">Tugas Utama:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
-                        <li>Setting Adapter <strong>Bridged</strong> ke Laptop.</li>
-                        <li>Aktifkan <strong>IP Forwarding</strong> & NAT.</li>
-                        <li>Install <strong>DHCP Server</strong> untuk Laptop.</li>
+                        [cite_start]<li>Setting Adapter <strong>Bridged</strong> ke Laptop[cite: 192].</li>
+                        [cite_start]<li>Aktifkan <strong>IP Forwarding</strong> & NAT[cite: 193].</li>
+                        [cite_start]<li>Install <strong>DHCP Server</strong> untuk Laptop[cite: 194].</li>
                     </ul>
                 </div>
             </div>
@@ -207,7 +195,7 @@
                 <div class="step-badge">1</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Cloning & Hardware (PENTING!)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan "Kabel Fisik" ke Client.</p>
+                    [cite_start]<p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyiapkan "Kabel Fisik" ke Client[cite: 197].</p>
                 </div>
             </div>
 
@@ -215,13 +203,13 @@
                 <div class="border-l-4 border-slate-200 pl-3 md:pl-4">
                     <h4 class="font-bold text-slate-800 text-sm">1. Full Clone</h4>
                     <p class="text-xs md:text-sm text-slate-600 mt-1 leading-relaxed">
-                        Klik kanan <code>Debian-Master</code> > <strong>Manage</strong> > <strong>Clone</strong>. Pilih <strong>Full Clone</strong>. Nama VM: <code>fw</code>.
+                        Klik kanan <code>Debian-Master</code> > <strong>Manage</strong> > <strong>Clone</strong>. Pilih <strong>Full Clone</strong>. [cite_start]Nama VM: <code>fw</code>[cite: 199].
                     </p>
                 </div>
                 
                 <div class="border-l-4 border-blue-500 bg-blue-50 pl-3 md:pl-4 py-3 rounded-r">
                     <h4 class="font-bold text-blue-800 text-sm">2. Network Adapter (Mode Bridged)</h4>
-                    <p class="text-xs md:text-sm text-slate-700 mt-1 mb-2">Atur 4 Adapter di VM Settings. Perhatikan <strong>Adapter 4</strong>:</p>
+                    <p class="text-xs md:text-sm text-slate-700 mt-1 mb-2">Atur 4 Adapter di VM Settings. [cite_start]Perhatikan <strong>Adapter 4</strong>[cite: 201]:</p>
                     <div class="overflow-x-auto rounded border border-blue-200 bg-white">
                         <table class="w-full text-xs text-left">
                             <thead class="bg-blue-100 font-bold text-blue-900">
@@ -234,23 +222,23 @@
                             <tbody>
                                 <tr>
                                     <td class="p-2 border-b">1</td>
-                                    <td class="p-2 border-b">Bridged</td>
-                                    <td class="p-2 border-b">Internet (ISP)</td>
+                                    <td class="p-2 border-b">NAT / Bridged</td>
+                                    [cite_start]<td class="p-2 border-b">Internet (ISP) [cite: 207]</td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 border-b">2</td>
-                                    <td class="p-2 border-b">VMnet10</td>
-                                    <td class="p-2 border-b">DMZ (Web/Mail)</td>
+                                    <td class="p-2 border-b">VMnet10 (Custom)</td>
+                                    [cite_start]<td class="p-2 border-b">DMZ (Web/Mail) [cite: 210]</td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 border-b">3</td>
-                                    <td class="p-2 border-b">VMnet11</td>
-                                    <td class="p-2 border-b">Internal Server</td>
+                                    <td class="p-2 border-b">VMnet11 (Custom)</td>
+                                    [cite_start]<td class="p-2 border-b">Internal Server [cite: 213]</td>
                                 </tr>
                                 <tr class="bg-yellow-50">
                                     <td class="p-2 border-b font-bold">4</td>
                                     <td class="p-2 border-b font-bold text-red-600">Bridged (LAN Card)</td>
-                                    <td class="p-2 border-b font-bold">Ke Laptop Fisik</td>
+                                    [cite_start]<td class="p-2 border-b font-bold">Ke Laptop Fisik [cite: 216]</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -265,7 +253,7 @@
                 <div class="step-badge">2</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi IP</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Nyalakan VM & Login Root.</p>
+                    [cite_start]<p class="text-slate-500 text-xs md:text-sm mt-0.5">Nyalakan VM & Login Root[cite: 218].</p>
                 </div>
             </div>
 
@@ -273,7 +261,7 @@
                 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cek Interface</h4>
-                    <p class="text-xs text-slate-500 mb-2">Lihat nama asli (ens33/37/etc) - Klik kode untuk info:</p>
+                    [cite_start]<p class="text-xs text-slate-500 mb-2">Lihat nama asli (ens33/37/etc) - Klik kode untuk info[cite: 220]:</p>
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('ip link show', '<b>Cek Daftar Kartu Jaringan.</b><br>Perintah ini menampilkan semua adapter jaringan. Pastikan ada 4 interface (selain lo). Catat namanya untuk config.')">ip link show</span>
                     </div>
@@ -291,7 +279,7 @@
 auto lo
 iface lo inet loopback
 
-# INTERNET (Bridged)
+# INTERNET (Bridged/NAT)
 auto ens33
 iface ens33 inet dhcp
 
@@ -327,7 +315,7 @@ iface ens39 inet static
                 <div class="step-badge">3</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Routing & NAT</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Wajib agar Client bisa akses Web.</p>
+                    [cite_start]<p class="text-slate-500 text-xs md:text-sm mt-0.5">Wajib agar Client bisa akses Web[cite: 245].</p>
                 </div>
             </div>
 
@@ -335,7 +323,7 @@ iface ens39 inet static
                 
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                     <h4 class="font-bold text-yellow-800 text-sm mb-2"><i class="fas fa-compact-disc"></i> Persiapan DVD</h4>
-                    <p class="text-xs text-slate-700 mb-2">Masukkan DVD-1 & DVD-2 (Binary) ke VMware sebelum lanjut.</p>
+                    [cite_start]<p class="text-xs text-slate-700 mb-2">Masukkan DVD-1 & DVD-2 (Binary) ke VMware sebelum lanjut[cite: 249].</p>
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Daftarkan DVD.</b><br>Meminta Debian membaca isi DVD agar bisa menginstall paket.')">apt-cdrom add</span>
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Refresh Database.</b><br>Membaca ulang daftar isi aplikasi di dalam DVD.')">apt update</span>
@@ -348,7 +336,7 @@ iface ens39 inet static
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/sysctl.conf', '<b>Aktifkan Mode Router.</b><br>Mengizinkan Linux meneruskan paket data dari satu kabel ke kabel lain.')">nano /etc/sysctl.conf</span>
                     </div>
-                    <p class="text-xs text-slate-500 mb-1">Hapus pagar (#) di baris:</p>
+                    [cite_start]<p class="text-xs text-slate-500 mb-1">Hapus pagar (#) di baris[cite: 251]:</p>
                     <div class="file-content py-2">net.ipv4.ip_forward=1</div>
                     <div class="terminal mt-1">
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('sysctl -p', '<b>Reload Konfigurasi Kernel.</b><br>Menerapkan perubahan ip_forward secara langsung.')">sysctl -p</span>
@@ -360,7 +348,7 @@ iface ens39 inet static
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install iptables iptables-persistent -y', '<b>Install Firewall Tools.</b><br>Menginstall program IPTables dan alat penyimpan aturan permanen.')">apt install iptables iptables-persistent -y</span>
                     </div>
-                    <p class="text-xs text-slate-400 italic mb-2">*Pilih YES saat ditanya simpan rule.</p>
+                    [cite_start]<p class="text-xs text-slate-400 italic mb-2">*Pilih YES saat ditanya simpan rule[cite: 254].</p>
                     
                     <div class="terminal">
                         <span class="comment"># Rule NAT ke ens33 (Internet)</span><br>
@@ -378,7 +366,7 @@ iface ens39 inet static
                 <div class="step-badge">4</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">DHCP Server</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Memberi IP otomatis ke Laptop Fisik.</p>
+                    [cite_start]<p class="text-slate-500 text-xs md:text-sm mt-0.5">Memberi IP otomatis ke Laptop Fisik[cite: 260].</p>
                 </div>
             </div>
 
@@ -390,6 +378,7 @@ iface ens39 inet static
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install isc-dhcp-server -y', '<b>Install DHCP Server.</b><br>Menginstall paket ISC-DHCP-SERVER.')">apt install isc-dhcp-server -y</span>
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/default/isc-dhcp-server', '<b>Pilih Interface.</b><br>Tentukan kabel mana yang boleh membagi IP. Isi dengan interface Bridged (ens39).')">nano /etc/default/isc-dhcp-server</span>
                     </div>
+                    [cite_start]<p class="text-xs text-slate-500 mt-2 mb-1">Isi dengan interface arah Client (ens39)[cite: 267]:</p>
                     <div class="file-content py-2">INTERFACESv4="ens39"</div>
                 </div>
 
@@ -398,12 +387,12 @@ iface ens39 inet static
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/dhcp/dhcpd.conf', '<b>Konfigurasi Pool IP.</b><br>Menentukan range IP (10-100), Gateway, dan DNS untuk Laptop Client.')">nano /etc/dhcp/dhcpd.conf</span>
                     </div>
-                    <p class="text-xs text-slate-500 mb-2">Scroll paling bawah, tambahkan:</p>
+                    [cite_start]<p class="text-xs text-slate-500 mb-2">Scroll paling bawah, tambahkan[cite: 269]:</p>
                     <div class="file-content">
 subnet 10.10.10.0 netmask 255.255.255.0 {
     range 10.10.10.10 10.10.10.100;
     option routers 10.10.10.1;
-    option domain-name-servers 10.10.10.1;
+    option domain-name-servers 10.10.10.1, 8.8.8.8;
 }</div>
                 </div>
 
@@ -420,24 +409,24 @@ subnet 10.10.10.0 netmask 255.255.255.0 {
 
         <section class="bg-green-50 border border-green-200 rounded-2xl p-5 md:p-8 mb-12">
             <h2 class="text-base md:text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-check-circle"></i> Hasil Akhir Fase 2
+                [cite_start]<i class="fas fa-check-circle"></i> Hasil Akhir Fase 2 [cite: 277]
             </h2>
             <div class="grid md:grid-cols-2 gap-3 md:gap-4">
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>Repo DVD:</strong> Apt install sukses.</div>
+                    [cite_start]<div class="text-xs md:text-sm text-slate-700"><strong>Repo DVD:</strong> Apt install sukses[cite: 278].</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>IP OK:</strong> Semua interface (termasuk arah fisik) punya IP.</div>
+                    [cite_start]<div class="text-xs md:text-sm text-slate-700"><strong>IP OK:</strong> Semua interface (termasuk arah fisik) punya IP[cite: 279].</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>Forwarding:</strong> sysctl aktif.</div>
+                    [cite_start]<div class="text-xs md:text-sm text-slate-700"><strong>Forwarding:</strong> sysctl aktif[cite: 280].</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>DHCP:</strong> Running (Siap melayani Laptop).</div>
+                    [cite_start]<div class="text-xs md:text-sm text-slate-700"><strong>DHCP:</strong> Running (Siap melayani Laptop)[cite: 282].</div>
                 </div>
             </div>
         </section>
