@@ -26,6 +26,7 @@
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 0.75rem;
+            font-weight: bold;
         }
 
         .step-badge {
@@ -70,19 +71,20 @@
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Membangun Topologi Fisik</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Sebelum mengetik perintah apapun, kita harus menyusun perangkat di Cisco Packet Tracer dan menghubungkan kabel ke port yang tepat. <strong>Salah colok port = Konfigurasi Gagal.</strong>
+                Panduan pemasangan perangkat dan pengkabelan di Cisco Packet Tracer. <br>
+                <span class="text-red-600 font-bold">PENTING:</span> Kesalahan memilih port di tahap ini akan menyebabkan konfigurasi di fase berikutnya GAGAL TOTAL.
             </p>
         </header>
 
         <section class="bg-teal-50 border border-teal-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
             <h2 class="text-teal-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-box-open"></i> Daftar Belanja (Devices)
+                <i class="fas fa-box-open"></i> Daftar Perangkat (Devices)
             </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div class="bg-white p-3 rounded-lg border border-teal-100">
                     <i class="fas fa-server text-3xl text-slate-700 mb-2"></i>
                     <h4 class="font-bold text-sm">1x Router</h4>
-                    <p class="text-xs text-slate-500">Model: 2911 / 2811</p>
+                    <p class="text-xs text-slate-500">Model: 2911 (atau 2811)</p>
                 </div>
                 <div class="bg-white p-3 rounded-lg border border-teal-100">
                     <i class="fas fa-network-wired text-3xl text-slate-700 mb-2"></i>
@@ -97,7 +99,7 @@
                 <div class="bg-white p-3 rounded-lg border border-teal-100">
                     <i class="fas fa-cloud text-3xl text-slate-700 mb-2"></i>
                     <h4 class="font-bold text-sm">1x Server</h4>
-                    <p class="text-xs text-slate-500">Generic Server (Internal)</p>
+                    <p class="text-xs text-slate-500">Generic Server</p>
                 </div>
             </div>
         </section>
@@ -105,18 +107,44 @@
         <section class="mb-8">
             <div class="flex items-center gap-3 md:gap-4 mb-4">
                 <div class="step-badge">1</div>
-                <h2 class="text-lg md:text-xl font-bold text-slate-800">Penataan (Drag & Drop)</h2>
+                <h2 class="text-lg md:text-xl font-bold text-slate-800">Layout (Penempatan)</h2>
             </div>
             <div class="ml-2 md:ml-14 space-y-4">
                 <div class="step-card">
-                    <p class="text-sm text-slate-700 mb-2">Susun perangkat di workspace Packet Tracer seperti ini:</p>
-                    <ul class="list-disc ml-5 text-sm text-slate-600 space-y-1">
-                        <li><strong>Atas Tengah:</strong> Router (Beri nama: <strong>R1</strong>)</li>
-                        <li><strong>Tengah Kiri:</strong> Switch 1 (Beri nama: <strong>SW-1</strong>)</li>
-                        <li><strong>Tengah Kanan:</strong> Switch 2 (Beri nama: <strong>SW-2</strong>)</li>
-                        <li><strong>Bawah Kiri (Bawah SW-1):</strong> 2 PC (VLAN 10 & 20)</li>
-                        <li><strong>Bawah Kanan (Bawah SW-2):</strong> 2 PC (VLAN 10 & 20)</li>
-                    </ul>
+                    <p class="text-sm text-slate-700 mb-2">Susun perangkat di workspace Packet Tracer seperti diagram berikut:</p>
+                    
+                    <div class="bg-slate-100 p-6 rounded border border-slate-300 flex flex-col items-center gap-6 my-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold shadow-md">R1</div>
+                            <span class="text-xs font-bold mt-1 text-slate-600">Router</span>
+                        </div>
+                        
+                        <div class="flex justify-between w-full max-w-sm px-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-12 h-8 bg-slate-700 text-white flex items-center justify-center text-xs font-bold rounded shadow-md">SW-1</div>
+                                <span class="text-[10px] mt-1 text-slate-500">Switch Kiri</span>
+                            </div>
+                            <div class="h-0.5 bg-slate-400 w-full mt-4 mx-2"></div>
+                            
+                            <div class="flex flex-col items-center">
+                                <div class="w-12 h-8 bg-slate-700 text-white flex items-center justify-center text-xs font-bold rounded shadow-md">SW-2</div>
+                                <span class="text-[10px] mt-1 text-slate-500">Switch Kanan</span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between w-full max-w-md">
+                            <div class="flex gap-2">
+                                <div class="w-8 h-8 bg-slate-300 rounded flex items-center justify-center text-[10px]">PC1</div>
+                                <div class="w-8 h-8 bg-slate-300 rounded flex items-center justify-center text-[10px]">PC2</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="w-8 h-8 bg-slate-300 rounded flex items-center justify-center text-[10px]">PC3</div>
+                                <div class="w-8 h-8 bg-slate-300 rounded flex items-center justify-center text-[10px]">PC4</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500 italic mt-2 text-center">Pastikan posisi rapi agar mudah saat memasang kabel.</p>
                 </div>
             </div>
         </section>
@@ -124,64 +152,87 @@
         <section class="mb-8">
             <div class="flex items-center gap-3 md:gap-4 mb-4">
                 <div class="step-badge">2</div>
-                <h2 class="text-lg md:text-xl font-bold text-slate-800">Cabling (Sangat PENTING!)</h2>
+                <h2 class="text-lg md:text-xl font-bold text-slate-800">Detail Pengkabelan (Cabling Guide)</h2>
             </div>
             <div class="ml-2 md:ml-14 space-y-4">
                 
-                <div class="step-card border-l-4 border-l-teal-500">
-                    <h4 class="font-bold text-teal-800 text-sm mb-2">A. Jalur Trunk & Router (Kabel: Straight-Through)</h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-xs text-left">
-                            <thead class="bg-teal-50">
-                                <tr><th>Dari Perangkat</th><th>Port</th><th>Ke Perangkat</th><th>Port</th><th>Fungsi</th></tr>
-                            </thead>
-                            <tbody class="divide-y">
-                                <tr>
-                                    <td class="p-2">SW-1</td>
-                                    <td class="p-2"><span class="port-badge">Gi0/1</span></td>
-                                    <td class="p-2">SW-2</td>
-                                    <td class="p-2"><span class="port-badge">Gi0/1</span></td>
-                                    <td class="p-2 font-bold text-slate-600">Trunk Antar Switch</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2">R1 (Router)</td>
-                                    <td class="p-2"><span class="port-badge">Gi0/0</span></td>
-                                    <td class="p-2">SW-1</td>
-                                    <td class="p-2"><span class="port-badge">Gi0/2</span></td>
-                                    <td class="p-2 font-bold text-slate-600">Router on Stick (Gateway)</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="step-card border-l-4 border-l-teal-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-teal-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl">BACKBONE</div>
+                    <h4 class="font-bold text-teal-800 text-sm mb-3">A. Jalur Utama (Trunk & Gateway)</h4>
+                    <p class="text-xs text-slate-600 mb-2">Gunakan kabel <span class="font-bold">Copper Straight-Through</span> (garis hitam lurus).</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-teal-50 p-3 rounded border border-teal-100">
+                            <h5 class="font-bold text-xs text-teal-700 mb-1">Router ke Switch 1</h5>
+                            <ul class="text-xs space-y-1">
+                                <li>Router R1: <span class="port-badge">GigabitEthernet0/0</span></li>
+                                <li class="text-center text-slate-400">⬇️ (Hubungkan)</li>
+                                <li>Switch SW-1: <span class="port-badge">GigabitEthernet0/2</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-teal-50 p-3 rounded border border-teal-100">
+                            <h5 class="font-bold text-xs text-teal-700 mb-1">Switch ke Switch (Trunk)</h5>
+                            <ul class="text-xs space-y-1">
+                                <li>Switch SW-1: <span class="port-badge">GigabitEthernet0/1</span></li>
+                                <li class="text-center text-slate-400">↔️ (Hubungkan)</li>
+                                <li>Switch SW-2: <span class="port-badge">GigabitEthernet0/1</span></li>
+                            </ul>
+                        </div>
                     </div>
-                    <p class="text-[10px] text-red-500 mt-2 italic">*Gunakan kabel Crossover untuk SW ke SW jika pakai switch model lama (tapi 2960 support auto-MDIX, jadi straight aman).</p>
                 </div>
 
                 <div class="step-card">
                     <h4 class="font-bold text-slate-800 text-sm mb-2">B. PC Client di SW-1 (Kiri)</h4>
-                    <ul class="text-xs text-slate-600 space-y-2">
-                        <li class="flex justify-between items-center bg-slate-50 p-2 rounded">
-                            <span>PC-1 (Siswa)</span>
-                            <span>Kabel Straight ke SW-1 <span class="port-badge">Fa0/5</span></span>
-                        </li>
-                        <li class="flex justify-between items-center bg-slate-50 p-2 rounded">
-                            <span>PC-2 (Guru)</span>
-                            <span>Kabel Straight ke SW-1 <span class="port-badge">Fa0/15</span></span>
-                        </li>
-                    </ul>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead class="bg-slate-100 text-slate-600">
+                                <tr>
+                                    <th class="p-2">PC Name</th>
+                                    <th class="p-2">VLAN</th>
+                                    <th class="p-2">Ke Port Switch (SW-1)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr>
+                                    <td class="p-2 font-bold">PC-1 (Siswa)</td>
+                                    <td class="p-2"><span class="bg-blue-100 text-blue-800 px-1 rounded">10</span></td>
+                                    <td class="p-2"><span class="port-badge">FastEthernet0/5</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-bold">PC-2 (Guru)</td>
+                                    <td class="p-2"><span class="bg-purple-100 text-purple-800 px-1 rounded">20</span></td>
+                                    <td class="p-2"><span class="port-badge">FastEthernet0/15</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="step-card">
                     <h4 class="font-bold text-slate-800 text-sm mb-2">C. PC Client di SW-2 (Kanan)</h4>
-                    <ul class="text-xs text-slate-600 space-y-2">
-                        <li class="flex justify-between items-center bg-slate-50 p-2 rounded">
-                            <span>PC-3 (Siswa)</span>
-                            <span>Kabel Straight ke SW-2 <span class="port-badge">Fa0/5</span></span>
-                        </li>
-                        <li class="flex justify-between items-center bg-slate-50 p-2 rounded">
-                            <span>PC-4 (Guru)</span>
-                            <span>Kabel Straight ke SW-2 <span class="port-badge">Fa0/15</span></span>
-                        </li>
-                    </ul>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead class="bg-slate-100 text-slate-600">
+                                <tr>
+                                    <th class="p-2">PC Name</th>
+                                    <th class="p-2">VLAN</th>
+                                    <th class="p-2">Ke Port Switch (SW-2)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr>
+                                    <td class="p-2 font-bold">PC-3 (Siswa)</td>
+                                    <td class="p-2"><span class="bg-blue-100 text-blue-800 px-1 rounded">10</span></td>
+                                    <td class="p-2"><span class="port-badge">FastEthernet0/5</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-bold">PC-4 (Guru)</td>
+                                    <td class="p-2"><span class="bg-purple-100 text-purple-800 px-1 rounded">20</span></td>
+                                    <td class="p-2"><span class="port-badge">FastEthernet0/15</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
             </div>
@@ -193,13 +244,17 @@
                 <h2 class="text-lg md:text-xl font-bold text-slate-800">Visualisasi & Labeling</h2>
             </div>
             <div class="ml-2 md:ml-14 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-sm text-slate-600 mb-3">Agar tidak bingung saat config, gunakan fitur <strong>Note</strong> dan <strong>Palette</strong> di Packet Tracer:</p>
-                <ul class="list-disc ml-5 text-xs text-slate-600 space-y-1">
-                    <li>Beri warna latar belakang berbeda untuk area VLAN 10 (misal: Merah Muda) dan VLAN 20 (Biru Muda).</li>
-                    <li>Tulis label IP Network di samping Router: <code>192.168.10.0/24 (VLAN 10)</code> dan <code>192.168.20.0/24 (VLAN 20)</code>.</li>
-                    <li>Pastikan lampu indikator link Switch ke PC berwarna <strong>Hijau</strong> (atau Oranye lalu Hijau).</li>
-                    <li>Lampu ke Router mungkin masih <strong>Merah</strong> (karena router belum di-no shutdown). Ini Normal.</li>
-                </ul>
+                <p class="text-sm text-slate-600 mb-3">Agar tidak bingung saat config, gunakan fitur <strong>Note</strong> (ikon kertas) dan <strong>Palette</strong> (ikon cat) di Packet Tracer:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600">
+                    <ul class="list-disc ml-5 space-y-1">
+                        <li>Beri kotak warna <strong>Biru Muda</strong> di belakang PC Siswa (VLAN 10).</li>
+                        <li>Beri kotak warna <strong>Merah Muda</strong> di belakang PC Guru (VLAN 20).</li>
+                    </ul>
+                    <ul class="list-disc ml-5 space-y-1">
+                        <li>Tempel Note di dekat Router: <code>IP GW: 192.168.10.1 & 20.1</code></li>
+                        <li>Pastikan indikator kabel ke PC berwarna <strong>Hijau</strong>.</li>
+                    </ul>
+                </div>
             </div>
         </section>
 
