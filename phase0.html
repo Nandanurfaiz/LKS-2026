@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 0: Persiapan Master & Paket Online - LKS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
+        .terminal { background-color: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; border-left: 4px solid #10b981; margin: 0.75rem 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow-x: auto; }
+        .prompt { color: #22c55e; font-weight: bold; }
+        .step-badge { width: 2.5rem; height: 2.5rem; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-slate-400 hover:text-emerald-600 transition p-2"><i class="fas fa-home"></i></a>
+                <span class="font-bold text-slate-800">Fase 0: Golden Master Setup</span>
+            </div>
+            <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Pre-Competition</span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
+
+        <header class="mb-10 text-center">
+            <div class="inline-block bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-xs font-bold mb-4">STRATEGI INJEKSI PAKET</div>
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">Menyiapkan "Golden Master"</h1>
+            <p class="text-slate-600">Memanfaatkan koneksi internet di awal untuk mengamankan paket HAProxy sebelum kompetisi dimulai.</p>
+        </header>
+
+        <section class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-10 shadow-sm">
+            <h2 class="text-emerald-900 font-bold mb-4 flex items-center gap-2"><i class="fas fa-lightbulb"></i> Mengapa melakukan ini?</h2>
+            <p class="text-sm text-slate-700 leading-relaxed">
+                Beberapa paket seperti <strong>HAProxy</strong> atau <strong>Roundcube</strong> terkadang tidak ditemukan di DVD-1. Dengan menginstallnya saat persiapan (saat internet masih ada), paket tersebut akan masuk ke dalam <i>APT Cache</i> di Master VM. Saat hari-H, meskipun internet dicabut, proses kloning akan membawa paket tersebut ke server tujuan.
+            </p>
+        </section>
+
+        <section class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="step-badge">1</div>
+                <h2 class="text-xl font-bold">Koneksi Internet Master</h2>
+            </div>
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-sm text-slate-600 mb-2">Pastikan Network Adapter Master VM diset ke <strong>NAT</strong> dan sudah bisa ping google.com.</p>
+                <div class="terminal">
+                    <span class="prompt">root@master:~#</span> nano /etc/apt/sources.list
+                </div>
+                <p class="text-xs text-slate-500 mt-2">Tambahkan repo resmi Debian Bookworm (pastikan internet PC Host aktif):</p>
+                <div class="bg-slate-800 text-green-400 p-3 rounded font-mono text-xs mt-1">
+                    deb http://deb.debian.org/debian bookworm main<br>
+                    deb http://security.debian.org/debian-security bookworm-security main
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="step-badge">2</div>
+                <h2 class="text-xl font-bold">Suntik Paket (Online)</h2>
+            </div>
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-sm text-slate-600 mb-2">Kita install sekarang agar Master VM memiliki semua dependensi yang diperlukan.</p>
+                <div class="terminal">
+                    <span class="prompt">root@master:~#</span> apt update<br>
+                    <span class="prompt">root@master:~#</span> apt install haproxy bind9 postfix dovecot-imapd dovecot-pop3d samba ntp -y
+                </div>
+                <p class="text-xs text-amber-600 mt-2 font-bold"><i class="fas fa-exclamation-triangle"></i> JANGAN jalankan 'apt clean' setelah ini, agar file installer (.deb) tetap tersimpan di folder /var/cache/apt/archives.</p>
+            </div>
+        </section>
+
+        <section class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="step-badge">3</div>
+                <h2 class="text-xl font-bold">Lepas Internet (Finalisasi)</h2>
+            </div>
+            <div class="ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div class="border-l-4 border-red-500 pl-4">
+                    <h4 class="font-bold text-slate-800 text-sm">Kembalikan Sources List</h4>
+                    <p class="text-xs text-slate-600 mt-1">Hapus kembali link deb http:// agar tidak dicurigai juri. Pastikan hanya deb cdrom: yang aktif.</p>
+                    <div class="terminal mt-2">
+                        <span class="prompt">root@master:~#</span> nano /etc/apt/sources.list
+                    </div>
+                </div>
+                <div class="border-l-4 border-slate-500 pl-4">
+                    <h4 class="font-bold text-slate-800 text-sm">Matikan Mesin</h4>
+                    <p class="text-xs text-slate-600 mt-1">Golden Master siap dikloning ke semua fase berikutnya tanpa butuh internet lagi.</p>
+                    <div class="terminal mt-2">
+                        <span class="prompt">root@master:~#</span> poweroff
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="bg-blue-50 border border-blue-200 p-6 rounded-xl text-center">
+            <h3 class="font-bold text-blue-800">Master Siap Digunakan!</h3>
+            <p class="text-sm text-blue-600 mt-1 mb-4">Gunakan VM ini sebagai sumber Cloning untuk Fase 2 s/d Fase 10.</p>
+            <a href="index.html" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition inline-block text-sm">Kembali ke Dashboard</a>
+        </div>
+
+    </main>
+</body>
+</html>
