@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 8: Firewall & Security - LKS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #fff7ed; color: #334155; } /* Orange-50 background */
+        
+        /* Terminal & Code Styles */
+        .terminal {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            border-left: 4px solid #f97316; /* Orange-500 */
+            margin: 0.75rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .file-content {
+            background-color: #ffedd5; /* Orange-100 */
+            border: 1px solid #fdba74;
+            color: #9a3412;
+            font-family: 'Roboto Mono', monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .prompt { color: #fb923c; font-weight: bold; } /* Orange-400 */
+        .comment { color: #94a3b8; font-style: italic; }
+        
+        /* Interactive Code */
+        .interactive-code {
+            cursor: pointer;
+            border-bottom: 1px dashed #fb923c;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .interactive-code:hover {
+            background-color: rgba(251, 146, 60, 0.2);
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+        .interactive-code::after {
+            content: '\f059';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.6rem;
+            margin-left: 4px;
+            color: #fb923c;
+            opacity: 0.7;
+        }
+
+        /* Step Badge - Orange Theme */
+        .step-badge {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); 
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(249, 115, 22, 0.3);
+        }
+
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+        .modal-content { background-color: #fefefe; margin: 20% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 1rem; position: relative; }
+        .close { color: #64748b; position: absolute; top: 10px; right: 15px; font-size: 2rem; font-weight: bold; cursor: pointer; }
+    </style>
+    <script>
+        function showHint(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerHTML = text;
+            document.getElementById('myModal').style.display = "block";
+        }
+        function closeModal() { document.getElementById('myModal').style.display = "none"; }
+        window.onclick = function(e) { if (e.target == document.getElementById('myModal')) closeModal(); }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-3 border-b pb-2">Penjelasan</h3>
+            <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+        </div>
+    </div>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-slate-400 hover:text-orange-600 transition p-2">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </a>
+                <div class="flex flex-col">
+                    <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase 8</span>
+                    <span class="text-xs text-slate-500 md:hidden">Security</span>
+                </div>
+                <span class="hidden md:inline text-slate-300">|</span>
+                <span class="hidden md:inline font-bold text-slate-800">Firewall & Router Hardening</span>
+            </div>
+            <span class="bg-orange-100 text-orange-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
+                Modul Security
+            </span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
+
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Keamanan Jaringan (IPTables)</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Kita akan mengamankan Router dari serangan luar dengan memblokir Ping (ICMP) dan membatasi akses SSH hanya untuk Admin.
+            </p>
+        </header>
+
+        <section class="bg-orange-50 border border-orange-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
+            <h2 class="text-orange-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-shield-alt"></i> Skenario Keamanan
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <h4 class="font-bold text-orange-700 mb-2">Rule 1: Block Ping (ICMP)</h4>
+                    <p class="text-slate-700 mb-2">Router tidak boleh membalas ping dari Client, tapi Client tetap bisa internetan.</p>
+                    <div class="bg-white p-2 rounded border border-orange-100 text-xs font-mono">
+                        Client -> Ping Router (10.10.10.1) -> <span class="text-red-600 font-bold">DROP</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-orange-700 mb-2">Rule 2: Secure SSH</h4>
+                    <p class="text-slate-700 mb-2">SSH ke Router hanya diizinkan dari jaringan lokal (Management), akses dari luar ditolak.</p>
+                    <div class="bg-white p-2 rounded border border-orange-100 text-xs font-mono">
+                        Client -> SSH Router (Port 22) -> <span class="text-green-600 font-bold">ACCEPT</span><br>
+                        Internet -> SSH Router -> <span class="text-red-600 font-bold">DROP</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">1</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Cek Status Awal</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Pastikan tool firewall terinstall di Router (fw).</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-600 mb-2">Di terminal <strong>Router (fw)</strong>, pastikan paket penyimpan rule ada:</p>
+                <div class="terminal">
+                    <span class="prompt">root@fw:~#</span> apt install iptables-persistent -y
+                </div>
+                <p class="text-xs text-slate-600 mt-2 mb-1">Cek aturan saat ini (Harusnya ada rule NAT dari Fase 2):</p>
+                <div class="terminal">
+                    <span class="prompt">root@fw:~#</span> iptables -t nat -L -v -n
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">2</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Blokir Ping (ICMP)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Membuat router "Invisible" dari Client.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">Penerapan Rule</h4>
+                    <p class="text-xs text-slate-600 mb-2">Perintah ini akan membuang paket Ping (echo-request) yang masuk ke Router dari arah Client (ens39).</p>
+                    <div class="terminal">
+                        <span class="comment"># Format: iptables -A INPUT -i [Interface] -p icmp -j DROP</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('iptables -A INPUT ...', '<b>Blokir Ping.</b><br>-A INPUT: Tambah aturan di pintu masuk Router.<br>-i ens39: Khusus trafik dari kabel Client.<br>-p icmp: Protokol Ping.<br>-j DROP: Buang paket (jangan balas).')">iptables -A INPUT -i ens39 -p icmp --icmp-type echo-request -j DROP</span>
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 border-l-4 border-orange-400 p-3">
+                    <h4 class="font-bold text-orange-800 text-sm mb-1"><i class="fas fa-vial"></i> Tes Langsung (Validasi)</h4>
+                    <p class="text-xs text-slate-700">Buka CMD di Laptop Client, coba ping Gateway:</p>
+                    <code class="block bg-slate-800 text-white p-2 rounded mt-1 text-xs font-mono">ping 10.10.10.1</code>
+                    <p class="text-xs text-slate-700 mt-1"><strong>Target:</strong> Request Timed Out (RTO). <br>Tapi coba ping ke Google (8.8.8.8), harusnya tetap <strong>Reply</strong>.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">3</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Amankan SSH (Port 22)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Hanya izinkan Laptop Client, blokir yang lain.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">Strategi Whitelist</h4>
+                    <p class="text-xs text-slate-600 mb-2">Kita izinkan dulu network Client, baru blokir sisanya.</p>
+                    <div class="terminal">
+                        <span class="comment"># 1. Izinkan Network Client (10.10.10.0/24) masuk SSH</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('Allow SSH Client', 'Mengizinkan semua IP dari 10.10.10.1 s.d 10.10.10.254 untuk mengakses port 22 (SSH).')">iptables -A INPUT -p tcp --dport 22 -s 10.10.10.0/24 -j ACCEPT</span><br><br>
+                        
+                        <span class="comment"># 2. Blokir SSH dari manapun selain di atas</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('Block SSH All', 'Menutup port 22 untuk semua interface dan IP lainnya (misal dari Internet atau DMZ).')">iptables -A INPUT -p tcp --dport 22 -j DROP</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">4</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Simpan Permanen</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Agar aturan tidak hilang saat restart.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="terminal">
+                    <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('netfilter-persistent save', '<b>Save Rules.</b><br>Menyimpan semua aturan IPTables yang baru saja dibuat ke dalam file konfigurasi agar dimuat ulang saat booting.')">netfilter-persistent save</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-2">
+                    <i class="fas fa-info-circle text-orange-500"></i> Jika Anda ingin menghapus semua aturan dan mulai dari nol:
+                    <code class="bg-slate-100 px-1 rounded">iptables -F</code> lalu simpan lagi.
+                </p>
+            </div>
+        </section>
+
+        <section class="bg-orange-50 border-l-4 border-orange-500 p-5 md:p-6 mb-12 shadow-sm">
+            <h2 class="text-orange-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-check-double"></i> Verifikasi Akhir
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-4 text-sm text-slate-700">
+                <div class="bg-white p-4 rounded border shadow-sm">
+                    <h5 class="font-bold text-orange-600 mb-2">1. Ping Router</h5>
+                    <p class="text-xs mb-2">Dari Laptop, ping ke 10.10.10.1.</p>
+                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Harus RTO</span>
+                </div>
+                <div class="bg-white p-4 rounded border shadow-sm">
+                    <h5 class="font-bold text-orange-600 mb-2">2. Ping Internet</h5>
+                    <p class="text-xs mb-2">Dari Laptop, ping ke 8.8.8.8.</p>
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Harus Reply</span>
+                </div>
+                <div class="bg-white p-4 rounded border shadow-sm">
+                    <h5 class="font-bold text-orange-600 mb-2">3. SSH Router</h5>
+                    <p class="text-xs mb-2">Buka PuTTY ke 10.10.10.1.</p>
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Bisa Login</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="phase7.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
+                <i class="fas fa-arrow-left"></i> Kembali ke Fase 7
+            </a>
+            <a href="phase9.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-orange-600 text-white hover:bg-orange-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
+                Lanjut ke Fase 9 (VPN) <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>

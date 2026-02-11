@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 10: LDAP Server (Centralized Auth) - LKS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #fff1f2; color: #334155; } /* Rose-50 background */
+        
+        .terminal {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            border-left: 4px solid #e11d48; /* Rose-600 */
+            margin: 0.75rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .file-content {
+            background-color: #fff1f2; /* Rose-100 */
+            border: 1px solid #fda4af;
+            color: #881337;
+            font-family: 'Roboto Mono', monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .prompt { color: #fb7185; font-weight: bold; }
+        .comment { color: #94a3b8; font-style: italic; }
+        
+        .interactive-code {
+            cursor: pointer;
+            border-bottom: 1px dashed #fb7185;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .interactive-code:hover {
+            background-color: rgba(251, 113, 133, 0.2);
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+        .interactive-code::after {
+            content: '\f059';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.6rem;
+            margin-left: 4px;
+            color: #fb7185;
+            opacity: 0.7;
+        }
+
+        .step-badge {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%); 
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(225, 29, 72, 0.3);
+        }
+
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 1rem; position: relative; }
+        .close { color: #64748b; position: absolute; top: 10px; right: 15px; font-size: 2rem; font-weight: bold; cursor: pointer; }
+    </style>
+    <script>
+        function showHint(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerHTML = text;
+            document.getElementById('myModal').style.display = "block";
+        }
+        function closeModal() { document.getElementById('myModal').style.display = "none"; }
+        window.onclick = function(e) { if (e.target == document.getElementById('myModal')) closeModal(); }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-3 border-b pb-2">Penjelasan</h3>
+            <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+        </div>
+    </div>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-slate-400 hover:text-rose-600 transition p-2">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </a>
+                <div class="flex flex-col">
+                    <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase 10</span>
+                    <span class="text-xs text-slate-500 md:hidden">Management</span>
+                </div>
+                <span class="hidden md:inline text-slate-300">|</span>
+                <span class="hidden md:inline font-bold text-slate-800">LDAP Directory Server</span>
+            </div>
+            <span class="bg-rose-100 text-rose-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
+                Identity Manager
+            </span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
+
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Manajemen User Terpusat (LDAP)</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Fase terakhir: Membangun sistem direktori untuk menyimpan akun user yang bisa digunakan secara global oleh seluruh server (SSO dasar).
+            </p>
+        </header>
+
+        <section class="bg-rose-50 border border-rose-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
+            <h2 class="text-rose-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-users-cog"></i> Target Konfigurasi
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <h4 class="font-bold text-rose-700 mb-2">Struktur Direktori:</h4>
+                    <div class="bg-white p-3 rounded border border-rose-100 overflow-x-auto">
+                        <ul class="space-y-1 font-mono text-xs md:text-sm text-slate-700">
+                            <li><strong>Base DN:</strong> dc=lks2026,dc=id</li>
+                            <li><strong>Admin DN:</strong> cn=admin,dc=lks2026,dc=id</li>
+                            <li><strong>Organizational Unit:</strong> People, Groups</li>
+                            <li><strong>Server:</strong> Internal Server (int-srv)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-rose-700 mb-2 mt-4 md:mt-0">Kenapa LDAP Penting?</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Bayangkan jika ada 100 server, Anda tidak perlu membuat user secara manual di 100 mesin tersebut. Cukup buat di LDAP, mesin lain tinggal "bertanya" ke server ini.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">1</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Install SLAPD</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Software LDAP di Debian.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-xs text-slate-600">Lakukan di <strong>Internal Server (int-srv)</strong>:</p>
+                <div class="terminal">
+                    <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('apt install slapd ...', 'Saat installasi, Anda akan diminta memasukkan Administrator Password. Gunakan password yang sama dengan server lainnya, misal: 123.')">apt install slapd ldap-utils -y</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">2</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi Domain LDAP</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menyesuaikan dengan domain lks2026.id.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div class="terminal">
+                    <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('dpkg-reconfigure slapd', '<b>PENTING:</b><br>1. Omit LDAP server config? NO<br>2. DNS Domain name: <b>lks2026.id</b><br>3. Organization name: <b>lks2026</b><br>4. Admin Password: 123<br>5. Database backend: MDB<br>6. Remove DB when slapd is purged? NO<br>7. Move old database? YES')">dpkg-reconfigure slapd</span>
+                </div>
+                <p class="text-[10px] text-rose-500 italic font-bold">*Jangan sampai salah mengetik domain lks2026.id di sini.</p>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">3</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Membuat Struktur (OU)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menggunakan file LDIF.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-xs text-slate-600">1. Buat file pondasi:</p>
+                <div class="terminal">
+                    <span class="prompt">root@int-srv:~#</span> nano struktur.ldif
+                </div>
+                <div class="file-content">
+dn: ou=People,dc=lks2026,dc=id
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=lks2026,dc=id
+objectClass: organizationalUnit
+ou: Groups</div>
+
+                <p class="text-xs text-slate-600 mt-4">2. Masukkan ke database LDAP:</p>
+                <div class="terminal">
+                    <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('ldapadd', 'Perintah ini akan meminta password admin LDAP Anda (123).')">ldapadd -x -D cn=admin,dc=lks2026,dc=id -W -f struktur.ldif</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">4</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Verifikasi Database</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Cek apakah data sudah masuk.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="terminal">
+                    <span class="prompt">root@int-srv:~#</span> <span class="interactive-code" onclick="showHint('ldapsearch', 'Mencari semua data di LDAP. Jika muncul ou=People dan ou=Groups, berarti konfigurasi Anda BERHASIL.')">ldapsearch -x -b dc=lks2026,dc=id</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gradient-to-r from-rose-600 to-rose-800 rounded-2xl p-8 text-center text-white shadow-xl">
+            <i class="fas fa-trophy text-5xl mb-4 text-yellow-400"></i>
+            <h2 class="text-2xl font-bold mb-2">MODUL A SELESAI!</h2>
+            <p class="text-rose-100 text-sm mb-6 max-w-md mx-auto">
+                Anda telah menyelesaikan seluruh konfigurasi Linux Environment untuk LKS 2026. Semua fase (1-10) telah terdokumentasi dengan baik.
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="index.html" class="bg-white text-rose-700 px-6 py-2 rounded-full font-bold hover:bg-rose-50 transition">Kembali ke Dashboard</a>
+            </div>
+        </section>
+
+        <div class="mt-12 flex justify-start">
+             <a href="phase9.html" class="px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali ke Fase 9
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>
