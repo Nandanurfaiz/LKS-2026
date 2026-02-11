@@ -24,19 +24,9 @@
             overflow-x: auto;
             white-space: pre-wrap;
         }
-        .file-content {
-            background-color: #ccfbf1;
-            border: 1px solid #5eead4;
-            color: #115e59;
-            font-family: 'Roboto Mono', monospace;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            white-space: pre;
-            overflow-x: auto;
-        }
         .prompt { color: #2dd4bf; font-weight: bold; } /* Teal-400 */
         .comment { color: #94a3b8; font-style: italic; }
+        .command { color: #facc15; } /* Yellow for key commands */
         
         /* Interactive Code */
         .interactive-code {
@@ -49,15 +39,6 @@
             background-color: rgba(45, 212, 191, 0.2);
             color: #ffffff;
             border-bottom: 1px solid #ffffff;
-        }
-        .interactive-code::after {
-            content: '\f059';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            font-size: 0.6rem;
-            margin-left: 4px;
-            color: #2dd4bf;
-            opacity: 0.7;
         }
 
         /* Step Badge - Teal */
@@ -76,9 +57,24 @@
             box-shadow: 0 2px 4px rgba(20, 184, 166, 0.3);
         }
 
+        /* Concept Cards */
+        .concept-card {
+            background: white;
+            border: 1px solid #ccfbf1;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        .concept-card:hover {
+            border-color: #14b8a6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
         /* Modal */
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
-        .modal-content { background-color: #fefefe; margin: 20% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 1rem; position: relative; }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 1rem; position: relative; }
         .close { color: #64748b; position: absolute; top: 10px; right: 15px; font-size: 2rem; font-weight: bold; cursor: pointer; }
     </style>
     <script>
@@ -96,7 +92,7 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-3 border-b pb-2">Penjelasan</h3>
+            <h3 id="modalTitle" class="text-xl font-bold text-teal-900 mb-3 border-b border-teal-100 pb-2">Penjelasan</h3>
             <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
         </div>
     </div>
@@ -122,177 +118,203 @@
 
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
-        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Virtual LAN (Layer 2)</h1>
-            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Memisahkan departemen dalam satu switch fisik menjadi beberapa jaringan logikal (VLAN) dan menghubungkan antar-switch menggunakan Trunk.
+        <header class="mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Dasar Switching (L2)</h1>
+            <p class="text-slate-600 leading-relaxed text-sm md:text-base">
+                Membangun pondasi jaringan dengan memisahkan trafik (VLAN) dan menghubungkan antar-switch (Trunking) secara aman.
             </p>
         </header>
 
-        <section class="bg-teal-50 border border-teal-200 rounded-xl p-5 md:p-6 mb-8 md:mb-12 shadow-sm">
-            <h2 class="text-teal-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-sitemap"></i> Topologi & Tabel VLAN
+        <section class="mb-12">
+            <h2 class="text-teal-900 font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-lightbulb text-yellow-500"></i> Pahami Konsepnya
             </h2>
-            <div class="grid md:grid-cols-2 gap-6 text-sm">
-                <div>
-                    <h4 class="font-bold text-teal-700 mb-2">VLAN Database:</h4>
-                    <div class="overflow-hidden rounded-lg border border-teal-200">
-                        <table class="w-full text-xs bg-white">
-                            <thead class="bg-teal-100 text-teal-800">
-                                <tr>
-                                    <th class="p-2 text-left">ID</th>
-                                    <th class="p-2 text-left">Name</th>
-                                    <th class="p-2 text-left">Ports (Range)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-teal-50">
-                                <tr>
-                                    <td class="p-2 font-mono">10</td>
-                                    <td class="p-2">SISWA</td>
-                                    <td class="p-2">Fa0/1 - Fa0/10</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 font-mono">20</td>
-                                    <td class="p-2">GURU</td>
-                                    <td class="p-2">Fa0/11 - Fa0/20</td>
-                                </tr>
-                                <tr class="bg-yellow-50">
-                                    <td class="p-2 font-mono">99</td>
-                                    <td class="p-2">NATIVE</td>
-                                    <td class="p-2">(Trunk Native)</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="concept-card">
+                    <div class="text-teal-600 text-2xl mb-2"><i class="fas fa-network-wired"></i></div>
+                    <h3 class="font-bold text-slate-800 mb-2">Apa itu VLAN?</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Bayangkan Sekolah. VLAN itu seperti <strong>"Ruang Kelas"</strong>. Siswa kelas 10 tidak boleh mendengar percakapan kelas 11. Secara fisik mereka di gedung yang sama (Switch), tapi secara logik mereka terpisah.
+                    </p>
                 </div>
-                <div>
-                    <h4 class="font-bold text-teal-700 mb-2 mt-4 md:mt-0">Perangkat:</h4>
-                    <ul class="list-disc ml-5 text-slate-700 space-y-1">
-                        <li><strong>SW-1 (Utama):</strong> 2960 Switch</li>
-                        <li><strong>SW-2 (Cabang):</strong> 2960 Switch</li>
-                        <li><strong>Trunk Link:</strong> Port Gi0/1 (SW1) ke Gi0/1 (SW2)</li>
-                    </ul>
+                <div class="concept-card">
+                    <div class="text-teal-600 text-2xl mb-2"><i class="fas fa-road"></i></div>
+                    <h3 class="font-bold text-slate-800 mb-2">Apa itu Trunk?</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Trunk itu seperti <strong>"Jalan Tol"</strong> antar gedung. Jika siswa kelas 10 ingin pindah ke gedung sebelah, mereka harus lewat jalan tol ini. Di jalan tol, setiap siswa diberi <strong>"Stempel/Tag"</strong> (802.1Q) agar satpam gedung sebelah tahu mereka dari kelas mana.
+                    </p>
+                </div>
+                <div class="concept-card">
+                    <div class="text-teal-600 text-2xl mb-2"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="font-bold text-slate-800 mb-2">Apa itu Native VLAN?</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Di jalan tol (Trunk), Native VLAN adalah satu-satunya trafik yang <strong>tidak diberi stempel (Untagged)</strong>. Defaultnya VLAN 1. Untuk keamanan (mencegah <em>VLAN Hopping Attack</em>), kita pindahkan ke VLAN yang tidak terpakai (misal VLAN 99).
+                    </p>
                 </div>
             </div>
         </section>
 
-        <section class="mb-10 md:mb-12">
-            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+        <section class="bg-teal-50 border border-teal-200 rounded-xl p-5 md:p-6 mb-10 shadow-sm">
+            <h2 class="text-teal-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-table"></i> Tabel Perencanaan
+            </h2>
+            <div class="overflow-hidden rounded-lg border border-teal-200 bg-white">
+                <table class="w-full text-xs md:text-sm">
+                    <thead class="bg-teal-100 text-teal-800 font-bold">
+                        <tr>
+                            <th class="p-3 text-left">VLAN ID</th>
+                            <th class="p-3 text-left">Nama</th>
+                            <th class="p-3 text-left">Port Anggota (Access)</th>
+                            <th class="p-3 text-left">Fungsi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-teal-50">
+                        <tr>
+                            <td class="p-3 font-mono">10</td>
+                            <td class="p-3">SISWA</td>
+                            <td class="p-3">Fa0/1 - Fa0/10</td>
+                            <td class="p-3">Jaringan Siswa</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-mono">20</td>
+                            <td class="p-3">GURU</td>
+                            <td class="p-3">Fa0/11 - Fa0/20</td>
+                            <td class="p-3">Jaringan Guru</td>
+                        </tr>
+                        <tr class="bg-yellow-50">
+                            <td class="p-3 font-mono">99</td>
+                            <td class="p-3">NATIVE</td>
+                            <td class="p-3">-</td>
+                            <td class="p-3 font-bold text-orange-600">Keamanan Trunk (Native)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-slate-500 mt-3 italic">
+                <i class="fas fa-info-circle"></i> Topologi: Kabel Cross menghubungkan SW-1 (Gi0/1) ke SW-2 (Gi0/1).
+            </p>
+        </section>
+
+        <section class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">1</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Membuat VLAN Database</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Lakukan ini di <strong>KEDUA</strong> switch (SW-1 dan SW-2).</p>
+                    <h2 class="text-lg font-bold text-slate-800">Setup Database VLAN</h2>
+                    <p class="text-slate-500 text-xs">Lakukan konfigurasi ini di <strong>SEMUA SWITCH</strong> (SW-1 dan SW-2).</p>
                 </div>
             </div>
-
-            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                 <div class="terminal">
-                    <span class="prompt">Switch></span> enable<br>
-                    <span class="prompt">Switch#</span> configure terminal<br>
-                    <span class="prompt">Switch(config)#</span> hostname SW-1<br><br>
-                    
-                    <span class="comment">! Membuat VLAN 10</span><br>
-                    <span class="prompt">SW-1(config)#</span> <span class="interactive-code" onclick="showHint('vlan 10', '<b>Membuat ID VLAN.</b><br>Angka 10 adalah identitas unik VLAN.')">vlan 10</span><br>
-                    <span class="prompt">SW-1(config-vlan)#</span> name SISWA<br>
-                    <span class="prompt">SW-1(config-vlan)#</span> exit<br><br>
+<span class="prompt">Switch></span> enable
+<span class="prompt">Switch#</span> configure terminal
+<span class="prompt">Switch(config)#</span> hostname SW-1 <span class="comment">! Ganti nama agar tidak bingung</span>
 
-                    <span class="comment">! Membuat VLAN 20</span><br>
-                    <span class="prompt">SW-1(config)#</span> vlan 20<br>
-                    <span class="prompt">SW-1(config-vlan)#</span> name GURU<br>
-                    <span class="prompt">SW-1(config-vlan)#</span> exit<br><br>
+<span class="comment">! 1. Membuat Kamar Siswa</span>
+<span class="prompt">SW-1(config)#</span> <span class="interactive-code" onclick="showHint('vlan 10', 'Perintah untuk membuat ID VLAN baru.')">vlan 10</span>
+<span class="prompt">SW-1(config-vlan)#</span> name SISWA
+<span class="prompt">SW-1(config-vlan)#</span> exit
 
-                    <span class="comment">! Membuat VLAN 99 (Native/Management)</span><br>
-                    <span class="prompt">SW-1(config)#</span> vlan 99<br>
-                    <span class="prompt">SW-1(config-vlan)#</span> name NATIVE<br>
-                    <span class="prompt">SW-1(config-vlan)#</span> exit
+<span class="comment">! 2. Membuat Kamar Guru</span>
+<span class="prompt">SW-1(config)#</span> vlan 20
+<span class="prompt">SW-1(config-vlan)#</span> name GURU
+<span class="prompt">SW-1(config-vlan)#</span> exit
+
+<span class="comment">! 3. Membuat Native VLAN (Wajib ada meski tidak ada PC-nya)</span>
+<span class="prompt">SW-1(config)#</span> vlan 99
+<span class="prompt">SW-1(config-vlan)#</span> name NATIVE
+<span class="prompt">SW-1(config-vlan)#</span> exit
                 </div>
-                <p class="text-xs text-slate-500 mt-2 italic">*Ulangi langkah yang sama persis di SW-2.</p>
             </div>
         </section>
 
-        <section class="mb-10 md:mb-12">
-            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+        <section class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Assign Port (Access Mode)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Memasukkan port PC ke "kamar" VLAN masing-masing.</p>
+                    <h2 class="text-lg font-bold text-slate-800">Assign Port Access</h2>
+                    <p class="text-slate-500 text-xs">Mendaftarkan port kabel ke VLAN yang sesuai. Ingat: Port Access hanya untuk PC/Laptop.</p>
                 </div>
             </div>
-
-            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                 <div class="terminal">
-                    <span class="comment">! Masukkan Port 1-10 ke VLAN 10</span><br>
-                    <span class="prompt">SW-1(config)#</span> interface range fa0/1-10<br>
-                    <span class="prompt">SW-1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('switchport mode access', '<b>Mode Access.</b><br>Port ini hanya boleh dilewati 1 VLAN saja (menuju end device/PC).')">switchport mode access</span><br>
-                    <span class="prompt">SW-1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('switchport access vlan 10', '<b>Assign VLAN.</b><br>Menentukan bahwa port ini milik VLAN 10.')">switchport access vlan 10</span><br>
-                    <span class="prompt">SW-1(config-if-range)#</span> exit<br><br>
+<span class="comment">! Mendaftarkan Port 1 sampai 10 ke Siswa</span>
+<span class="prompt">SW-1(config)#</span> interface range fa0/1-10
+<span class="prompt">SW-1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('switchport mode access', '<b>Mode Access</b><br>Mengunci port agar hanya bisa dilewati satu VLAN saja (tidak ada tagging). Wajib untuk port yang mengarah ke End Device (PC/Printer).')">switchport mode access</span>
+<span class="prompt">SW-1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('switchport access vlan 10', '<b>Assign VLAN</b><br>Menentukan port ini milik VLAN 10.')">switchport access vlan 10</span>
+<span class="prompt">SW-1(config-if-range)#</span> exit
 
-                    <span class="comment">! Masukkan Port 11-20 ke VLAN 20</span><br>
-                    <span class="prompt">SW-1(config)#</span> interface range fa0/11-20<br>
-                    <span class="prompt">SW-1(config-if-range)#</span> switchport mode access<br>
-                    <span class="prompt">SW-1(config-if-range)#</span> switchport access vlan 20<br>
-                    <span class="prompt">SW-1(config-if-range)#</span> exit
+<span class="comment">! Mendaftarkan Port 11 sampai 20 ke Guru</span>
+<span class="prompt">SW-1(config)#</span> interface range fa0/11-20
+<span class="prompt">SW-1(config-if-range)#</span> switchport mode access
+<span class="prompt">SW-1(config-if-range)#</span> switchport access vlan 20
+<span class="prompt">SW-1(config-if-range)#</span> exit
                 </div>
             </div>
         </section>
 
-        <section class="mb-10 md:mb-12">
-            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+        <section class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">3</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi Trunking</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Jalan tol antar-switch (Gi0/1).</p>
+                    <h2 class="text-lg font-bold text-slate-800">Konfigurasi Trunk (Jalan Tol)</h2>
+                    <p class="text-slate-500 text-xs">Konfigurasi paling krusial. Salah setting di sini, antar switch tidak terkoneksi.</p>
                 </div>
             </div>
+            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-3 mb-4 text-xs text-amber-800">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> <strong>PENTING:</strong> Konfigurasi Native VLAN harus <strong>SAMA PERSIS</strong> di kedua switch. Jika SW-1 Native 99 tapi SW-2 Native 1, akan terjadi error "Native VLAN Mismatch".
+                </div>
 
-            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-600 mb-2">Lakukan di port yang menghubungkan SW-1 dan SW-2 (misal: Gi0/1):</p>
                 <div class="terminal">
-                    <span class="prompt">SW-1(config)#</span> interface gi0/1<br>
-                    <span class="prompt">SW-1(config-if)#</span> <span class="interactive-code" onclick="showHint('switchport mode trunk', '<b>Mode Trunk.</b><br>Mengizinkan port ini membawa banyak VLAN sekaligus (Tagged Frames).')">switchport mode trunk</span><br>
-                    
-                    <span class="comment">! Security Best Practice (Opsional tapi Nilai Plus)</span><br>
-                    <span class="prompt">SW-1(config-if)#</span> <span class="interactive-code" onclick="showHint('switchport trunk native vlan 99', '<b>Native VLAN.</b><br>Memindahkan native vlan dari 1 (default) ke 99 demi keamanan.')">switchport trunk native vlan 99</span><br>
-                    <span class="prompt">SW-1(config-if)#</span> switchport trunk allowed vlan 10,20,99
+<span class="comment">! Masuk ke port penghubung antar switch (misal Gigabit 0/1)</span>
+<span class="prompt">SW-1(config)#</span> interface gi0/1
+
+<span class="comment">! 1. Aktifkan Mode Trunk</span>
+<span class="prompt">SW-1(config-if)#</span> <span class="interactive-code" onclick="showHint('switchport mode trunk', 'Mengubah port menjadi jalur pipa besar yang bisa dilewati banyak VLAN sekaligus menggunakan protokol 802.1Q.')">switchport mode trunk</span>
+
+<span class="comment">! 2. Security: Ubah Native VLAN ke 99</span>
+<span class="prompt">SW-1(config-if)#</span> <span class="interactive-code" onclick="showHint('switchport trunk native vlan 99', 'Secara default Native VLAN adalah 1. Kita ubah ke 99 agar trafik untagged (tanpa label) masuk ke VLAN 99 yang kosong, mencegah serangan VLAN Hopping.')">switchport trunk native vlan 99</span>
+
+<span class="comment">! 3. Security: Filter VLAN yang Boleh Lewat (Whitelist)</span>
+<span class="prompt">SW-1(config-if)#</span> <span class="interactive-code" onclick="showHint('switchport trunk allowed vlan 10,20,99', 'Hanya mengizinkan VLAN 10, 20, dan 99 yang boleh lewat. VLAN lain diblokir untuk mengurangi beban broadcast dan meningkatkan keamanan.')">switchport trunk allowed vlan 10,20,99</span>
                 </div>
-                <p class="text-xs text-slate-500 mt-2 italic">*Jangan lupa lakukan hal yang sama di SW-2 interface Gi0/1.</p>
+                <p class="text-xs text-slate-500 mt-2 font-bold italic">ulangi konfigurasi trunk ini pada switch lawan (SW-2) di port pasangannya.</p>
             </div>
         </section>
 
-        <section class="bg-teal-50 border-l-4 border-teal-500 p-5 md:p-6 mb-12 shadow-sm">
-            <h2 class="text-teal-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-check-circle"></i> Verifikasi & Pengujian
-            </h2>
-            
+        <section class="bg-gradient-to-br from-slate-50 to-teal-50 border border-teal-200 rounded-xl p-6 shadow-sm">
+            <h2 class="text-teal-900 font-bold mb-4"><i class="fas fa-check-double"></i> Verifikasi Hasil</h2>
             <div class="space-y-4">
-                <div class="bg-white p-4 rounded border border-teal-100">
-                    <h4 class="font-bold text-slate-800 text-sm mb-2">1. Cek Tabel VLAN</h4>
-                    <div class="terminal">
-                        <span class="prompt">SW-1#</span> show vlan brief
+                <div class="bg-white p-3 rounded border border-teal-100">
+                    <div class="flex justify-between items-center cursor-pointer" onclick="document.getElementById('check1').classList.toggle('hidden')">
+                        <span class="font-bold text-sm text-slate-700">1. Cek Tabel VLAN</span>
+                        <i class="fas fa-chevron-down text-slate-400"></i>
                     </div>
-                    <p class="text-xs text-slate-600">Pastikan VLAN 10 dan 20 ada, dan port Fa0/1-20 sudah terbagi benar.</p>
+                    <div id="check1" class="hidden mt-2">
+                        <div class="terminal"><span class="prompt">SW-1#</span> show vlan brief</div>
+                        <p class="text-xs text-slate-600">Pastikan VLAN 10, 20, 99 Aktif. Pastikan port Fa0/1-10 ada di baris VLAN 10.</p>
+                    </div>
                 </div>
 
-                <div class="bg-white p-4 rounded border border-teal-100">
-                    <h4 class="font-bold text-slate-800 text-sm mb-2">2. Cek Trunk</h4>
-                    <div class="terminal">
-                        <span class="prompt">SW-1#</span> show interfaces trunk
+                <div class="bg-white p-3 rounded border border-teal-100">
+                    <div class="flex justify-between items-center cursor-pointer" onclick="document.getElementById('check2').classList.toggle('hidden')">
+                        <span class="font-bold text-sm text-slate-700">2. Cek Status Trunk</span>
+                        <i class="fas fa-chevron-down text-slate-400"></i>
                     </div>
-                    <p class="text-xs text-slate-600">Pastikan Gi0/1 statusnya <strong>trunking</strong> dan Native VLAN adalah <strong>99</strong>.</p>
-                </div>
-
-                <div class="bg-white p-4 rounded border border-teal-100">
-                    <h4 class="font-bold text-slate-800 text-sm mb-2">3. Tes Ping (PC ke PC)</h4>
-                    <ul class="list-disc ml-5 text-xs text-slate-600 space-y-1">
-                        <li><strong>Sama VLAN:</strong> PC VLAN 10 di SW-1 ➔ Ping ➔ PC VLAN 10 di SW-2 (Harus <strong>Reply</strong>).</li>
-                        <li><strong>Beda VLAN:</strong> PC VLAN 10 ➔ Ping ➔ PC VLAN 20 (Harus <strong>RTO / Gagal</strong>).</li>
-                    </ul>
-                    <p class="text-[10px] text-teal-600 mt-1 italic">*Beda VLAN belum bisa ping karena belum ada Routing (Lanjut ke Fase B2).</p>
+                    <div id="check2" class="hidden mt-2">
+                        <div class="terminal"><span class="prompt">SW-1#</span> show interfaces trunk</div>
+                        <p class="text-xs text-slate-600">
+                            <strong>Port:</strong> Gi0/1 harus muncul.<br>
+                            <strong>Mode:</strong> on<br>
+                            <strong>Encapsulation:</strong> 802.1q<br>
+                            <strong>Native VLAN:</strong> 99 (Pastikan bukan 1)
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-12">
             <a href="index.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
                 Kembali ke Dashboard
             </a>
@@ -302,6 +324,5 @@
         </div>
 
     </main>
-
 </body>
 </html>
