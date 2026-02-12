@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #fff1f2; color: #881337; } /* Rose-50 */
+        body { font-family: 'Inter', sans-serif; background-color: #fff1f2; color: #881337; }
         
         /* Terminal Cisco Style */
         .terminal {
@@ -18,14 +18,14 @@
             border-radius: 0.5rem;
             font-family: 'Roboto Mono', monospace;
             font-size: 0.85rem;
-            border-left: 4px solid #f43f5e; /* Rose-500 */
+            border-left: 4px solid #f43f5e;
             margin: 1rem 0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
             white-space: pre-wrap;
             line-height: 1.6;
         }
-        .prompt { color: #fb7185; font-weight: bold; } /* Rose-400 */
+        .prompt { color: #fb7185; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
         
         /* Interactive Code */
@@ -33,7 +33,6 @@
             cursor: pointer;
             border-bottom: 1px dashed #fb7185;
             transition: all 0.2s;
-            position: relative;
         }
         .interactive-code:hover {
             background-color: rgba(251, 113, 133, 0.2);
@@ -41,68 +40,144 @@
             border-bottom: 1px solid #ffffff;
         }
 
-        /* Concept Card */
-        .concept-card {
-            background: white;
-            border: 1px solid #ffe4e6;
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            height: 100%;
-            transition: all 0.3s ease;
+        /* DEVICE LINK (Merah) */
+        .device-link {
+            color: #e11d48;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 1px dashed #e11d48;
+            transition: all 0.2s;
+            padding: 0 2px;
         }
-        .concept-card:hover {
-            border-color: #f43f5e;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
+        .device-link:hover { background-color: #ffe4e6; color: #be123c; }
 
         /* Step Badge */
         .step-badge {
-            width: 2.5rem;
-            height: 2.5rem;
+            width: 2.5rem; height: 2.5rem;
             background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); 
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-            font-size: 1.1rem;
+            color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; flex-shrink: 0; font-size: 1.1rem;
             box-shadow: 0 4px 6px rgba(244, 63, 94, 0.3);
         }
 
-        /* Modal */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 1rem; position: relative; }
-        .close { color: #64748b; position: absolute; top: 10px; right: 15px; font-size: 2rem; font-weight: bold; cursor: pointer; }
+        /* Modal Structure */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 95%; max-width: 800px; border-radius: 1rem; position: relative; overflow: hidden; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 2rem; font-weight: bold; color: #64748b; cursor: pointer; z-index: 100; }
+
+        /* SVG Topology Styles */
+        .topo-svg { width: 100%; height: 420px; background-color: #fff1f2; }
+        .topo-line { stroke: #94a3b8; stroke-width: 2; }
+        .topo-node { cursor: pointer; transition: all 0.3s ease; fill: #e2e8f0; stroke: #475569; stroke-width: 2; }
+        .topo-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: bold; fill: #334155; text-anchor: middle; }
+        .topo-icon { font-family: 'Font Awesome 6 Free'; font-weight: 900; text-anchor: middle; dominant-baseline: central; fill: #475569; font-size: 20px; }
+        
+        /* Active Animation */
+        .active-node rect, .active-node circle, .active-node path {
+            fill: #ffe4e6 !important; stroke: #e11d48 !important; stroke-width: 4;
+            animation: pulse-node 1.5s infinite;
+        }
+        .active-node text.topo-icon { fill: #be123c !important; }
+
+        @keyframes pulse-node {
+            0% { stroke-width: 4; }
+            50% { stroke-width: 8; stroke-opacity: 0.5; }
+            100% { stroke-width: 4; }
+        }
     </style>
     <script>
         function showHint(title, text) {
             document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalText').innerHTML = text;
-            document.getElementById('myModal').style.display = "block";
+            document.getElementById('modalContentText').innerHTML = text;
+            document.getElementById('textModal').style.display = "block";
         }
-        function closeModal() { document.getElementById('myModal').style.display = "none"; }
-        window.onclick = function(e) { if (e.target == document.getElementById('myModal')) closeModal(); }
+        function closeTextModal() { document.getElementById('textModal').style.display = "none"; }
+
+        function showTopology(deviceId) {
+            document.getElementById('topoModal').style.display = "block";
+            document.querySelectorAll('.topo-group').forEach(el => el.classList.remove('active-node'));
+            const target = document.getElementById('node-' + deviceId);
+            if(target) { target.classList.add('active-node'); }
+        }
+        function closeTopoModal() { document.getElementById('topoModal').style.display = "none"; }
+
+        window.onclick = function(e) {
+            if (e.target == document.getElementById('textModal')) closeTextModal();
+            if (e.target == document.getElementById('topoModal')) closeTopoModal();
+        }
     </script>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <div id="myModal" class="modal">
+    <div id="textModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; padding: 1.5rem; margin: 20% auto;">
+            <span class="close" onclick="closeTextModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-rose-900 mb-3 border-b border-rose-100 pb-2">Penjelasan</h3>
+            <div id="modalContentText" class="text-slate-600 text-sm leading-relaxed"></div>
+        </div>
+    </div>
+
+    <div id="topoModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="modalTitle" class="text-xl font-bold text-rose-900 mb-3 border-b border-rose-100 pb-2">Penjelasan Konsep</h3>
-            <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+            <span class="close" onclick="closeTopoModal()">&times;</span>
+            <div class="bg-slate-100 p-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="font-bold text-slate-700"><i class="fas fa-sitemap mr-2"></i>Full Topology Visualization</h3>
+                <span class="text-xs text-rose-600 font-bold bg-white px-2 py-1 rounded border">Security Layer Highlight</span>
+            </div>
+            
+            <svg class="topo-svg" viewBox="0 0 600 400">
+                <line x1="300" y1="120" x2="300" y2="40" class="topo-line" stroke-dasharray="5,2" />
+                <g id="node-internet" class="topo-group">
+                    <path d="M275,40 Q275,10 300,10 T325,40 T345,60 T300,70 T255,60 T275,40" fill="white" stroke="#64748b" stroke-width="2" />
+                    <text x="300" y="45" class="topo-icon" style="font-size:16px">&#xf0c2;</text>
+                    <text x="300" y="80" class="topo-label" style="font-size:10px">Loopback 0 (Outside)</text>
+                </g>
+
+                <g id="node-r1" class="topo-group">
+                    <circle cx="300" cy="120" r="30" class="topo-node" />
+                    <text x="300" y="120" class="topo-icon">&#xf233;</text>
+                    <text x="300" y="165" class="topo-label">R1 (Gateway)</text>
+                </g>
+
+                <line x1="300" y1="120" x2="200" y2="200" class="topo-line" />
+                <line x1="200" y1="200" x2="400" y2="200" class="topo-line" stroke-width="4" stroke="#f43f5e" stroke-opacity="0.3"/> <g id="node-sw1" class="topo-group">
+                    <rect x="175" y="185" width="50" height="30" rx="3" class="topo-node" />
+                    <text x="200" y="200" class="topo-icon" style="font-size:16px">&#xf6ff;</text>
+                    <text x="200" y="180" class="topo-label">SW-1</text>
+                </g>
+                <g id="node-sw2" class="topo-group">
+                    <rect x="375" y="185" width="50" height="30" rx="3" class="topo-node" />
+                    <text x="400" y="200" class="topo-icon" style="font-size:16px">&#xf6ff;</text>
+                    <text x="400" y="180" class="topo-label">SW-2</text>
+                </g>
+
+                <line x1="200" y1="200" x2="150" y2="280" class="topo-line" />
+                <line x1="200" y1="200" x2="250" y2="280" class="topo-line" />
+                <line x1="400" y1="200" x2="350" y2="280" class="topo-line" />
+                <line x1="400" y1="200" x2="450" y2="280" class="topo-line" />
+
+                <g id="node-siswa" class="topo-group">
+                    <rect x="135" y="280" width="30" height="25" rx="2" class="topo-node" style="fill:#dbeafe" />
+                    <rect x="335" y="280" width="30" height="25" rx="2" class="topo-node" style="fill:#dbeafe" />
+                    <text x="250" y="325" class="topo-label" style="fill:#1e40af">Zone: VLAN 10 (Siswa)</text>
+                </g>
+                <g id="node-guru" class="topo-group">
+                    <rect x="235" y="280" width="30" height="25" rx="2" class="topo-node" style="fill:#f3e8ff" />
+                    <rect x="435" y="280" width="30" height="25" rx="2" class="topo-node" style="fill:#f3e8ff" />
+                    <text x="350" y="350" class="topo-label" style="fill:#6b21a8">Zone: VLAN 20 (Guru)</text>
+                </g>
+
+                <rect x="250" y="145" width="100" height="5" fill="#f43f5e" rx="2" />
+                <text x="300" y="140" class="topo-label" style="fill:#f43f5e; font-size:9px">ACL BARRIER</text>
+            </svg>
         </div>
     </div>
 
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="phase-b4.html" class="text-slate-400 hover:text-rose-600 transition p-2">
-                    <i class="fas fa-arrow-left text-lg"></i>
-                </a>
+                <a href="phase-b4.html" class="text-slate-400 hover:text-rose-600 transition p-2"><i class="fas fa-arrow-left text-lg"></i></a>
                 <div class="flex flex-col">
                     <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase B5</span>
                     <span class="text-xs text-slate-500 md:hidden">Security Hardening</span>
@@ -110,72 +185,42 @@
                 <span class="hidden md:inline text-slate-300">|</span>
                 <span class="hidden md:inline font-bold text-slate-800">NAT, ACL & SSH</span>
             </div>
-            <span class="bg-rose-100 text-rose-700 text-[10px] md:text-xs font-bold px-3 py-1 rounded-full uppercase">
-                Final Step
-            </span>
+            <span class="bg-rose-100 text-rose-700 text-[10px] md:text-xs font-bold px-3 py-1 rounded-full uppercase">Final Step</span>
         </div>
     </nav>
 
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
-
         <header class="mb-10 text-center max-w-3xl mx-auto">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Keamanan & Translasi Jaringan</h1>
             <p class="text-slate-600 leading-relaxed text-sm md:text-base">
-                Tahap akhir: Menyembunyikan IP Lokal agar bisa akses internet (NAT) dan membatasi akses liar menggunakan Access Control List (ACL).
+                Tahap akhir: Konfigurasi keamanan di <span class="device-link" onclick="showTopology('r1')">R1</span> untuk membagi zona **Inside** (LAN) dan **Outside** (Internet).
             </p>
         </header>
-
-        <section class="mb-12">
-            <h2 class="text-rose-900 font-bold text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-shield-alt text-rose-500"></i> Pahami Konsepnya
-            </h2>
-            <div class="grid md:grid-cols-2 gap-4">
-                <div class="concept-card">
-                    <div class="text-rose-600 text-2xl mb-2"><i class="fas fa-random"></i></div>
-                    <h3 class="font-bold text-slate-800 mb-1">NAT Overload (PAT)</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Seperti resepsionis kantor. Ratusan karyawan (IP Lokal) bisa kirim surat keluar hanya menggunakan 1 alamat kantor pusat (IP Publik/WAN). Hemat IP Publik.
-                    </p>
-                </div>
-                <div class="concept-card">
-                    <div class="text-rose-600 text-2xl mb-2"><i class="fas fa-user-secret"></i></div>
-                    <h3 class="font-bold text-slate-800 mb-1">ACL (Access Control List)</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Daftar tamu. Satpam (Router) akan mengecek setiap paket. Jika nama ada di daftar "Deny", maka paket dibuang. Jika "Permit", paket boleh lewat.
-                    </p>
-                </div>
-            </div>
-        </section>
 
         <section class="mb-10">
             <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">1</div>
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Konfigurasi NAT Overload</h2>
-                    <p class="text-slate-500 text-xs">Mengizinkan VLAN 10 dan 20 akses ke Internet (Loopback 0).</p>
+                    <p class="text-slate-500 text-xs">Device: <span class="device-link" onclick="showTopology('r1')">R1 (Gateway)</span></p>
                 </div>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                
-                <h4 class="font-bold text-rose-800 text-sm mb-2">A. Tentukan Pintu Masuk & Keluar</h4>
+                <h4 class="font-bold text-rose-800 text-sm mb-2">A. Penentuan Interface (Inside vs Outside)</h4>
                 <div class="terminal">
 <span class="prompt">R1(config)#</span> interface range fa0/0.10, fa0/0.20
-<span class="prompt">R1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('ip nat inside', 'Menandai interface ini sebagai area LOKAL (Private) yang IP-nya perlu diterjemahkan.')">ip nat inside</span>
+<span class="prompt">R1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('ip nat inside', 'Interface yang mengarah ke PC Client (Zone Aman).')">ip nat inside</span>
 <span class="prompt">R1(config-if-range)#</span> exit
 
 <span class="prompt">R1(config)#</span> interface loopback 0
-<span class="prompt">R1(config-if)#</span> <span class="interactive-code" onclick="showHint('ip nat outside', 'Menandai interface ini sebagai area LUAR (Public/Internet).')">ip nat outside</span>
-<span class="prompt">R1(config-if)#</span> exit
+<span class="prompt">R1(config-if)#</span> <span class="interactive-code" onclick="showHint('ip nat outside', 'Interface yang mengarah ke Internet (Zone Luar).')">ip nat outside</span>
                 </div>
 
-                <h4 class="font-bold text-rose-800 text-sm mb-2 mt-4">B. Buat Aturan NAT (Siapa yang boleh internetan?)</h4>
+                <h4 class="font-bold text-rose-800 text-sm mb-2 mt-4">B. Aturan Izin NAT</h4>
                 <div class="terminal">
-<span class="comment">! 1. Buat Access List untuk mencatat IP Lokal</span>
 <span class="prompt">R1(config)#</span> access-list 1 permit 192.168.10.0 0.0.0.255
 <span class="prompt">R1(config)#</span> access-list 1 permit 192.168.20.0 0.0.0.255
-
-<span class="comment">! 2. Aktifkan NAT Overload</span>
-<span class="prompt">R1(config)#</span> <span class="interactive-code" onclick="showHint('ip nat inside source list 1 interface loopback 0 overload', '<b>Mantra NAT!</b><br>Artinya: Terjemahkan IP yang ada di Daftar no 1, keluarkan lewat Loopback 0. Gunakan metode Overload (banyak IP dalam 1 pintu).')">ip nat inside source list 1 interface loopback 0 overload</span>
+<span class="prompt">R1(config)#</span> <span class="interactive-code" onclick="showHint('ip nat inside source list 1 interface loopback 0 overload', 'Terjemahkan semua IP di ACL 1 menjadi IP milik Loopback 0.')">ip nat inside source list 1 interface loopback 0 overload</span>
                 </div>
             </div>
         </section>
@@ -183,28 +228,16 @@
         <section class="mb-10">
             <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">2</div>
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800">Amankan Router (SSH)</h2>
-                    <p class="text-slate-500 text-xs">Agar admin tidak perlu colok kabel console (remote setting), tapi tetap terenkripsi.</p>
-                </div>
+                <h2 class="text-lg font-bold text-slate-800">Enkripsi Remote (SSH)</h2>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-500 mb-2">Supaya <span class="device-link" onclick="showTopology('guru')">User Guru</span> bisa setting router tanpa kabel console.</p>
                 <div class="terminal">
-<span class="comment">! 1. Syarat SSH: Harus ada domain name</span>
 <span class="prompt">R1(config)#</span> ip domain-name lks2026.id
-
-<span class="comment">! 2. Buat Kunci Enkripsi (Pilih 1024 bits)</span>
-<span class="prompt">R1(config)#</span> <span class="interactive-code" onclick="showHint('crypto key generate rsa', 'Membuat kunci rahasia untuk mengacak data. Semakin besar bit (1024/2048), semakin susah dibobol.')">crypto key generate rsa</span>
-
-<span class="comment">! 3. Buat User Admin</span>
+<span class="prompt">R1(config)#</span> crypto key generate rsa <span class="comment">! (Pilih 1024)</span>
 <span class="prompt">R1(config)#</span> username admin privilege 15 secret lks123
-
-<span class="comment">! 4. Terapkan pada Jalur Remote (VTY)</span>
 <span class="prompt">R1(config)#</span> line vty 0 4
-<span class="prompt">R1(config-line)#</span> login local
-<span class="prompt">R1(config-line)#</span> <span class="interactive-code" onclick="showHint('transport input ssh', 'Memaksa admin menggunakan SSH. Telnet (yang tidak aman) otomatis ditolak.')">transport input ssh</span>
-<span class="prompt">R1(config-line)#</span> exit
-<span class="prompt">R1(config)#</span> ip ssh version 2
+<span class="prompt">R1(config-line)#</span> transport input ssh
                 </div>
             </div>
         </section>
@@ -212,43 +245,33 @@
         <section class="mb-10">
             <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">3</div>
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800">ACL Restriction (Pembatasan)</h2>
-                    <p class="text-slate-500 text-xs">Skenario: PC Siswa (VLAN 10) DILARANG ping ke Router (192.168.10.1), tapi boleh akses lain.</p>
-                </div>
+                <h2 class="text-lg font-bold text-slate-800">ACL Barrier (Pembatasan)</h2>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-500 mb-2">Melarang <span class="device-link" onclick="showTopology('siswa')">Siswa</span> melakukan Ping ke Router.</p>
                 <div class="terminal">
-<span class="comment">! Buat Access List Extended (Nomor 100-199)</span>
 <span class="prompt">R1(config)#</span> access-list 100 deny icmp 192.168.10.0 0.0.0.255 host 192.168.10.1
-<span class="prompt">R1(config)#</span> <span class="interactive-code" onclick="showHint('access-list 100 permit ip any any', '<b>Jangan Lupa Ini!</b><br>Secara default ACL itu menolak SEMUA. Baris ini penting untuk mengizinkan sisa trafik yang tidak dilarang.')">access-list 100 permit ip any any</span>
-
-<span class="comment">! Pasang Satpam (ACL) di Pintu Masuk VLAN 10</span>
+<span class="prompt">R1(config)#</span> access-list 100 permit ip any any
 <span class="prompt">R1(config)#</span> interface fa0/0.10
-<span class="prompt">R1(config-subif)#</span> <span class="interactive-code" onclick="showHint('ip access-group 100 in', 'Menerapkan aturan no 100 pada paket yang MASUK (in) ke router dari arah PC Siswa.')">ip access-group 100 in</span>
+<span class="prompt">R1(config-subif)#</span> <span class="interactive-code" onclick="showHint('ip access-group 100 in', 'Pasang filter di pintu masuk VLAN 10.')">ip access-group 100 in</span>
                 </div>
             </div>
         </section>
 
         <section class="bg-gradient-to-br from-slate-50 to-rose-50 border border-rose-200 rounded-xl p-6 shadow-sm mb-10">
             <h2 class="text-rose-900 font-bold mb-4"><i class="fas fa-flag-checkered"></i> Uji Coba Terakhir</h2>
-            <div class="space-y-4">
+            <div class="grid md:grid-cols-3 gap-4">
                 <div class="bg-white p-3 rounded border border-rose-100">
-                    <h4 class="font-bold text-sm text-slate-700">1. Tes NAT (Ping Internet)</h4>
-                    <p class="text-xs text-slate-600 mb-1">Dari PC Siswa, ping ke 8.8.8.8. Harus <strong>Reply</strong>.</p>
-                    <div class="terminal mt-1"><span class="prompt">R1#</span> show ip nat translations</div>
-                    <p class="text-xs text-slate-600 italic">Harus muncul daftar translasi (Inside Global vs Inside Local).</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Tes 1</p>
+                    <p class="text-xs text-slate-700">Ping <strong>8.8.8.8</strong> dari PC Siswa. Harus <span class="text-green-600 font-bold">Reply</span>.</p>
                 </div>
-
                 <div class="bg-white p-3 rounded border border-rose-100">
-                    <h4 class="font-bold text-sm text-slate-700">2. Tes ACL (Ping Gateway)</h4>
-                    <p class="text-xs text-slate-600 mb-1">Dari PC Siswa, ping ke 192.168.10.1.</p>
-                    <p class="text-xs font-bold text-red-500">Hasil harus: Destination host unreachable / Request Timed Out.</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Tes 2</p>
+                    <p class="text-xs text-slate-700">Ping <strong>192.168.10.1</strong> dari Siswa. Harus <span class="text-red-600 font-bold">Fail</span> (ACL).</p>
                 </div>
-                
                 <div class="bg-white p-3 rounded border border-rose-100">
-                    <h4 class="font-bold text-sm text-slate-700">3. Tes SSH</h4>
-                    <p class="text-xs text-slate-600">Dari PC Guru, buka "Telnet/SSH Client". Pilih SSH. IP: 192.168.20.1. User: admin.</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Tes 3</p>
+                    <p class="text-xs text-slate-700">SSH ke <strong>192.168.20.1</strong> dari PC Guru. Harus <span class="text-green-600 font-bold">Success</span>.</p>
                 </div>
             </div>
         </section>
@@ -256,15 +279,10 @@
         <div class="bg-slate-800 text-white rounded-xl p-8 text-center shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-400 via-blue-500 to-rose-500"></div>
             <i class="fas fa-trophy text-5xl text-yellow-400 mb-4 animate-bounce"></i>
-            <h2 class="text-3xl font-black mb-2">SELAMAT!</h2>
-            <p class="text-slate-300 mb-6">Anda telah menyelesaikan seluruh konfigurasi Modul Cisco LKS 2026.</p>
-            <div class="flex justify-center gap-4">
-                <a href="index.html" class="bg-white text-slate-900 px-6 py-2 rounded-full font-bold hover:bg-slate-200 transition">
-                    Kembali ke Dashboard
-                </a>
-            </div>
+            <h2 class="text-3xl font-black mb-2 uppercase">Finish!</h2>
+            <p class="text-slate-400 text-sm mb-6 italic">Topologi fisik Anda sekarang sudah terlindungi secara logis.</p>
+            <a href="index.html" class="bg-white text-slate-900 px-8 py-2 rounded-full font-bold hover:bg-slate-200 transition">Back to Dashboard</a>
         </div>
-
     </main>
 </body>
 </html>

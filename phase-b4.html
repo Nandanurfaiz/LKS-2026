@@ -41,6 +41,29 @@
             border-bottom: 1px solid #ffffff;
         }
 
+        /* DEVICE LINK (NEW FEATURE) */
+        .device-link {
+            color: #2563eb; /* Blue-600 */
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 1px dashed #2563eb;
+            transition: all 0.2s;
+            padding: 0 2px;
+        }
+        .device-link:hover {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-bottom: 1px solid #1e40af;
+        }
+        .device-link::after {
+            content: '\f002';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.7em;
+            margin-left: 4px;
+            opacity: 0.5;
+        }
+
         /* Concept Card */
         .concept-card {
             background: white;
@@ -72,28 +95,103 @@
             box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
         }
 
-        /* Modal */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 1rem; position: relative; }
-        .close { color: #64748b; position: absolute; top: 10px; right: 15px; font-size: 2rem; font-weight: bold; cursor: pointer; }
+        /* Modal Structure */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 95%; max-width: 800px; border-radius: 1rem; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 2rem; font-weight: bold; color: #64748b; cursor: pointer; z-index: 100; transition: color 0.2s; }
+        .close:hover { color: #ef4444; }
+
+        /* SVG Topology Styles */
+        .topo-svg { width: 100%; height: 400px; background-color: #f8fafc; }
+        .topo-line { stroke: #94a3b8; stroke-width: 3; }
+        .topo-node { cursor: pointer; transition: all 0.3s ease; fill: #e2e8f0; stroke: #475569; stroke-width: 2; }
+        .topo-label { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: bold; fill: #334155; text-anchor: middle; pointer-events: none; }
+        .topo-icon { font-family: 'Font Awesome 6 Free'; font-weight: 900; text-anchor: middle; dominant-baseline: central; fill: #475569; font-size: 24px; pointer-events: none; }
+        
+        /* Active Highlighting Animation */
+        .active-node rect, .active-node circle, .active-node path {
+            fill: #dbeafe !important; /* Blue-100 */
+            stroke: #2563eb !important; /* Blue-600 */
+            stroke-width: 4;
+            filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.6));
+            animation: pulse-node 1.5s infinite;
+        }
+        .active-node text.topo-icon { fill: #1e40af !important; }
+
+        @keyframes pulse-node {
+            0% { stroke-width: 4; }
+            50% { stroke-width: 8; stroke-opacity: 0.5; }
+            100% { stroke-width: 4; }
+        }
     </style>
     <script>
         function showHint(title, text) {
             document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalText').innerHTML = text;
-            document.getElementById('myModal').style.display = "block";
+            document.getElementById('modalContentText').innerHTML = text;
+            document.getElementById('textModal').style.display = "block";
         }
-        function closeModal() { document.getElementById('myModal').style.display = "none"; }
-        window.onclick = function(e) { if (e.target == document.getElementById('myModal')) closeModal(); }
+        function closeTextModal() { document.getElementById('textModal').style.display = "none"; }
+
+        function showTopology(deviceId) {
+            document.getElementById('topoModal').style.display = "block";
+            document.querySelectorAll('.topo-group').forEach(el => el.classList.remove('active-node'));
+            const target = document.getElementById('node-' + deviceId);
+            if(target) { target.classList.add('active-node'); }
+        }
+        function closeTopoModal() { document.getElementById('topoModal').style.display = "none"; }
+
+        window.onclick = function(e) {
+            if (e.target == document.getElementById('textModal')) closeTextModal();
+            if (e.target == document.getElementById('topoModal')) closeTopoModal();
+        }
     </script>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <div id="myModal" class="modal">
+    <div id="textModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; padding: 1.5rem; margin: 20% auto;">
+            <span class="close" onclick="closeTextModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-bold text-blue-900 mb-3 border-b border-blue-100 pb-2">Penjelasan</h3>
+            <div id="modalContentText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+        </div>
+    </div>
+
+    <div id="topoModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="modalTitle" class="text-xl font-bold text-blue-900 mb-3 border-b border-blue-100 pb-2">Penjelasan Konsep</h3>
-            <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
+            <span class="close" onclick="closeTopoModal()">&times;</span>
+            <div class="bg-slate-100 p-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="font-bold text-slate-700"><i class="fas fa-sitemap mr-2"></i>Live Topology Highlight</h3>
+                <span class="text-xs text-slate-500 bg-white px-2 py-1 rounded border">Perangkat aktif berkedip biru</span>
+            </div>
+            
+            <svg class="topo-svg" viewBox="0 0 600 350">
+                <line x1="300" y1="150" x2="300" y2="60" class="topo-line" stroke-dasharray="5,2" />
+                
+                <line x1="300" y1="150" x2="200" y2="250" class="topo-line" />
+                <line x1="200" y1="250" x2="400" y2="250" class="topo-line" />
+
+                <g id="node-cloud" class="topo-group">
+                    <path d="M270,60 Q270,30 300,30 T330,60 T350,80 T300,90 T250,80 T270,60" fill="white" stroke="#64748b" stroke-width="2" class="topo-node"/>
+                    <text x="300" y="65" class="topo-icon" style="font-size:16px">&#xf0c2;</text>
+                    <text x="300" y="85" class="topo-label" style="font-size:10px">Internet (Lo0)</text>
+                </g>
+
+                <g id="node-r1" class="topo-group">
+                    <circle cx="300" cy="150" r="30" class="topo-node" />
+                    <text x="300" y="150" class="topo-icon">&#xf233;</text>
+                    <text x="300" y="195" class="topo-label">R1 (Gateway)</text>
+                </g>
+
+                <g id="node-lan" class="topo-group">
+                    <rect x="170" y="230" width="60" height="40" rx="5" class="topo-node" />
+                    <text x="200" y="250" class="topo-icon" style="font-size:18px">&#xf6ff;</text>
+                    <text x="200" y="220" class="topo-label">SW-1</text>
+                    
+                    <rect x="370" y="230" width="60" height="40" rx="5" class="topo-node" />
+                    <text x="400" y="250" class="topo-icon" style="font-size:18px">&#xf6ff;</text>
+                    <text x="400" y="220" class="topo-label">SW-2</text>
+                </g>
+            </svg>
         </div>
     </div>
 
@@ -154,7 +252,7 @@
                 <div>
                     <h4 class="font-bold text-blue-800 mb-1">Persiapan WAN (Simulasi Internet)</h4>
                     <p class="text-blue-700 text-xs leading-relaxed mb-2">
-                        Karena di topologi ini kita hanya punya 1 Router, kita perlu membuat <strong>Interface Loopback</strong> untuk berpura-pura menjadi koneksi Internet (ISP).
+                        Membuat interface virtual <span class="device-link" onclick="showTopology('cloud')">Loopback 0</span> di R1 agar router punya jalur menuju "Internet".
                     </p>
                     <div class="terminal mt-2">
 <span class="prompt">R1(config)#</span> interface loopback 0
@@ -170,7 +268,7 @@
                 <div class="step-badge">1</div>
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Aktifkan OSPF Process</h2>
-                    <p class="text-slate-500 text-xs">Mulai layanan OSPF pada Router R1.</p>
+                    <p class="text-slate-500 text-xs">Mulai layanan OSPF pada <span class="device-link" onclick="showTopology('r1')">R1</span>.</p>
                 </div>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
@@ -178,7 +276,7 @@
 <span class="prompt">R1(config)#</span> <span class="interactive-code" onclick="showHint('router ospf 1', 'Angka 1 adalah Process ID. Hanya penanda lokal di router ini, tidak harus sama dengan router tetangga.')">router ospf 1</span>
 <span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('router-id 1.1.1.1', 'Memberi nama panggilan (KTP) untuk router ini. Formatnya mirip IP, tapi cuma label.')">router-id 1.1.1.1</span>
 
-<span class="comment">! Advertise Network (Umumkan jaringan kita ke tetangga)</span>
+<span class="comment">! Advertise Network (Umumkan jaringan LOKAL kita ke tetangga)</span>
 <span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('network 192.168.10.0 0.0.0.255 area 0', 'Mengumumkan Network VLAN 10 (Siswa) ke dalam Area Backbone (0).')">network 192.168.10.0 0.0.0.255 area 0</span>
 <span class="prompt">R1(config-router)#</span> network 192.168.20.0 0.0.0.255 area 0
 <span class="prompt">R1(config-router)#</span> network 192.168.99.0 0.0.0.255 area 0
@@ -194,11 +292,11 @@
                 <div class="step-badge">2</div>
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Security: Passive Interface</h2>
-                    <p class="text-slate-500 text-xs">Mencegah router "mengobrol" OSPF ke arah PC Client (Bahaya & Boros Bandwidth).</p>
+                    <p class="text-slate-500 text-xs">Mencegah router "mengobrol" OSPF ke arah <span class="device-link" onclick="showTopology('lan')">LAN Client</span> (Bahaya & Boros Bandwidth).</p>
                 </div>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-600 mb-2">Kita ingin OSPF hanya jalan ke arah Router ISP, jangan ke arah LAN Siswa/Guru.</p>
+                <p class="text-xs text-slate-600 mb-2">Kita ingin OSPF hanya jalan ke arah Internet, jangan ke arah LAN Siswa/Guru.</p>
                 <div class="terminal">
 <span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('passive-interface fa0/0.10', 'Mematikan pengiriman paket Hello OSPF ke VLAN 10. PC Siswa tidak perlu tahu urusan routing.')">passive-interface fa0/0.10</span>
 <span class="prompt">R1(config-router)#</span> passive-interface fa0/0.20
@@ -215,7 +313,7 @@
                 <div class="step-badge">3</div>
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Sebarkan Default Route</h2>
-                    <p class="text-slate-500 text-xs">Memberitahu router lain: "Kalau bingung mau kemana, lewat saya saja (karena saya punya internet)."</p>
+                    <p class="text-slate-500 text-xs">Memberitahu router lain: "Saya punya jalur ke <span class="device-link" onclick="showTopology('cloud')">Internet</span>."</p>
                 </div>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
