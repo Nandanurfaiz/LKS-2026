@@ -8,43 +8,59 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f0fdfa; color: #334155; }
+        body { font-family: 'Inter', sans-serif; background-color: #eff6ff; color: #1e3a8a; } /* Blue-50 */
         
         /* Terminal Cisco Style */
         .terminal {
             background-color: #0f172a;
             color: #e2e8f0;
-            padding: 1rem;
+            padding: 1.25rem;
             border-radius: 0.5rem;
             font-family: 'Roboto Mono', monospace;
             font-size: 0.85rem;
-            border-left: 4px solid #0d9488;
-            margin: 0.75rem 0;
+            border-left: 4px solid #2563eb; /* Blue-600 */
+            margin: 1rem 0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
             white-space: pre-wrap;
+            line-height: 1.6;
         }
-        .prompt { color: #2dd4bf; font-weight: bold; }
+        .prompt { color: #60a5fa; font-weight: bold; } /* Blue-400 */
         .comment { color: #94a3b8; font-style: italic; }
         
         /* Interactive Code */
         .interactive-code {
             cursor: pointer;
-            border-bottom: 1px dashed #2dd4bf;
+            border-bottom: 1px dashed #60a5fa;
             transition: all 0.2s;
             position: relative;
         }
         .interactive-code:hover {
-            background-color: rgba(45, 212, 191, 0.2);
+            background-color: rgba(96, 165, 250, 0.2);
             color: #ffffff;
             border-bottom: 1px solid #ffffff;
+        }
+
+        /* Concept Card */
+        .concept-card {
+            background: white;
+            border: 1px solid #dbeafe;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        .concept-card:hover {
+            border-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         /* Step Badge */
         .step-badge {
             width: 2.5rem;
             height: 2.5rem;
-            background: linear-gradient(135deg, #0d9488 0%, #115e59 100%); 
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); 
             color: white;
             border-radius: 50%;
             display: flex;
@@ -53,12 +69,12 @@
             font-weight: bold;
             flex-shrink: 0;
             font-size: 1.1rem;
-            box-shadow: 0 2px 4px rgba(13, 148, 136, 0.3);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
         }
 
         /* Modal */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 1rem; position: relative; }
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 1rem; position: relative; }
         .close { color: #64748b; position: absolute; top: 10px; right: 15px; font-size: 2rem; font-weight: bold; cursor: pointer; }
     </style>
     <script>
@@ -76,7 +92,7 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="modalTitle" class="text-xl font-bold text-teal-900 mb-3 border-b border-teal-100 pb-2">Penjelasan Konsep</h3>
+            <h3 id="modalTitle" class="text-xl font-bold text-blue-900 mb-3 border-b border-blue-100 pb-2">Penjelasan Konsep</h3>
             <div id="modalText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
         </div>
     </div>
@@ -84,7 +100,7 @@
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="index.html" class="text-slate-400 hover:text-teal-600 transition p-2">
+                <a href="phase-b3.html" class="text-slate-400 hover:text-blue-600 transition p-2">
                     <i class="fas fa-arrow-left text-lg"></i>
                 </a>
                 <div class="flex flex-col">
@@ -92,10 +108,10 @@
                     <span class="text-xs text-slate-500 md:hidden">Dynamic Routing</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">OSPF Single Area</span>
+                <span class="hidden md:inline font-bold text-slate-800">OSPF Configuration</span>
             </div>
-            <span class="bg-teal-100 text-teal-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
-                Modul Cisco
+            <span class="bg-blue-100 text-blue-700 text-[10px] md:text-xs font-bold px-3 py-1 rounded-full uppercase">
+                Layer 3
             </span>
         </div>
     </nav>
@@ -103,112 +119,72 @@
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
         <header class="mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-3">OSPF Routing Protocol</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Open Shortest Path First (OSPF)</h1>
             <p class="text-slate-600 leading-relaxed text-sm md:text-base">
-                Menghubungkan Router Pusat (R1) dan Router Cabang (R2) secara otomatis. Router akan saling "bertukar peta" untuk mencari jalur tercepat.
+                Mengaktifkan protokol routing dinamis agar Router R1 bisa "mengumumkan" keberadaan jaringan Siswa dan Guru ke dunia luar (Internet/WAN).
             </p>
         </header>
 
-        <section class="mb-12 grid md:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-xl border border-teal-200 shadow-sm">
-                <h3 class="font-bold text-teal-800 mb-3"><i class="fas fa-broadcast-tower mr-2"></i>Kenapa OSPF?</h3>
-                <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                    Static Routing itu capek. Jika kabel putus, admin harus setting ulang manual. OSPF (Dynamic) mendeteksi jalur mati dan mencari jalan alternatif secara otomatis dalam hitungan detik.
-                </p>
-                <div class="bg-teal-50 text-teal-700 px-3 py-2 rounded text-xs font-bold border border-teal-100 inline-block">
-                    Area 0 = Backbone (Area Wajib)
+        <section class="mb-12">
+            <h2 class="text-blue-900 font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-lightbulb text-yellow-500"></i> Pahami Konsepnya
+            </h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="concept-card">
+                    <div class="text-blue-600 text-2xl mb-2"><i class="fas fa-map-marked-alt"></i></div>
+                    <h3 class="font-bold text-slate-800 mb-1">Area 0 (Backbone)</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        OSPF membagi jaringan menjadi area-area. <strong>Area 0</strong> adalah pusat/inti. Semua router harus terhubung ke Area 0.
+                    </p>
                 </div>
-            </div>
-            <div class="bg-white p-6 rounded-xl border border-teal-200 shadow-sm">
-                <h3 class="font-bold text-teal-800 mb-3"><i class="fas fa-calculator mr-2"></i>Rumus Wildcard Mask</h3>
-                <p class="text-xs text-slate-600 leading-relaxed mb-2">
-                    OSPF tidak pakai Subnet Mask, tapi <strong>Wildcard Mask</strong>.
-                </p>
-                <div class="bg-slate-800 text-yellow-400 p-3 rounded font-mono text-xs mb-2">
-                    Total: 255.255.255.255<br>
-                    Mask : 255.255.255.0   (-)<br>
-                    ----------------------<br>
-                    Wild : 0.0.0.255
+                <div class="concept-card">
+                    <div class="text-blue-600 text-2xl mb-2"><i class="fas fa-calculator"></i></div>
+                    <h3 class="font-bold text-slate-800 mb-1">Wildcard Mask</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Kebalikan dari Subnet Mask. Digunakan OSPF untuk mencocokkan IP.
+                        <br>Subnet: <code>255.255.255.0</code> ⮕ Wildcard: <code>0.0.0.255</code>.
+                    </p>
                 </div>
-                <p class="text-[10px] text-slate-500 italic">Contoh /30 (255.255.255.252) -> Wildcard: 0.0.0.3</p>
             </div>
         </section>
 
-        <section class="bg-teal-50 border border-teal-200 rounded-xl p-5 md:p-6 mb-10 shadow-sm">
-            <h2 class="text-teal-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-map-marked-alt"></i> Topologi Routing
-            </h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-xs md:text-sm bg-white rounded-lg border border-teal-200">
-                    <thead class="bg-teal-100 text-teal-800 font-bold">
-                        <tr>
-                            <th class="p-3 text-left">Router</th>
-                            <th class="p-3 text-left">Interface</th>
-                            <th class="p-3 text-left">Network (IP)</th>
-                            <th class="p-3 text-left">Wildcard Mask</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-teal-50">
-                        <tr>
-                            <td class="p-3 font-bold" rowspan="3">R1 (Pusat)</td>
-                            <td class="p-3 font-mono">LAN (VLANs)</td>
-                            <td class="p-3 font-mono">192.168.10.0 & 20.0</td>
-                            <td class="p-3 font-mono">0.0.0.255</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3 font-mono">Serial0/0/0 (WAN)</td>
-                            <td class="p-3 font-mono">10.10.10.0/30</td>
-                            <td class="p-3 font-mono">0.0.0.3</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3 font-mono">Loopback 0</td>
-                            <td class="p-3 font-mono">1.1.1.1 (Router ID)</td>
-                            <td class="p-3 font-mono">-</td>
-                        </tr>
-                        <tr class="bg-slate-50">
-                            <td class="p-3 font-bold" rowspan="2">R2 (Cabang)</td>
-                            <td class="p-3 font-mono">Gigabit0/0 (LAN)</td>
-                            <td class="p-3 font-mono">192.168.30.0/24</td>
-                            <td class="p-3 font-mono">0.0.0.255</td>
-                        </tr>
-                        <tr class="bg-slate-50">
-                            <td class="p-3 font-mono">Serial0/0/0 (WAN)</td>
-                            <td class="p-3 font-mono">10.10.10.0/30</td>
-                            <td class="p-3 font-mono">0.0.0.3</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <section class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 text-sm">
+            <div class="flex gap-3">
+                <div class="text-blue-600 text-xl"><i class="fas fa-globe"></i></div>
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-1">Persiapan WAN (Simulasi Internet)</h4>
+                    <p class="text-blue-700 text-xs leading-relaxed mb-2">
+                        Karena di topologi ini kita hanya punya 1 Router, kita perlu membuat <strong>Interface Loopback</strong> untuk berpura-pura menjadi koneksi Internet (ISP).
+                    </p>
+                    <div class="terminal mt-2">
+<span class="prompt">R1(config)#</span> interface loopback 0
+<span class="prompt">R1(config-if)#</span> ip address 8.8.8.8 255.255.255.255
+<span class="prompt">R1(config-if)#</span> exit
+                    </div>
+                </div>
             </div>
-            <p class="text-xs text-slate-500 mt-3 italic">
-                <i class="fas fa-info-circle"></i> Skenario: R1 dan R2 terhubung lewat kabel Serial (WAN Link).
-            </p>
         </section>
 
         <section class="mb-10">
             <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">1</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Konfigurasi R1 (Head Office)</h2>
-                    <p class="text-slate-500 text-xs">Mendaftarkan semua network milik R1 ke OSPF.</p>
+                    <h2 class="text-lg font-bold text-slate-800">Aktifkan OSPF Process</h2>
+                    <p class="text-slate-500 text-xs">Mulai layanan OSPF pada Router R1.</p>
                 </div>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                 <div class="terminal">
-<span class="prompt">R1(config)#</span> <span class="interactive-code" onclick="showHint('router ospf 1', 'Angka 1 adalah Process ID. Hanya relevan di router lokal, tidak harus sama antar router. Tapi supaya rapi, samakan saja.')">router ospf 1</span>
+<span class="prompt">R1(config)#</span> <span class="interactive-code" onclick="showHint('router ospf 1', 'Angka 1 adalah Process ID. Hanya penanda lokal di router ini, tidak harus sama dengan router tetangga.')">router ospf 1</span>
+<span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('router-id 1.1.1.1', 'Memberi nama panggilan (KTP) untuk router ini. Formatnya mirip IP, tapi cuma label.')">router-id 1.1.1.1</span>
 
-<span class="comment">! 1. Tentukan Identitas (Router-ID)</span>
-<span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('router-id 1.1.1.1', 'KTP bagi Router. Jika tidak diset, ia akan mengambil IP tertinggi. Penting untuk kestabilan OSPF.')">router-id 1.1.1.1</span>
-
-<span class="comment">! 2. Umumkan Network LAN (VLAN 10 & 20)</span>
-<span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('network 192.168.10.0 0.0.0.255 area 0', 'Mendaftarkan network 192.168.10.x ke Area 0 (Backbone).')">network 192.168.10.0 0.0.0.255 area 0</span>
+<span class="comment">! Advertise Network (Umumkan jaringan kita ke tetangga)</span>
+<span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('network 192.168.10.0 0.0.0.255 area 0', 'Mengumumkan Network VLAN 10 (Siswa) ke dalam Area Backbone (0).')">network 192.168.10.0 0.0.0.255 area 0</span>
 <span class="prompt">R1(config-router)#</span> network 192.168.20.0 0.0.0.255 area 0
+<span class="prompt">R1(config-router)#</span> network 192.168.99.0 0.0.0.255 area 0
 
-<span class="comment">! 3. Umumkan Network WAN (Link ke R2)</span>
-<span class="prompt">R1(config-router)#</span> network 10.10.10.0 0.0.0.3 area 0
-
-<span class="comment">! 4. Security: Passive Interface</span>
-<span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('passive-interface g0/0.10', '<b>PENTING!</b><br>Mencegah R1 mengirim paket OSPF ke arah PC Siswa/Guru. PC tidak butuh hello packet OSPF, ini menghemat bandwidth dan meningkatkan keamanan.')">passive-interface g0/0.10</span>
-<span class="prompt">R1(config-router)#</span> passive-interface g0/0.20
+<span class="comment">! Advertise Internet (Loopback)</span>
+<span class="prompt">R1(config-router)#</span> network 8.8.8.8 0.0.0.0 area 0
                 </div>
             </div>
         </section>
@@ -217,23 +193,19 @@
             <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Konfigurasi R2 (Branch Office)</h2>
-                    <p class="text-slate-500 text-xs">Mendaftarkan network cabang agar bisa diakses pusat.</p>
+                    <h2 class="text-lg font-bold text-slate-800">Security: Passive Interface</h2>
+                    <p class="text-slate-500 text-xs">Mencegah router "mengobrol" OSPF ke arah PC Client (Bahaya & Boros Bandwidth).</p>
                 </div>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-600 mb-2">Kita ingin OSPF hanya jalan ke arah Router ISP, jangan ke arah LAN Siswa/Guru.</p>
                 <div class="terminal">
-<span class="prompt">R2(config)#</span> router ospf 1
-<span class="prompt">R2(config-router)#</span> router-id 2.2.2.2
-
-<span class="comment">! 1. Umumkan LAN Cabang</span>
-<span class="prompt">R2(config-router)#</span> network 192.168.30.0 0.0.0.255 area 0
-
-<span class="comment">! 2. Umumkan Network WAN (Link ke R1)</span>
-<span class="prompt">R2(config-router)#</span> <span class="interactive-code" onclick="showHint('network 10.10.10.0 0.0.0.3 area 0', 'Network WAN harus di-advertise di KEDUA router agar mereka bisa saling sapa (Neighbor Adjacency).')">network 10.10.10.0 0.0.0.3 area 0</span>
-
-<span class="comment">! 3. Security</span>
-<span class="prompt">R2(config-router)#</span> passive-interface g0/0
+<span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('passive-interface fa0/0.10', 'Mematikan pengiriman paket Hello OSPF ke VLAN 10. PC Siswa tidak perlu tahu urusan routing.')">passive-interface fa0/0.10</span>
+<span class="prompt">R1(config-router)#</span> passive-interface fa0/0.20
+<span class="prompt">R1(config-router)#</span> passive-interface fa0/0.99
+                </div>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-2 mt-2 text-xs text-blue-800">
+                    <strong>Tips Pro:</strong> Cara lebih cepat adalah <code>passive-interface default</code> (matikan semua), lalu <code>no passive-interface [Interface_ke_ISP]</code>.
                 </div>
             </div>
         </section>
@@ -242,53 +214,41 @@
             <div class="flex items-center gap-4 mb-4">
                 <div class="step-badge">3</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Internet & Default Route (Advanced)</h2>
-                    <p class="text-slate-500 text-xs">Menyebarkan jalur internet dari R1 ke seluruh jaringan OSPF.</p>
+                    <h2 class="text-lg font-bold text-slate-800">Sebarkan Default Route</h2>
+                    <p class="text-slate-500 text-xs">Memberitahu router lain: "Kalau bingung mau kemana, lewat saya saja (karena saya punya internet)."</p>
                 </div>
             </div>
             <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-600 mb-2">Asumsi: R1 terhubung ke ISP lewat IP 202.10.10.1. Kita buat R2 bisa internetan lewat R1.</p>
-                
                 <div class="terminal">
-<span class="comment">! Di Router 1 (Pusat)</span>
-<span class="comment">! 1. Buat rute statis ke ISP ("Pintu Keluar")</span>
-<span class="prompt">R1(config)#</span> ip route 0.0.0.0 0.0.0.0 202.10.10.1
-
-<span class="comment">! 2. Masukkan ke OSPF (Sebarkan Info)</span>
-<span class="prompt">R1(config)#</span> router ospf 1
-<span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('default-information originate', '<b>Jurus Pamungkas</b><br>Perintah ini menyuruh R1 bilang ke R2: Hei, kalau mau ke internet, lewat saya saja! Saya punya jalurnya.')">default-information originate</span>
+<span class="prompt">R1(config-router)#</span> <span class="interactive-code" onclick="showHint('default-information originate', 'Perintah sakti untuk menyebarkan rute 0.0.0.0/0 (Default Route) ke seluruh jaringan OSPF.')">default-information originate</span>
+<span class="prompt">R1(config-router)#</span> exit
                 </div>
             </div>
         </section>
 
-        <section class="bg-gradient-to-br from-slate-50 to-teal-50 border border-teal-200 rounded-xl p-6 shadow-sm">
-            <h2 class="text-teal-900 font-bold mb-4"><i class="fas fa-check-double"></i> Verifikasi OSPF</h2>
-            
+        <section class="bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-200 rounded-xl p-6 shadow-sm">
+            <h2 class="text-blue-900 font-bold mb-4"><i class="fas fa-check-double"></i> Verifikasi Hasil</h2>
             <div class="space-y-4">
-                <div class="bg-white p-4 rounded border border-teal-100">
-                    <h4 class="font-bold text-sm text-slate-800 mb-2">1. Cek Tetangga (Neighbor)</h4>
-                    <div class="terminal"><span class="prompt">R1#</span> show ip ospf neighbor</div>
+                <div class="bg-white p-3 rounded border border-blue-100">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-sm text-slate-700">1. Cek Protokol</span>
+                    </div>
+                    <div class="terminal mt-2"><span class="prompt">R1#</span> show ip protocols</div>
                     <p class="text-xs text-slate-600 mt-1">
-                        Pastikan statusnya <strong>FULL/DR</strong> atau <strong>FULL/BDR</strong> atau <strong>FULL/-</strong>.<br>
-                        Jika statusnya <em>Init</em> atau <em>2WAY</em> terus menerus, cek kabel atau MTU.
-                    </p>
-                    
-                </div>
-
-                <div class="bg-white p-4 rounded border border-teal-100">
-                    <h4 class="font-bold text-sm text-slate-800 mb-2">2. Cek Tabel Routing (Routing Table)</h4>
-                    <div class="terminal"><span class="prompt">R2#</span> show ip route</div>
-                    <p class="text-xs text-slate-600 mt-1">
-                        Di R2, cari kode <strong>O</strong> (OSPF).<br>
-                        R2 harusnya punya rute ke <code>192.168.10.0</code> (VLAN 10 R1) dan <code>O*E2 0.0.0.0/0</code> (Jalur Internet).
+                        Pastikan:<br>
+                        - Routing Protocol is "ospf 1"<br>
+                        - Router ID: 1.1.1.1<br>
+                        - Routing for Networks: (Daftar IP VLAN 10, 20, 99 muncul).
                     </p>
                 </div>
-
-                <div class="bg-white p-4 rounded border border-teal-100">
-                    <h4 class="font-bold text-sm text-slate-800 mb-2">3. Ping Lintas Cabang</h4>
-                    <p class="text-xs text-slate-600">
-                        PC Cabang (192.168.30.x) ➔ Ping ➔ PC Siswa (192.168.10.x).<br>
-                        <strong>Hasil: Reply.</strong>
+                
+                <div class="bg-white p-3 rounded border border-blue-100">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-sm text-slate-700">2. Cek Interface</span>
+                    </div>
+                    <div class="terminal mt-2"><span class="prompt">R1#</span> show ip ospf interface brief</div>
+                    <p class="text-xs text-slate-600 mt-1">
+                        Pastikan interface yang aktif OSPF muncul di sini. Interface Loopback 0 harusnya statusnya LOOP/DR.
                     </p>
                 </div>
             </div>
@@ -298,8 +258,8 @@
             <a href="phase-b3.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
                 <i class="fas fa-arrow-left mr-2"></i> Kembali ke B3
             </a>
-            <a href="phase-b5.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-teal-600 text-white hover:bg-teal-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
-                Lanjut ke Fase B5 (Security & WAN) <i class="fas fa-arrow-right"></i>
+            <a href="phase-b5.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
+                Lanjut ke Fase B5 (NAT & Security) <i class="fas fa-arrow-right"></i>
             </a>
         </div>
 

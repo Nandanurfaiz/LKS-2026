@@ -157,7 +157,7 @@
 
         <section class="mb-10 md:mb-12">
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
-                <div class="step-badge bg-red-500">1</div>
+                <div class="step-badge bg-red-500 ring-4 ring-red-100">1</div>
                 <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Matikan Nginx Lama</h2>
                     <p class="text-slate-500 text-xs md:text-sm mt-0.5">Langkah Kunci: Mencegah bentrok Port 80.</p>
@@ -165,7 +165,7 @@
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-600 mb-2">Lakukan ini di <strong>Router (fw)</strong>:</p>
+                <p class="text-xs text-slate-600 mb-2">Lakukan ini di <strong>Router (fw)</strong> sebelum install HAProxy:</p>
                 <div class="terminal">
                     <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl stop nginx', '<b>Stop Nginx.</b><br>Menghentikan layanan Nginx yang berjalan agar Port 80 bebas.')">systemctl stop nginx</span><br>
                     <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl disable nginx', '<b>Disable Nginx.</b><br>Mencegah Nginx menyala otomatis saat komputer direstart.')">systemctl disable nginx</span><br>

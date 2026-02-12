@@ -3,245 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naskah Soal Lengkap - LKS 2026</title>
+    <title>Naskah Ujian LKS 2026 - A4 Layout</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600&family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #525659; /* Abu-abu gelap ala PDF viewer */
+            margin: 0;
+            padding: 20px;
+        }
+
         .mono { font-family: 'Roboto Mono', monospace; }
-        .table-custom th { background-color: #f1f5f9; text-transform: uppercase; font-size: 0.75rem; color: #64748b; letter-spacing: 0.05em; }
-        .table-custom td { border-bottom: 1px solid #e2e8f0; }
+
+        /* Konfigurasi Kertas A4 */
+        .page {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm 20mm;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Timeline Styles */
+        .timeline-step { position: relative; padding-left: 1.5rem; border-left: 2px solid #e2e8f0; padding-bottom: 1.5rem; }
+        .timeline-step:last-child { border-left: 2px solid transparent; padding-bottom: 0; }
+        .timeline-badge { 
+            position: absolute; left: -0.65rem; top: 0; 
+            width: 1.25rem; height: 1.25rem; 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 0.7rem; 
+            background: white; border: 2px solid; 
+        }
+
+        /* PRINT CONFIGURATION - SANGAT PENTING */
+        @media print {
+            @page { 
+                size: A4; 
+                margin: 0; /* Browser margin di-nol-kan, kita atur via padding .page */
+            }
+            body { 
+                background-color: white; 
+                padding: 0; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+            .page {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                min-height: auto;
+                page-break-after: always; /* Paksa ganti halaman tiap div .page */
+                padding: 15mm 20mm; /* Margin cetak fisik */
+            }
+            .page:last-child { page-break-after: auto; }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
-<body class="text-slate-800 bg-slate-50">
+<body>
 
-    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="text-slate-400 hover:text-blue-600 transition"><i class="fas fa-arrow-left"></i> Dashboard</a>
-                <span class="text-slate-300">|</span>
-                <span class="font-bold text-slate-700">Naskah Soal Simulasi (Full)</span>
-            </div>
-            <div class="bg-red-100 text-red-600 px-3 py-1 rounded text-xs font-bold uppercase tracking-wide">
-                Rahasia
-            </div>
+    <nav class="max-w-[210mm] mx-auto mb-4 flex justify-between items-center no-print">
+        <a href="index.html" class="text-white hover:text-blue-200 font-bold transition flex items-center gap-2">
+            <i class="fas fa-arrow-left"></i> Dashboard
+        </a>
+        <div class="flex gap-3">
+            <span class="text-gray-300 text-sm py-2">Layout: A4 Paper</span>
+            <button onclick="window.print()" class="bg-blue-600 text-white px-5 py-2 rounded shadow hover:bg-blue-700 transition font-bold flex items-center gap-2">
+                <i class="fas fa-print"></i> Cetak / Simpan PDF
+            </button>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-6 py-10">
-        
-        <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 mb-8 text-center">
-            <h1 class="text-2xl font-bold mb-2">LKS SMK KABUPATEN KEBUMEN TAHUN 2026</h1>
-            <p class="text-slate-500 uppercase tracking-widest text-sm mb-6">Bidang IT Network System Administration</p>
-            <div class="flex justify-center gap-4 text-sm font-semibold flex-wrap">
-                <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded border border-blue-200">Modul A: Linux (70%)</span>
-                <span class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded border border-indigo-200">Modul B: Cisco (30%)</span>
+    <div class="page">
+        <header class="border-b-4 border-double border-slate-900 pb-6 mb-8 text-center">
+            <div class="flex justify-between items-start mb-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_LKS_SMK.png" alt="Logo" class="h-16 opacity-80 grayscale">
+                <div class="text-right">
+                    <h3 class="text-xs font-bold uppercase text-slate-500">Dokumen Negara</h3>
+                    <p class="text-[10px] text-slate-400">Sangat Rahasia</p>
+                </div>
+            </div>
+            <h1 class="text-2xl font-black tracking-tighter uppercase text-slate-900">Lomba Kompetensi Siswa (LKS) 2026</h1>
+            <h2 class="text-lg font-bold uppercase mt-1 text-slate-700">IT Network System Administration</h2>
+        </header>
+
+        <section class="mb-8">
+            <h3 class="text-sm font-bold mb-2 uppercase tracking-wide border-b border-slate-300 pb-1">A. Skenario Proyek</h3>
+            <div class="bg-slate-50 p-4 border-l-4 border-slate-800 text-xs text-justify leading-relaxed text-slate-700 italic">
+                "Perusahaan **Kebumen Digital Solution** sedang melakukan migrasi infrastruktur. Sebagai Network Engineer, Anda bertugas membangun server Linux yang redundan (High Availability) dan mengamankan jaringan Cisco menggunakan VLAN, OSPF, dan Firewall. Seluruh layanan harus dapat diakses melalui domain internal <strong>lks2026.id</strong> dengan aman dan stabil."
+            </div>
+        </section>
+
+        <section>
+            <h3 class="text-sm font-bold mb-4 uppercase tracking-wide border-b border-slate-300 pb-1">B. Algoritma Pengerjaan (Workflow)</h3>
+            
+            <div class="grid grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-bold text-blue-800 text-xs mb-3 uppercase">I. Linux Workflow</h4>
+                    <div class="space-y-0">
+                        <div class="timeline-step border-blue-200">
+                            <div class="timeline-badge border-blue-600 text-blue-600">1</div>
+                            <h5 class="font-bold text-slate-800 text-xs">Inisiasi System</h5>
+                            <p class="text-[10px] text-slate-600">Config IP Static, Hostname, & Repo Lokal pada semua Node.</p>
+                        </div>
+                        <div class="timeline-step border-blue-200">
+                            <div class="timeline-badge border-blue-600 text-blue-600">2</div>
+                            <h5 class="font-bold text-slate-800 text-xs">Router & Gateway</h5>
+                            <p class="text-[10px] text-slate-600">IP Forwarding & NAT Masquerade pada VM Router.</p>
+                        </div>
+                        <div class="timeline-step border-blue-200">
+                            <div class="timeline-badge border-blue-600 text-blue-600">3</div>
+                            <h5 class="font-bold text-slate-800 text-xs">DNS & Web</h5>
+                            <p class="text-[10px] text-slate-600">Bind9 (lks2026.id) & Nginx Web Server (Node 1 & 2).</p>
+                        </div>
+                        <div class="timeline-step border-blue-200">
+                            <div class="timeline-badge border-blue-600 text-blue-600">4</div>
+                            <h5 class="font-bold text-slate-800 text-xs">HAProxy LB</h5>
+                            <p class="text-[10px] text-slate-600 font-bold text-red-600">Stop Nginx Router! <span class="font-normal text-slate-600">Config HAProxy RoundRobin.</span></p>
+                        </div>
+                        <div class="timeline-step border-blue-200">
+                            <div class="timeline-badge border-blue-600 text-blue-600">5</div>
+                            <h5 class="font-bold text-slate-800 text-xs">Security & LDAP</h5>
+                            <p class="text-[10px] text-slate-600">LDAP, Samba, Firewall, & VPN Server.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-teal-800 text-xs mb-3 uppercase">II. Cisco Workflow</h4>
+                    <div class="space-y-0">
+                        <div class="timeline-step border-teal-200">
+                            <div class="timeline-badge border-teal-600 text-teal-600">1</div>
+                            <h5 class="font-bold text-slate-800 text-xs">L2 Switching</h5>
+                            <p class="text-[10px] text-slate-600">VLAN, Trunking (Native 99), & EtherChannel.</p>
+                        </div>
+                        <div class="timeline-step border-teal-200">
+                            <div class="timeline-badge border-teal-600 text-teal-600">2</div>
+                            <h5 class="font-bold text-slate-800 text-xs">L3 Routing</h5>
+                            <p class="text-[10px] text-slate-600">Inter-VLAN (RoaS) & DHCP Server.</p>
+                        </div>
+                        <div class="timeline-step border-teal-200">
+                            <div class="timeline-badge border-teal-600 text-teal-600">3</div>
+                            <h5 class="font-bold text-slate-800 text-xs">OSPF Area 0</h5>
+                            <p class="text-[10px] text-slate-600">Advertise Network, Passive Interface, Default Route.</p>
+                        </div>
+                        <div class="timeline-step border-teal-200">
+                            <div class="timeline-badge border-teal-600 text-teal-600">4</div>
+                            <h5 class="font-bold text-slate-800 text-xs">WAN Security</h5>
+                            <p class="text-[10px] text-slate-600">NAT Overload (PAT), ACL, & Port Security.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="absolute bottom-6 left-0 right-0 text-center text-[10px] text-slate-400">
+            Halaman 1 dari 3 - LKS IT NSA 2026
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div class="flex items-center gap-2 mb-6 border-b-2 border-slate-800 pb-2">
+            <span class="bg-slate-900 text-white px-2 py-1 font-bold text-xs rounded">MODUL A</span>
+            <h2 class="text-xl font-bold uppercase text-slate-800">Linux System Administration</h2>
+        </div>
+
+        <div class="mb-6 grid grid-cols-2 gap-4">
+            <div class="bg-yellow-50 border border-yellow-200 p-3 rounded">
+                <h4 class="text-yellow-900 font-bold uppercase text-[10px] mb-1">Domain Parameters</h4>
+                <div class="text-xs text-yellow-800 space-y-1">
+                    <div class="flex justify-between border-b border-yellow-100"><span>Domain:</span> <span class="font-mono font-bold">lks2026.id</span></div>
+                    <div class="flex justify-between border-b border-yellow-100"><span>Web URL:</span> <span class="font-mono">www.lks2026.id</span></div>
+                    <div class="flex justify-between"><span>Mail URL:</span> <span class="font-mono">mail.lks2026.id</span></div>
+                </div>
+            </div>
+            <div class="bg-indigo-50 border border-indigo-200 p-3 rounded">
+                <h4 class="text-indigo-900 font-bold uppercase text-[10px] mb-1">IP Allocation</h4>
+                <div class="text-xs text-indigo-800 space-y-1">
+                    <div class="flex justify-between border-b border-indigo-100"><span>DMZ Net:</span> <span class="font-mono">172.16.10.0/24</span></div>
+                    <div class="flex justify-between border-b border-indigo-100"><span>INT Net:</span> <span class="font-mono">192.168.10.0/24</span></div>
+                    <div class="flex justify-between"><span>Router GW:</span> <span class="font-mono">.1 (Last Octet)</span></div>
+                </div>
             </div>
         </div>
 
-        <div class="relative mb-12">
-            <div class="absolute -left-6 top-0 bottom-0 w-2 bg-blue-500 rounded-r"></div>
-            <h2 class="text-2xl font-bold text-blue-800 mb-6 flex items-center gap-2">
-                <i class="fab fa-linux"></i> BAGIAN 1: MODUL A (Linux Environment)
-            </h2>
+        <table class="w-full text-xs text-left mb-8 border border-slate-300">
+            <thead class="bg-slate-800 text-white font-bold uppercase">
+                <tr>
+                    <th class="px-3 py-2">Hostname</th>
+                    <th class="px-3 py-2">Role / Fungsi</th>
+                    <th class="px-3 py-2">Konfigurasi IP</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-700">
+                <tr>
+                    <td class="px-3 py-2 font-bold bg-slate-50">fw-kbm</td>
+                    <td class="px-3 py-2">Router, NAT, HAProxy, Firewall</td>
+                    <td class="px-3 py-2 mono">eth0:DHCP | eth1:172.16.10.1 | eth2:192.168.10.1</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2 font-bold bg-slate-50">web-node1</td>
+                    <td class="px-3 py-2">Web Server 1 (Backend)</td>
+                    <td class="px-3 py-2 mono">172.16.10.10/24 (GW: .1)</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2 font-bold bg-slate-50">web-node2</td>
+                    <td class="px-3 py-2">Web Server 2 (Backend)</td>
+                    <td class="px-3 py-2 mono">172.16.10.20/24 (GW: .1)</td>
+                </tr>
+                <tr>
+                    <td class="px-3 py-2 font-bold bg-slate-50">data-center</td>
+                    <td class="px-3 py-2">LDAP, Samba, NTP</td>
+                    <td class="px-3 py-2 mono">192.168.10.10/24 (GW: .1)</td>
+                </tr>
+            </tbody>
+        </table>
 
-            <section class="mb-8">
-                <h3 class="font-bold text-slate-700 mb-2 border-b pb-1">A. Skenario Modul A</h3>
-                <p class="text-slate-600 leading-relaxed bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm">
-                    Anda bertindak sebagai Administrator Jaringan di perusahaan "Kebumen Tech". Anda diminta membangun infrastruktur jaringan yang aman dengan memisahkan layanan publik (DMZ) dan layanan internal (INT). Anda harus mengkonfigurasi Router, DNS, Web Server dengan Load Balancing, Mail Server, serta layanan direktori (LDAP) dan File Sharing (Samba). Seluruh sistem harus berjalan di atas OS <strong>Debian 12</strong> menggunakan VMWare Workstation.
-                </p>
-            </section>
-
-            <section class="mb-8">
-                <h3 class="font-bold text-slate-700 mb-2 border-b pb-1">B. Konfigurasi IP & Domain (Modul A)</h3>
-                <div class="bg-white rounded-lg border border-slate-200 overflow-hidden mb-4 shadow-sm">
-                    <table class="w-full text-sm text-left table-custom">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3">Device</th>
-                                <th class="px-6 py-3">Zone</th>
-                                <th class="px-6 py-3">IP Address</th>
-                                <th class="px-6 py-3">Gateway</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-600">
-                            <tr>
-                                <td class="px-6 py-3 font-bold">Router (fw)</td>
-                                <td class="px-6 py-3"><span class="bg-orange-100 text-orange-800 px-2 py-0.5 rounded text-xs font-bold">DMZ</span></td>
-                                <td class="px-6 py-3 mono">172.16.10.1/24</td>
-                                <td class="px-6 py-3">-</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-3"></td>
-                                <td class="px-6 py-3"><span class="bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs font-bold">INT</span></td>
-                                <td class="px-6 py-3 mono">192.168.10.1/24</td>
-                                <td class="px-6 py-3">-</td>
-                            </tr>
-                            <tr class="bg-slate-50">
-                                <td class="px-6 py-3 font-bold">Web01 & Web02</td>
-                                <td class="px-6 py-3">DMZ</td>
-                                <td class="px-6 py-3 mono">172.16.10.10 & .20</td>
-                                <td class="px-6 py-3 mono">172.16.10.1</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-3 font-bold">Int-Srv</td>
-                                <td class="px-6 py-3">INT</td>
-                                <td class="px-6 py-3 mono">192.168.10.10</td>
-                                <td class="px-6 py-3 mono">192.168.10.1</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="bg-blue-50 px-4 py-3 rounded border border-blue-200 text-sm text-blue-800 mono">
-                    <strong>Domain:</strong> lks2026.id | <strong>Web:</strong> www.lks2026.id (HTTPS) | <strong>Mail:</strong> mail.lks2026.id
-                </div>
-            </section>
-
-            <section>
-                <h3 class="font-bold text-slate-700 mb-4 border-b pb-1">C. Job Sheet Modul A</h3>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
-                        <h4 class="font-bold text-sm mb-2 text-blue-600">1. Router & Firewall</h4>
-                        <ul class="list-disc ml-4 space-y-1 text-xs text-slate-600">
-                            <li>IP Forwarding & NAT (Masquerade).</li>
-                            <li>DHCP Server (Interface Client).</li>
-                            <li>Block PING Client ke DMZ (Allow Web).</li>
-                            <li>SSH ke Router hanya dari INT.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
-                        <h4 class="font-bold text-sm mb-2 text-blue-600">2. DNS, Web & LB</h4>
-                        <ul class="list-disc ml-4 space-y-1 text-xs text-slate-600">
-                            <li>DNS Zone: lks2026.id.</li>
-                            <li>Web01 & Web02 (Nginx/Apache).</li>
-                            <li>HAProxy Load Balancer (Round Robin).</li>
-                            <li>HTTPS Self-signed Certificate.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
-                        <h4 class="font-bold text-sm mb-2 text-blue-600">3. Internal Services</h4>
-                        <ul class="list-disc ml-4 space-y-1 text-xs text-slate-600">
-                            <li>Mail Server (Postfix/Dovecot).</li>
-                            <li>Webmail (Roundcube).</li>
-                            <li>LDAP Server (User Management).</li>
-                            <li>Samba (Integrasi LDAP).</li>
-                        </ul>
-                    </div>
-                    <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
-                        <h4 class="font-bold text-sm mb-2 text-blue-600">4. Remote Access</h4>
-                        <ul class="list-disc ml-4 space-y-1 text-xs text-slate-600">
-                            <li>VPN Server (Wireguard/OpenVPN).</li>
-                            <li>Client Connect to VPN.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
+        <div class="grid grid-cols-2 gap-8 text-xs text-slate-800">
+            <div>
+                <h4 class="font-bold border-b border-slate-300 pb-1 mb-3 uppercase text-blue-700">A1. Web & Infrastructure</h4>
+                <ul class="space-y-3">
+                    <li class="flex gap-2 items-start"><input type="checkbox" class="mt-0.5"> <span>Install Bind9 & buat Zone <strong>lks2026.id</strong>.</span></li>
+                    <li class="flex gap-2 items-start"><input type="checkbox" class="mt-0.5"> <span>Install Nginx pada web-node1 & web-node2 dengan konten index.html yang berbeda (identitas node).</span></li>
+                    <li class="flex gap-2 items-start"><input type="checkbox" class="mt-0.5"> <span>Konfigurasi <strong>HAProxy</strong> (Port 80) dengan algoritma Round Robin ke backend web.</span></li>
+                    <li class="flex gap-2 items-start"><input type="checkbox" class="mt-0.5"> <span>Pastikan Failover berjalan (Web tetap akses meski 1 node mati).</span></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold border-b border-slate-300 pb-1 mb-3 uppercase text-blue-700">A2. Security & Storage</h4>
+                <ul class="space-y-3">
+                    <li class="flex gap-2 items-start"><input type="checkbox" class="mt-0.5"> <span>Deploy <strong>OpenLDAP</strong> Server & PHPLDAPAdmin.</span></li>
+                    <li class="flex gap-2 items-start"><input type="checkbox" class="mt-0.5"> <span>Konfigurasi <strong>Samba Share</strong> "Public" & "Secure" (Auth via LDAP).</span></li>
+                    <li class="flex gap-2 items-start"><input type="checkbox" class="mt-0.5"> <span><strong>Iptables:</strong> Drop ICMP (Ping) dari Client ke Router. Allow SSH from Internal.</span></li>
+                    <li class="flex gap-2 items-start"><input type="checkbox" class="mt-0.5"> <span>Setup <strong>VPN Server</strong> (PPTP/Wireguard) network 10.10.10.0/24.</span></li>
+                </ul>
+            </div>
         </div>
 
-        <div class="relative mt-16 pt-8 border-t-4 border-slate-200">
-            <div class="absolute -left-6 top-8 bottom-0 w-2 bg-indigo-500 rounded-r"></div>
-            <h2 class="text-2xl font-bold text-indigo-800 mb-6 flex items-center gap-2">
-                <i class="fas fa-network-wired"></i> BAGIAN 2: MODUL B (Cisco Packet Tracer)
-            </h2>
+        <div class="absolute bottom-6 left-0 right-0 text-center text-[10px] text-slate-400">
+            Halaman 2 dari 3 - LKS IT NSA 2026
+        </div>
+    </div>
 
-            <section class="mb-8">
-                <h3 class="font-bold text-slate-700 mb-2 border-b pb-1">A. Skenario Modul B</h3>
-                <p class="text-slate-600 leading-relaxed bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm">
-                    "Bank Jaringan Kebumen" membutuhkan infrastruktur jaringan baru yang redundant dan aman. Anda diminta merancang jaringan menggunakan <strong>Cisco Packet Tracer</strong>. Jaringan terdiri dari kantor pusat (HQ) yang memiliki 3 VLAN (Management, Staff, Server) dan terhubung ke Router ISP. Anda harus menerapkan Dynamic Routing OSPF, Redundansi Gateway (FHRP), serta keamanan Port Security pada Switch akses.
-                </p>
-            </section>
 
-             <section class="mb-8">
-                <h3 class="font-bold text-slate-700 mb-2 border-b pb-1">B. Tabel VLAN & Network (Modul B)</h3>
-                <div class="bg-white rounded-lg border border-slate-200 overflow-hidden mb-4 shadow-sm">
-                    <table class="w-full text-sm text-left table-custom">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3">VLAN ID</th>
-                                <th class="px-6 py-3">Nama VLAN</th>
-                                <th class="px-6 py-3">Network ID</th>
-                                <th class="px-6 py-3">Gateway (HSRP)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-600">
-                            <tr>
-                                <td class="px-6 py-3 mono font-bold">10</td>
-                                <td class="px-6 py-3">Management</td>
-                                <td class="px-6 py-3 mono">10.10.10.0/24</td>
-                                <td class="px-6 py-3 mono">10.10.10.254</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-3 mono font-bold">20</td>
-                                <td class="px-6 py-3">Staff_Bank</td>
-                                <td class="px-6 py-3 mono">10.10.20.0/24</td>
-                                <td class="px-6 py-3 mono">10.10.20.254</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-3 mono font-bold">30</td>
-                                <td class="px-6 py-3">Server_Farm</td>
-                                <td class="px-6 py-3 mono">10.10.30.0/24</td>
-                                <td class="px-6 py-3 mono">10.10.30.254</td>
-                            </tr>
-                             <tr>
-                                <td class="px-6 py-3 mono font-bold">99</td>
-                                <td class="px-6 py-3">Native/Parking</td>
-                                <td class="px-6 py-3 mono">-</td>
-                                <td class="px-6 py-3 mono">-</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section>
-                <h3 class="font-bold text-slate-700 mb-4 border-b pb-1">C. Job Sheet Modul B</h3>
-                <div class="space-y-4">
-                    
-                    <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex gap-4">
-                        <div class="bg-indigo-100 text-indigo-600 font-bold w-8 h-8 flex items-center justify-center rounded-full shrink-0">1</div>
-                        <div>
-                            <h4 class="font-bold text-sm text-indigo-800 mb-1">Switching Technologies</h4>
-                            <p class="text-xs text-slate-600 mb-2">Implementasi L2 Security & Management pada Switch Distribusi (DSW) dan Akses (ASW).</p>
-                            <ul class="list-disc ml-4 space-y-1 text-xs text-slate-500">
-                                <li>Konfigurasi <strong>VLAN Database</strong> & <strong>VTP Mode Client/Server</strong> (Domain: lks2026).</li>
-                                <li>Konfigurasi <strong>Trunking (802.1q)</strong> & Native VLAN 99.</li>
-                                <li>Konfigurasi <strong>EtherChannel (LACP)</strong> antar Switch Distribusi.</li>
-                                <li><strong>Port Security:</strong> Max 2 MAC Address, Violation Shutdown pada port akses.</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex gap-4">
-                        <div class="bg-indigo-100 text-indigo-600 font-bold w-8 h-8 flex items-center justify-center rounded-full shrink-0">2</div>
-                        <div>
-                            <h4 class="font-bold text-sm text-indigo-800 mb-1">Routing & Redundancy (L3)</h4>
-                            <p class="text-xs text-slate-600 mb-2">Implementasi Routing Dinamis dan Gateway Redundancy pada Router/L3 Switch.</p>
-                            <ul class="list-disc ml-4 space-y-1 text-xs text-slate-500">
-                                <li>Konfigurasi <strong>Inter-VLAN Routing</strong>.</li>
-                                <li>Konfigurasi <strong>OSPF Process ID 10</strong> Area 0. Pastikan semua network ter-advertise.</li>
-                                <li>Konfigurasi <strong>FHRP (HSRP)</strong> pada VLAN 10, 20, 30. Router 1 menjadi Active Gateway untuk VLAN 10, Router 2 untuk VLAN 20 (Load Balancing).</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex gap-4">
-                        <div class="bg-indigo-100 text-indigo-600 font-bold w-8 h-8 flex items-center justify-center rounded-full shrink-0">3</div>
-                        <div>
-                            <h4 class="font-bold text-sm text-indigo-800 mb-1">Services & WAN</h4>
-                            <ul class="list-disc ml-4 space-y-1 text-xs text-slate-500">
-                                <li>Konfigurasi <strong>DHCP Server</strong> pada Router HQ untuk VLAN Staff & Management (Exclude 10 IP pertama).</li>
-                                <li>Konfigurasi <strong>NAT Overload (PAT)</strong> agar VLAN Staff bisa ping ke Internet (8.8.8.8).</li>
-                                <li>Konfigurasi <strong>SSH Version 2</strong> pada semua perangkat jaringan (User: admin, Pass: lks2026).</li>
-                                <li>Konfigurasi <strong>NTP Server</strong> (arahkan ke server internet).</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
+    <div class="page">
+        <div class="flex items-center gap-2 mb-6 border-b-2 border-slate-800 pb-2">
+            <span class="bg-slate-900 text-white px-2 py-1 font-bold text-xs rounded">MODUL B</span>
+            <h2 class="text-xl font-bold uppercase text-slate-800">Cisco Network Infrastructure</h2>
         </div>
 
-    </main>
+        <div class="mb-6 bg-blue-50 border border-blue-200 p-4 rounded text-xs text-blue-900">
+            <div class="grid grid-cols-2 gap-8">
+                <div>
+                    <h5 class="font-bold border-b border-blue-200 mb-2">VLAN Database</h5>
+                    <ul class="space-y-1 font-mono">
+                        <li>ID 10: SISWA (192.168.10.0/24)</li>
+                        <li>ID 20: GURU  (192.168.20.0/24)</li>
+                        <li>ID 99: NATIVE (Management)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold border-b border-blue-200 mb-2">Protocol Specs</h5>
+                    <ul class="space-y-1">
+                        <li>Routing: <strong>OSPF Process ID 1</strong> (Area 0)</li>
+                        <li>EtherChannel: <strong>LACP</strong> (Mode Active)</li>
+                        <li>STP Mode: <strong>Rapid-PVST</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-12 border-2 border-slate-800 p-6 rounded bg-white">
+            <h4 class="font-bold text-center uppercase mb-6 text-sm underline">Daftar Tugas Konfigurasi (Checklist)</h4>
+            <div class="grid grid-cols-2 gap-x-12 gap-y-4 text-xs">
+                <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4 accent-black"> <span><strong>Trunking:</strong> Encapsulation Dot1Q & Native VLAN 99.</span></label>
+                <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4 accent-black"> <span><strong>OSPF:</strong> Advertise LAN & WAN Network di Area 0.</span></label>
+                
+                <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4 accent-black"> <span><strong>EtherChannel:</strong> Group 1 LACP Active antar SW1-SW2.</span></label>
+                <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4 accent-black"> <span><strong>DHCP:</strong> Pool Siswa & Guru di Router HQ.</span></label>
+                
+                <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4 accent-black"> <span><strong>Inter-VLAN:</strong> Router-on-a-Stick (Sub-interfaces).</span></label>
+                <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4 accent-black"> <span><strong>Port Security:</strong> Sticky MAC, Max 1, Violation Restrict.</span></label>
+                
+                <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4 accent-black"> <span><strong>NAT:</strong> Overload (PAT) interface Serial/WAN.</span></label>
+                <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4 accent-black"> <span><strong>ACL:</strong> Block ICMP from Guru to Server Farm.</span></label>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-end mt-auto pt-10">
+            <div class="text-center w-40">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-16">Peserta</p>
+                <div class="border-b border-slate-900 mb-1"></div>
+                <p class="font-mono text-[10px]">Tanda Tangan</p>
+            </div>
+            
+            <div class="text-center border border-slate-300 p-2 rounded">
+                <p class="text-[8px] font-mono text-slate-400">VERIFIED CODE</p>
+                <p class="text-sm font-bold font-mono">KBM-2026-FINAL</p>
+            </div>
+
+            <div class="text-center w-40">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-16">Juri / Penguji</p>
+                <div class="border-b border-slate-900 mb-1"></div>
+                <p class="font-mono text-[10px]">Tanda Tangan</p>
+            </div>
+        </div>
+
+        <div class="absolute bottom-6 left-0 right-0 text-center text-[10px] text-slate-400">
+            Halaman 3 dari 3 - LKS IT NSA 2026
+        </div>
+    </div>
+
 </body>
 </html>
