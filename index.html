@@ -82,7 +82,7 @@
                         <i class="fas fa-globe text-slate-300 group-hover:text-purple-500 transition"></i>
                     </div>
                     <h3 class="font-bold text-lg text-slate-800 mb-1">3. DNS & Web Server</h3>
-                    <p class="text-sm text-slate-500">Bind9 (Domain) & Nginx Multi-Server (Web01, Web02).</p>
+                    <p class="text-sm text-slate-500">Bind9 (Domain) & Apache Secure Web (HTTPS).</p>
                 </a>
 
                 <a href="phase4.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-yellow-400 group">
@@ -99,8 +99,8 @@
                         <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded">COMMUNICATION</span>
                         <i class="fas fa-envelope text-slate-300 group-hover:text-red-500 transition"></i>
                     </div>
-                    <h3 class="font-bold text-lg text-slate-800 mb-1">5. Mail Server</h3>
-                    <p class="text-sm text-slate-500">Postfix, Dovecot & Telnet/Thunderbird Test.</p>
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">5. Mail & Webmail</h3>
+                    <p class="text-sm text-slate-500">Postfix, Dovecot & Roundcube Webmail.</p>
                 </a>
 
                 <a href="phase6.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-emerald-400 group">
@@ -127,7 +127,7 @@
                         <i class="fas fa-shield-alt text-slate-300 group-hover:text-orange-500 transition"></i>
                     </div>
                     <h3 class="font-bold text-lg text-slate-800 mb-1">8. Firewall & Router</h3>
-                    <p class="text-sm text-slate-500">NAT, Block Ping, & Port Security.</p>
+                    <p class="text-sm text-slate-500">Virtual IP, NAT, Block Ping.</p>
                 </a>
 
                 <a href="phase9.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-cyan-400 group">
@@ -156,18 +156,16 @@
                 <div class="h-px bg-slate-200 flex-1"></div>
             </div>
 
-            
-
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
                 <a href="phase-b0.html" class="phase-card bg-teal-50 p-6 rounded-xl border border-teal-200 shadow-sm hover:border-teal-500 group">
-    <div class="flex justify-between items-start mb-4">
-        <span class="bg-teal-200 text-teal-800 text-[10px] font-extrabold px-2 py-1 rounded">START</span>
-        <i class="fas fa-project-diagram text-teal-400 group-hover:text-teal-600 transition"></i>
-    </div>
-    <h3 class="font-bold text-lg text-slate-800 mb-1">B0. Topologi Fisik</h3>
-    <p class="text-sm text-slate-500">Drag & Drop Perangkat dan Pengkabelan (Cabling) yang Benar.</p>
-</a>
-
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="bg-teal-200 text-teal-800 text-[10px] font-extrabold px-2 py-1 rounded">START</span>
+                        <i class="fas fa-project-diagram text-teal-400 group-hover:text-teal-600 transition"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">B0. Topologi Fisik</h3>
+                    <p class="text-sm text-slate-500">Drag & Drop Perangkat dan Pengkabelan (Cabling).</p>
+                </a>
 
                 <a href="phase-b1.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-teal-400 group">
                     <div class="flex justify-between items-start mb-4">
@@ -175,16 +173,16 @@
                         <i class="fas fa-network-wired text-slate-300 group-hover:text-teal-500 transition"></i>
                     </div>
                     <h3 class="font-bold text-lg text-slate-800 mb-1">B1. VLAN & Trunking</h3>
-                    <p class="text-sm text-slate-500">Database VLAN, Access/Voice Port & 802.1Q.</p>
+                    <p class="text-sm text-slate-500">VLAN Database, Trunking 802.1Q & <strong>VTP Protocol</strong>.</p>
                 </a>
 
                 <a href="phase-b2.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-teal-400 group">
                     <div class="flex justify-between items-start mb-4">
-                        <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-1 rounded">INTER-VLAN</span>
+                        <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-1 rounded">LAYER 3</span>
                         <i class="fas fa-random text-slate-300 group-hover:text-teal-500 transition"></i>
                     </div>
-                    <h3 class="font-bold text-lg text-slate-800 mb-1">B2. Routing & DHCP</h3>
-                    <p class="text-sm text-slate-500">SVI, Router on a Stick & DHCP Snooping.</p>
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">B2. Routing & FHRP</h3>
+                    <p class="text-sm text-slate-500">Inter-VLAN, DHCP & <strong>HSRP (Redundancy)</strong>.</p>
                 </a>
 
                 <a href="phase-b3.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-teal-400 group">
@@ -198,7 +196,7 @@
 
                 <a href="phase-b4.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-teal-400 group">
                     <div class="flex justify-between items-start mb-4">
-                        <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-1 rounded">LAYER 3</span>
+                        <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-1 rounded">DYNAMIC ROUTING</span>
                         <i class="fas fa-route text-slate-300 group-hover:text-teal-500 transition"></i>
                     </div>
                     <h3 class="font-bold text-lg text-slate-800 mb-1">B4. OSPF Routing</h3>
@@ -207,12 +205,22 @@
 
                 <a href="phase-b5.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-teal-400 group">
                     <div class="flex justify-between items-start mb-4">
-                        <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-1 rounded">SECURITY</span>
-                        <i class="fas fa-lock text-slate-300 group-hover:text-teal-500 transition"></i>
+                        <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-1 rounded">WAN SERVICES</span>
+                        <i class="fas fa-globe-asia text-slate-300 group-hover:text-teal-500 transition"></i>
                     </div>
-                    <h3 class="font-bold text-lg text-slate-800 mb-1">B5. ACL & NAT</h3>
-                    <p class="text-sm text-slate-500">Access Control List, PAT & NTP Cisco.</p>
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">B5. NAT & NTP</h3>
+                    <p class="text-sm text-slate-500">PAT (Overload), ACL Access & Time Sync.</p>
                 </a>
+
+                <a href="phase-b6.html" class="phase-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-teal-400 group">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-1 rounded">SECURITY & MGMT</span>
+                        <i class="fas fa-user-shield text-slate-300 group-hover:text-indigo-500 transition"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">B6. Device Hardening</h3>
+                    <p class="text-sm text-slate-500"><strong>SSH Access</strong>, <strong>Port Security</strong> & <strong>SNMP</strong>.</p>
+                </a>
+
             </div>
         </div>
 

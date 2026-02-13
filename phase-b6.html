@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase B6: Device Hardening - LKS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #eef2ff; color: #334155; } /* Indigo-50 */
+        
+        /* Terminal Styles */
+        .terminal { background-color: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; border-left: 4px solid #6366f1; overflow-x: auto; margin: 0.5rem 0; }
+        .prompt { color: #818cf8; font-weight: bold; } /* Indigo-400 */
+        .cmd { color: #fff; font-weight: bold; }
+        .comment { color: #94a3b8; font-style: italic; }
+
+        /* Interactive Device Link */
+        .dev-link {
+            color: #4f46e5; font-weight: bold; border-bottom: 1px dashed #4f46e5; cursor: pointer; transition: all 0.2s;
+            background-color: #e0e7ff; padding: 0 4px; border-radius: 4px;
+        }
+        .dev-link:hover { background-color: #6366f1; color: white; border-bottom: 1px solid transparent; }
+        .dev-link::after { content: '\f05b'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 0.7em; margin-left: 4px; opacity: 0.5; }
+
+        /* Step Badge */
+        .step-badge { width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3); }
+
+        /* --- TOPOLOGY MODAL STYLES --- */
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.9); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #f8fafc; margin: 5% auto; padding: 0; border-radius: 1rem; width: 90%; max-width: 900px; position: relative; height: 80vh; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        
+        .topo-wrapper { position: relative; width: 100%; height: 100%; background: #f1f5f9; display: flex; justify-content: center; align-items: center; }
+        
+        .device-box {
+            position: absolute; display: flex; flex-direction: column; align-items: center; transition: all 0.5s;
+            opacity: 0.4; transform: scale(0.9);
+        }
+        .device-box.active { opacity: 1; transform: scale(1.3); z-index: 50; }
+        .device-box.active .icon { box-shadow: 0 0 20px 5px rgba(99, 102, 241, 0.6); border-color: #4f46e5; background: white; }
+        
+        .icon {
+            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid #475569; border-radius: 8px; background: #e2e8f0; font-size: 1.5rem; color: #475569;
+        }
+        .router .icon { border-radius: 50%; background: #c7d2fe; border-color: #4f46e5; color: #4f46e5; }
+        .switch .icon { border-radius: 4px; background: #e0e7ff; border-color: #6366f1; color: #6366f1; }
+        .rogue .icon { background: #fee2e2; border-color: #ef4444; color: #ef4444; }
+        
+        .dev-label { margin-top: 5px; font-size: 0.7rem; font-weight: bold; background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; }
+        .line { position: absolute; background: #94a3b8; z-index: 0; opacity: 0.3; }
+
+        /* Lock Icon Animation */
+        .lock-anim {
+            position: absolute; font-size: 1.5rem; color: #ef4444;
+            top: 280px; left: 65%; z-index: 60; display: none;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+    </style>
+    <script>
+        function showTopology(targetId, showLock = false) {
+            document.getElementById('topoModal').style.display = "block";
+            document.querySelectorAll('.device-box').forEach(el => el.classList.remove('active'));
+            if(targetId) document.getElementById(targetId).classList.add('active');
+            
+            const lock = document.getElementById('lock-icon');
+            if(showLock) {
+                lock.style.display = 'block';
+            } else {
+                lock.style.display = 'none';
+            }
+        }
+        function closeModal() { document.getElementById('topoModal').style.display = "none"; }
+        document.onkeydown = function(evt) { if (evt.key === "Escape") closeModal(); };
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="topoModal" class="modal" onclick="if(event.target == this) closeModal()">
+        <div class="modal-content">
+            <div class="absolute top-4 right-4 z-50">
+                <button onclick="closeModal()" class="bg-red-500 text-white w-8 h-8 rounded-full font-bold">X</button>
+            </div>
+            <div class="topo-wrapper">
+                <div class="line" style="height: 100px; width: 4px; top: 150px; left: 50%; transform: translateX(-50%);"></div>
+                <div class="line" style="height: 80px; width: 4px; top: 300px; left: 35%;"></div>
+                <div class="line" style="height: 80px; width: 4px; top: 300px; left: 65%;"></div>
+
+                <div id="dev-hq" class="device-box router" style="top: 100px; left: 50%; transform: translateX(-50%);">
+                    <div class="icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="dev-label">Router HQ<br>(SSH Secured)</div>
+                </div>
+
+                <div id="dev-sw1" class="device-box switch" style="top: 250px; left: 50%; transform: translateX(-50%);">
+                    <div class="icon"><i class="fas fa-random"></i></div>
+                    <div class="dev-label">Switch 1<br>(Port Security)</div>
+                </div>
+
+                <div id="dev-pc1" class="device-box pc" style="top: 380px; left: 35%;">
+                    <div class="icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="dev-label">Admin<br>(Allowed)</div>
+                </div>
+
+                <div id="dev-rogue" class="device-box rogue" style="top: 380px; left: 65%;">
+                    <div class="icon"><i class="fas fa-user-secret"></i></div>
+                    <div class="dev-label text-red-600">Hacker<br>(Blocked)</div>
+                </div>
+
+                <i id="lock-icon" class="fas fa-lock lock-anim"></i>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-slate-400 hover:text-indigo-600 transition p-2">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </a>
+                <div class="flex flex-col">
+                    <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase B6</span>
+                    <span class="text-xs text-slate-500 md:hidden">Security & Management</span>
+                </div>
+                <span class="hidden md:inline text-slate-300">|</span>
+                <span class="hidden md:inline font-bold text-slate-800">Device Hardening</span>
+            </div>
+            <span class="bg-indigo-100 text-indigo-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase">
+                Modul B
+            </span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
+
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Pengamanan Perangkat (Hardening)</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Tahap terakhir: Mengganti Telnet yang usang dengan <strong>SSH (Encrypted)</strong>, memblokir perangkat asing di Switch menggunakan <strong>Port Security</strong>, dan mengaktifkan monitoring <strong>SNMP</strong>.
+            </p>
+        </header>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">1</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Secure SSH Access</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Wajib digunakan untuk manajemen router jarak jauh.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-sm text-slate-600">
+                    Buka <span class="dev-link" onclick="showTopology('dev-hq')">Router HQ</span>. Kita harus membuat kunci enkripsi (Crypto Key) terlebih dahulu.
+                </p>
+                
+                <div class="terminal">
+                    <span class="comment">! 1. Syarat SSH: Harus ada Hostname & Domain</span><br>
+                    <span class="prompt">HQ(config)#</span> hostname HQ<br>
+                    <span class="prompt">HQ(config)#</span> ip domain-name lks2026.id<br><br>
+
+                    <span class="comment">! 2. Buat Kunci RSA (Min 1024 bit)</span><br>
+                    <span class="prompt">HQ(config)#</span> <span class="cmd">crypto key generate rsa</span><br>
+                    <span class="prompt">Input bits:</span> 1024<br><br>
+
+                    <span class="comment">! 3. Buat User Admin</span><br>
+                    <span class="prompt">HQ(config)#</span> username admin privilege 15 secret cisco123<br><br>
+
+                    <span class="comment">! 4. Paksa Login via SSH (Matikan Telnet)</span><br>
+                    <span class="prompt">HQ(config)#</span> line vty 0 4<br>
+                    <span class="prompt">HQ(config-line)#</span> login local<br>
+                    <span class="prompt">HQ(config-line)#</span> <span class="cmd">transport input ssh</span>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 p-3 rounded text-xs text-indigo-800">
+                    <strong>Tes:</strong> Dari PC Admin, buka Command Prompt -> <code>ssh -l admin 192.168.10.1</code>. Jika diminta password, berarti sukses!
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">2</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Port Security (Sticky MAC)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Mencegah orang asing colok kabel sembarangan.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-sm text-slate-600">
+                    Buka <span class="dev-link" onclick="showTopology('dev-sw1', true)">Switch 1</span>. Kita akan amankan port yang mengarah ke PC Siswa (misal F0/10).
+                </p>
+                
+                <div class="terminal">
+                    <span class="prompt">SW1(config)#</span> int f0/10<br>
+                    <span class="comment">! Port harus mode access, tidak boleh trunk/dynamic</span><br>
+                    <span class="prompt">SW1(config-if)#</span> switchport mode access<br>
+                    <span class="prompt">SW1(config-if)#</span> <span class="cmd">switchport port-security</span><br>
+                    
+                    <span class="comment">! Maksimal 1 perangkat saja</span><br>
+                    <span class="prompt">SW1(config-if)#</span> switchport port-security maximum 1<br>
+                    
+                    <span class="comment">! Ingat MAC Address perangkat pertama yang colok</span><br>
+                    <span class="prompt">SW1(config-if)#</span> <span class="cmd">switchport port-security mac-address sticky</span><br>
+                    
+                    <span class="comment">! Hukuman jika melanggar: Matikan Port</span><br>
+                    <span class="prompt">SW1(config-if)#</span> switchport port-security violation shutdown
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-4 mt-2">
+                    <div class="bg-green-50 p-3 rounded text-xs border border-green-200">
+                        <h5 class="font-bold text-green-700">Skenario Normal</h5>
+                        PC Siswa (Resmi) terhubung -> Port UP (Lampu Hijau). Switch mencatat MAC Address PC Siswa.
+                    </div>
+                    <div class="bg-red-50 p-3 rounded text-xs border border-red-200">
+                        <h5 class="font-bold text-red-700">Skenario Serangan</h5>
+                        Kabel dicabut, dicolok ke Laptop Hacker -> Port otomatis <strong>mati (Shutdown)</strong>. Lampu Merah.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">3</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">SNMP & Banner</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Monitoring dan Legal Notice.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-indigo-700 text-sm mb-2">A. Konfigurasi SNMP</h4>
+                    <p class="text-xs text-slate-600 mb-1">Agar router bisa dipantau oleh server monitoring (Cacti/PRTG).</p>
+                    <div class="terminal">
+                        <span class="prompt">HQ(config)#</span> <span class="cmd">snmp-server community lks-ro ro</span><br>
+                        <span class="comment">! 'lks-ro' adalah password, 'ro' artinya Read Only (Hanya baca data)</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-indigo-700 text-sm mb-2">B. Banner & Password Encryption</h4>
+                    <p class="text-xs text-slate-600 mb-1">Pesan peringatan hukum & menyandikan semua password.</p>
+                    <div class="terminal">
+                        <span class="prompt">HQ(config)#</span> banner motd # DILARANG MASUK SELAIN ADMIN! #<br>
+                        <span class="prompt">HQ(config)#</span> service password-encryption
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-indigo-50 border-l-4 border-indigo-500 p-5 md:p-6 mb-12 shadow-sm">
+            <h2 class="text-indigo-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
+                <i class="fas fa-flag-checkered"></i> Modul B Selesai!
+            </h2>
+            <p class="text-sm text-slate-700 mb-4">
+                Selamat! Anda telah menyelesaikan seluruh rangkaian persiapan Modul Cisco Packet Tracer.
+            </p>
+            <div class="grid md:grid-cols-3 gap-3">
+                <div class="bg-white p-3 rounded text-center border shadow-sm">
+                    <span class="block text-2xl font-bold text-indigo-600">L2</span>
+                    <span class="text-xs text-slate-500">VLAN & STP Valid</span>
+                </div>
+                <div class="bg-white p-3 rounded text-center border shadow-sm">
+                    <span class="block text-2xl font-bold text-indigo-600">L3</span>
+                    <span class="text-xs text-slate-500">OSPF Routing OK</span>
+                </div>
+                <div class="bg-white p-3 rounded text-center border shadow-sm">
+                    <span class="block text-2xl font-bold text-indigo-600">SEC</span>
+                    <span class="text-xs text-slate-500">Hardened Device</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+            <a href="index.html" class="w-full md:w-auto text-center px-8 py-4 rounded-xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl hover:shadow-2xl transition font-bold flex items-center justify-center gap-2">
+                <i class="fas fa-home"></i> Kembali ke Dashboard Utama
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>

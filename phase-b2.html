@@ -3,204 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase B2: Inter-VLAN & DHCP - LKS 2026</title>
+    <title>Fase B2: Routing & HSRP - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f0fdfa; color: #334155; }
         
-        /* Terminal Cisco Style */
-        .terminal {
-            background-color: #0f172a;
-            color: #e2e8f0;
-            padding: 1.25rem;
-            border-radius: 0.5rem;
-            font-family: 'Roboto Mono', monospace;
-            font-size: 0.85rem;
-            border-left: 4px solid #0d9488; /* Teal-600 */
-            margin: 1rem 0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
-            white-space: pre-wrap;
-            line-height: 1.6;
-        }
+        /* Terminal Styles */
+        .terminal { background-color: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; border-left: 4px solid #14b8a6; overflow-x: auto; margin: 0.5rem 0; }
         .prompt { color: #2dd4bf; font-weight: bold; }
+        .cmd { color: #fff; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
-        
-        /* Interactive Code */
-        .interactive-code {
-            cursor: pointer;
-            border-bottom: 1px dashed #2dd4bf;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .interactive-code:hover {
-            background-color: rgba(45, 212, 191, 0.2);
-            color: #ffffff;
-            border-bottom: 1px solid #ffffff;
-        }
 
-        /* DEVICE LINK (NEW FEATURE) */
-        .device-link {
-            color: #0d9488; /* Teal-600 */
-            font-weight: bold;
-            cursor: pointer;
-            border-bottom: 1px dashed #0d9488;
-            transition: all 0.2s;
-            padding: 0 2px;
+        /* Interactive Device Link */
+        .dev-link {
+            color: #0f766e; font-weight: bold; border-bottom: 1px dashed #0f766e; cursor: pointer; transition: all 0.2s;
+            background-color: #ccfbf1; padding: 0 4px; border-radius: 4px;
         }
-        .device-link:hover {
-            background-color: #ccfbf1;
-            color: #0f766e;
-            border-bottom: 1px solid #0f766e;
-        }
-        .device-link::after {
-            content: '\f002';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            font-size: 0.7em;
-            margin-left: 4px;
-            opacity: 0.5;
-        }
-
-        /* Concept Card */
-        .concept-card {
-            background: white;
-            border: 1px solid #ccfbf1;
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            height: 100%;
-            transition: all 0.3s ease;
-        }
-        .concept-card:hover {
-            border-color: #0d9488;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
+        .dev-link:hover { background-color: #14b8a6; color: white; border-bottom: 1px solid transparent; }
+        .dev-link::after { content: '\f05b'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 0.7em; margin-left: 4px; opacity: 0.5; }
 
         /* Step Badge */
-        .step-badge {
-            width: 2.5rem;
-            height: 2.5rem;
-            background: linear-gradient(135deg, #0d9488 0%, #115e59 100%); 
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 6px rgba(13, 148, 136, 0.3);
-        }
+        .step-badge { width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; box-shadow: 0 2px 4px rgba(20, 184, 166, 0.3); }
 
-        /* Modal Structure */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 95%; max-width: 800px; border-radius: 1rem; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden; }
-        .close { position: absolute; right: 20px; top: 15px; font-size: 2rem; font-weight: bold; color: #64748b; cursor: pointer; z-index: 100; transition: color 0.2s; }
-        .close:hover { color: #ef4444; }
-
-        /* SVG Topology Styles */
-        .topo-svg { width: 100%; height: 400px; background-color: #f8fafc; }
-        .topo-line { stroke: #94a3b8; stroke-width: 3; }
-        .topo-node { cursor: pointer; transition: all 0.3s ease; fill: #e2e8f0; stroke: #475569; stroke-width: 2; }
-        .topo-label { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: bold; fill: #334155; text-anchor: middle; pointer-events: none; }
-        .topo-icon { font-family: 'Font Awesome 6 Free'; font-weight: 900; text-anchor: middle; dominant-baseline: central; fill: #475569; font-size: 24px; pointer-events: none; }
+        /* --- TOPOLOGY MODAL STYLES --- */
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.9); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #f8fafc; margin: 5% auto; padding: 0; border-radius: 1rem; width: 90%; max-width: 900px; position: relative; height: 80vh; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         
-        /* Active Highlighting Animation */
-        .active-node rect, .active-node circle {
-            fill: #ccfbf1 !important; /* Teal-100 */
-            stroke: #0d9488 !important; /* Teal-600 */
-            stroke-width: 4;
-            filter: drop-shadow(0 0 8px rgba(13, 148, 136, 0.6));
-            animation: pulse-node 1.5s infinite;
+        .topo-wrapper { position: relative; width: 100%; height: 100%; background: #f1f5f9; display: flex; justify-content: center; align-items: center; }
+        
+        .device-box {
+            position: absolute; display: flex; flex-direction: column; align-items: center; transition: all 0.5s;
+            opacity: 0.4; transform: scale(0.9);
         }
-        .active-node text.topo-icon { fill: #0f766e !important; }
+        .device-box.active { opacity: 1; transform: scale(1.3); z-index: 50; }
+        .device-box.active .icon { box-shadow: 0 0 20px 5px rgba(20, 184, 166, 0.6); border-color: #0d9488; background: white; }
+        
+        .icon {
+            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid #475569; border-radius: 8px; background: #e2e8f0; font-size: 1.5rem; color: #475569;
+        }
+        .router .icon { border-radius: 50%; background: #bae6fd; border-color: #0284c7; color: #0284c7; }
+        .switch .icon { border-radius: 4px; background: #bfdbfe; border-color: #2563eb; color: #2563eb; }
+        
+        .dev-label { margin-top: 5px; font-size: 0.7rem; font-weight: bold; background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; }
+        .line { position: absolute; background: #94a3b8; z-index: 0; opacity: 0.3; }
 
-        @keyframes pulse-node {
-            0% { stroke-width: 4; }
-            50% { stroke-width: 8; stroke-opacity: 0.5; }
-            100% { stroke-width: 4; }
-        }
     </style>
     <script>
-        function showHint(title, text) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalContentText').innerHTML = text;
-            document.getElementById('textModal').style.display = "block";
-        }
-        function closeTextModal() { document.getElementById('textModal').style.display = "none"; }
-
-        function showTopology(deviceId) {
+        function showTopology(targetId) {
             document.getElementById('topoModal').style.display = "block";
-            document.querySelectorAll('.topo-group').forEach(el => el.classList.remove('active-node'));
-            const target = document.getElementById('node-' + deviceId);
-            if(target) { target.classList.add('active-node'); }
+            document.querySelectorAll('.device-box').forEach(el => el.classList.remove('active'));
+            if(targetId) document.getElementById(targetId).classList.add('active');
         }
-        function closeTopoModal() { document.getElementById('topoModal').style.display = "none"; }
-
-        window.onclick = function(e) {
-            if (e.target == document.getElementById('textModal')) closeTextModal();
-            if (e.target == document.getElementById('topoModal')) closeTopoModal();
-        }
+        function closeModal() { document.getElementById('topoModal').style.display = "none"; }
+        document.onkeydown = function(evt) { if (evt.key === "Escape") closeModal(); };
     </script>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <div id="textModal" class="modal">
-        <div class="modal-content" style="max-width: 500px; padding: 1.5rem; margin: 20% auto;">
-            <span class="close" onclick="closeTextModal()">&times;</span>
-            <h3 id="modalTitle" class="text-xl font-bold text-teal-900 mb-3 border-b border-teal-100 pb-2">Penjelasan</h3>
-            <div id="modalContentText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
-        </div>
-    </div>
-
-    <div id="topoModal" class="modal">
+    <div id="topoModal" class="modal" onclick="if(event.target == this) closeModal()">
         <div class="modal-content">
-            <span class="close" onclick="closeTopoModal()">&times;</span>
-            <div class="bg-slate-100 p-4 border-b border-slate-200 flex justify-between items-center">
-                <h3 class="font-bold text-slate-700"><i class="fas fa-sitemap mr-2"></i>Live Topology Highlight</h3>
-                <span class="text-xs text-slate-500 bg-white px-2 py-1 rounded border">Perangkat aktif berkedip hijau</span>
+            <div class="absolute top-4 right-4 z-50">
+                <button onclick="closeModal()" class="bg-red-500 text-white w-8 h-8 rounded-full font-bold">X</button>
             </div>
-            
-            <svg class="topo-svg" viewBox="0 0 600 350">
-                <line x1="300" y1="60" x2="200" y2="150" class="topo-line" stroke="#0d9488" stroke-width="4" /> <line x1="200" y1="150" x2="400" y2="150" class="topo-line" stroke-dasharray="5,5" />
-                <line x1="200" y1="150" x2="130" y2="250" class="topo-line" />
-                <line x1="200" y1="150" x2="200" y2="250" class="topo-line" />
-                <line x1="400" y1="150" x2="400" y2="250" class="topo-line" />
-                <line x1="400" y1="150" x2="470" y2="250" class="topo-line" />
+            <div class="topo-wrapper">
+                <div class="line" style="height: 100px; width: 4px; top: 150px; left: 40%;"></div>
+                <div class="line" style="height: 100px; width: 4px; top: 150px; left: 60%;"></div>
+                <div class="line" style="width: 200px; height: 4px; top: 300px; left: 50%; transform: translateX(-50%);"></div>
 
-                <g id="node-r1" class="topo-group">
-                    <circle cx="300" cy="60" r="30" class="topo-node" />
-                    <text x="300" y="60" class="topo-icon">&#xf233;</text>
-                    <text x="300" y="105" class="topo-label">R1 (Router)</text>
-                </g>
+                <div id="dev-hq" class="device-box router" style="top: 100px; left: 40%; transform: translateX(-50%);">
+                    <div class="icon"><i class="fas fa-circle-notch"></i></div>
+                    <div class="dev-label">Router HQ<br>(Active)</div>
+                </div>
 
-                <g id="node-sw1" class="topo-group">
-                    <rect x="170" y="130" width="60" height="40" rx="5" class="topo-node" />
-                    <text x="200" y="150" class="topo-icon" style="font-size:18px">&#xf6ff;</text>
-                    <text x="200" y="120" class="topo-label">SW-1</text>
-                </g>
-                <g id="node-sw2" class="topo-group">
-                    <rect x="370" y="130" width="60" height="40" rx="5" class="topo-node" />
-                    <text x="400" y="150" class="topo-icon" style="font-size:18px">&#xf6ff;</text>
-                    <text x="400" y="120" class="topo-label">SW-2</text>
-                </g>
+                <div id="dev-backup" class="device-box router" style="top: 100px; left: 60%; transform: translateX(-50%);">
+                    <div class="icon"><i class="fas fa-circle-notch"></i></div>
+                    <div class="dev-label">Router Backup<br>(Standby)</div>
+                </div>
 
-                <g id="node-pc" class="topo-group">
-                    <rect x="110" y="250" width="40" height="30" rx="2" class="topo-node" style="fill:#dbeafe" />
-                    <rect x="180" y="250" width="40" height="30" rx="2" class="topo-node" style="fill:#f3e8ff" />
-                    <text x="300" y="300" class="topo-label">PC Clients (Receivers)</text>
-                </g>
-            </svg>
+                <div id="dev-sw1" class="device-box switch" style="top: 280px; left: 40%; transform: translateX(-50%);">
+                    <div class="icon"><i class="fas fa-random"></i></div>
+                    <div class="dev-label">Switch 1</div>
+                </div>
+
+                <div id="dev-sw2" class="device-box switch" style="top: 280px; left: 60%; transform: translateX(-50%);">
+                    <div class="icon"><i class="fas fa-random"></i></div>
+                    <div class="dev-label">Switch 2</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
         <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="phase-b1.html" class="text-slate-400 hover:text-teal-600 transition p-2">
+                <a href="index.html" class="text-slate-400 hover:text-teal-600 transition p-2">
                     <i class="fas fa-arrow-left text-lg"></i>
                 </a>
                 <div class="flex flex-col">
@@ -208,186 +107,171 @@
                     <span class="text-xs text-slate-500 md:hidden">Layer 3 Routing</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">Router on a Stick & DHCP</span>
+                <span class="hidden md:inline font-bold text-slate-800">Inter-VLAN, DHCP & HSRP</span>
             </div>
-            <span class="bg-teal-100 text-teal-700 text-[10px] md:text-xs font-bold px-3 py-1 rounded-full uppercase">
-                Cisco IOS
+            <span class="bg-teal-100 text-teal-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase">
+                Modul B
             </span>
         </div>
     </nav>
 
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
-        <header class="mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Menghubungkan VLAN (Layer 3)</h1>
-            <p class="text-slate-600 leading-relaxed text-sm md:text-base">
-                Fokus konfigurasi pada <strong>Router R1</strong>. Kita akan membuat "Jembatan Virtual" agar VLAN Siswa dan Guru bisa saling komunikasi, serta membagikan IP Address secara otomatis.
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Routing & Redundancy</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Menghubungkan VLAN agar bisa saling komunikasi (Inter-VLAN), membagikan IP otomatis (DHCP), dan menyiapkan <strong>Gateway Cadangan (HSRP)</strong> agar jaringan tidak mati total saat router utama rusak.
             </p>
         </header>
 
-        <section class="mb-12">
-            <h2 class="text-teal-900 font-bold text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-lightbulb text-yellow-500"></i> Pahami Konsepnya
-            </h2>
-            <div class="grid md:grid-cols-2 gap-4">
-                <div class="concept-card">
-                    <div class="text-teal-600 text-2xl mb-2"><i class="fas fa-network-wired"></i></div>
-                    <h3 class="font-bold text-slate-800 mb-1">Router on a Stick (RoaS)</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Alih-alih menarik 3 kabel fisik (boros), kita menggunakan 1 kabel fisik di <span class="device-link" onclick="showTopology('r1')">R1</span> yang dipecah menjadi banyak <strong>Sub-interface</strong> virtual (Fa0/0.10, Fa0/0.20) untuk melayani tiap VLAN.
-                    </p>
-                </div>
-                <div class="concept-card">
-                    <div class="text-teal-600 text-2xl mb-2"><i class="fas fa-server"></i></div>
-                    <h3 class="font-bold text-slate-800 mb-1">DHCP Server</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        <span class="device-link" onclick="showTopology('r1')">R1</span> akan menjadi "Bos" yang meminjamkan IP ke <span class="device-link" onclick="showTopology('pc')">PC Client</span> secara otomatis, jadi kita tidak perlu setting IP manual satu per satu.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section class="bg-slate-100 border border-slate-300 rounded-lg p-4 mb-8 text-sm">
-            <h4 class="font-bold text-slate-700 mb-2 uppercase text-xs tracking-wider">Tabel Alokasi IP (Gateway R1):</h4>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left bg-white rounded border border-slate-200">
-                    <thead class="bg-slate-200 text-slate-600 text-xs">
-                        <tr><th class="p-2">VLAN</th><th class="p-2">Sub-Interface</th><th class="p-2">Gateway IP</th></tr>
-                    </thead>
-                    <tbody class="text-xs">
-                        <tr class="border-b"><td class="p-2 font-bold">10 (Siswa)</td><td class="p-2">Fa0/0.10</td><td class="p-2 font-mono">192.168.10.1</td></tr>
-                        <tr class="border-b"><td class="p-2 font-bold">20 (Guru)</td><td class="p-2">Fa0/0.20</td><td class="p-2 font-mono">192.168.20.1</td></tr>
-                        <tr><td class="p-2 font-bold text-amber-600">99 (Native)</td><td class="p-2">Fa0/0.99</td><td class="p-2 font-mono">192.168.99.1</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="mb-10">
-            <div class="flex items-center gap-4 mb-4">
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">1</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Aktifkan Interface Fisik</h2>
-                    <p class="text-slate-500 text-xs">Target Device: <span class="device-link" onclick="showTopology('r1')">R1 (Router)</span></p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Inter-VLAN Routing</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Metode "Router on a Stick" pada HQ.</p>
                 </div>
             </div>
-            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-600 mb-2">Masuk ke CLI Router. Pastikan kabel fisik Fa0/0 menyala.</p>
-                <div class="terminal">
-<span class="prompt">Router></span> enable
-<span class="prompt">Router#</span> configure terminal
-<span class="prompt">Router(config)#</span> hostname R1
 
-<span class="comment">! Masuk ke port fisik utama</span>
-<span class="prompt">R1(config)#</span> interface fa0/0
-<span class="prompt">R1(config-if)#</span> <span class="interactive-code" onclick="showHint('no shutdown', '<b>Saklar Utama.</b><br>Perintah ini menyalakan port fisik. Jika port fisik mati, semua sub-interface (anaknya) juga ikut mati.')">no shutdown</span>
-<span class="prompt">R1(config-if)#</span> exit
-                </div>
-                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-2 mt-2 text-xs text-yellow-800">
-                    <strong>PERINGATAN:</strong> Jangan beri IP Address di interface fisik (Fa0/0) ini! Biarkan dia polosan. IP akan kita pasang di sub-interface langkah berikutnya.
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-sm text-slate-600">
+                    Buka <span class="dev-link" onclick="showTopology('dev-hq')">Router HQ</span>. Kita akan memecah port G0/1 menjadi beberapa sub-interface.
+                </p>
+                
+                <div class="terminal">
+                    <span class="prompt">HQ></span> en<br>
+                    <span class="prompt">HQ#</span> conf t<br>
+                    <span class="comment">! Aktifkan interface fisik dulu</span><br>
+                    <span class="prompt">HQ(config)#</span> int g0/1<br>
+                    <span class="prompt">HQ(config-if)#</span> no shut<br>
+                    <span class="prompt">HQ(config-if)#</span> exit<br><br>
+
+                    <span class="comment">! Sub-interface VLAN 10</span><br>
+                    <span class="prompt">HQ(config)#</span> int g0/1.10<br>
+                    <span class="prompt">HQ(config-subif)#</span> <span class="cmd">encapsulation dot1q 10</span><br>
+                    <span class="prompt">HQ(config-subif)#</span> ip add 192.168.10.1 255.255.255.0<br>
+                    <span class="prompt">HQ(config-subif)#</span> exit<br><br>
+
+                    <span class="comment">! Sub-interface VLAN 20</span><br>
+                    <span class="prompt">HQ(config)#</span> int g0/1.20<br>
+                    <span class="prompt">HQ(config-subif)#</span> <span class="cmd">encapsulation dot1q 20</span><br>
+                    <span class="prompt">HQ(config-subif)#</span> ip add 192.168.20.1 255.255.255.0<br>
+                    <span class="prompt">HQ(config-subif)#</span> exit
                 </div>
             </div>
         </section>
 
-        <section class="mb-10">
-            <div class="flex items-center gap-4 mb-4">
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Konfigurasi Sub-Interface (RoaS)</h2>
-                    <p class="text-slate-500 text-xs">Target Device: <span class="device-link" onclick="showTopology('r1')">R1 (Router)</span></p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">DHCP Server</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Agar PC Client dapat IP otomatis.</p>
                 </div>
             </div>
-            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-sm text-slate-600">
+                    Masih di <span class="dev-link" onclick="showTopology('dev-hq')">Router HQ</span>. Kita buat dua kolam IP (Pool).
+                </p>
+                
                 <div class="terminal">
-<span class="comment">! 1. Gateway VLAN 10 (Siswa)</span>
-<span class="prompt">R1(config)#</span> interface fa0/0.10
-<span class="prompt">R1(config-subif)#</span> <span class="interactive-code" onclick="showHint('encapsulation dot1q 10', '<b>Tagging 802.1Q</b><br>Ini perintah WAJIB. Memberitahu router: <i>Jika ada paket data membawa label VLAN 10, proses lewat pintu ini</i>.')">encapsulation dot1q 10</span>
-<span class="prompt">R1(config-subif)#</span> ip address 192.168.10.1 255.255.255.0
-<span class="prompt">R1(config-subif)#</span> exit
+                    <span class="comment">! Exclude IP Gateway & Virtual Gateway (HSRP)</span><br>
+                    <span class="prompt">HQ(config)#</span> ip dhcp excluded-address 192.168.10.1 192.168.10.10<br>
+                    <span class="prompt">HQ(config)#</span> ip dhcp excluded-address 192.168.10.254<br><br>
 
-<span class="comment">! 2. Gateway VLAN 20 (Guru)</span>
-<span class="prompt">R1(config)#</span> interface fa0/0.20
-<span class="prompt">R1(config-subif)#</span> encapsulation dot1q 20
-<span class="prompt">R1(config-subif)#</span> ip address 192.168.20.1 255.255.255.0
-<span class="prompt">R1(config-subif)#</span> exit
-
-<span class="comment">! 3. Gateway Native VLAN 99 (Management)</span>
-<span class="prompt">R1(config)#</span> interface fa0/0.99
-<span class="prompt">R1(config-subif)#</span> <span class="interactive-code" onclick="showHint('encapsulation dot1q 99 native', '<b>Keyword Native</b><br>Khusus VLAN Native, kita tambah kata <b>native</b> agar router tahu cara menangani paket yang tidak punya label (untagged).')">encapsulation dot1q 99 native</span>
-<span class="prompt">R1(config-subif)#</span> ip address 192.168.99.1 255.255.255.0
-<span class="prompt">R1(config-subif)#</span> exit
+                    <span class="comment">! Pool Siswa</span><br>
+                    <span class="prompt">HQ(config)#</span> ip dhcp pool SISWA<br>
+                    <span class="prompt">dhcp-config#</span> network 192.168.10.0 255.255.255.0<br>
+                    <span class="prompt">dhcp-config#</span> <span class="cmd">default-router 192.168.10.254</span> <span class="comment">! Arahkan ke IP Virtual (HSRP)</span><br>
+                    <span class="prompt">dhcp-config#</span> dns-server 8.8.8.8<br>
+                    <span class="prompt">dhcp-config#</span> exit
                 </div>
+                <div class="bg-yellow-50 border border-yellow-200 p-3 rounded text-xs text-yellow-800">
+                    <i class="fas fa-lightbulb"></i> <strong>Tips:</strong> Default Router kita set ke <code>.254</code> (IP Virtual HSRP) bukan <code>.1</code>. Ini kuncinya agar jika Router HQ mati, PC tetap bisa internetan lewat Router Backup!
+                </div>
+                <p class="text-xs text-slate-500 italic mt-2">*Ulangi langkah di atas untuk VLAN 20 (GURU).</p>
             </div>
         </section>
 
-        <section class="mb-10">
-            <div class="flex items-center gap-4 mb-4">
-                <div class="step-badge">3</div>
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge bg-indigo-500 text-white shadow-indigo-300">3</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Setup DHCP Server</h2>
-                    <p class="text-slate-500 text-xs">Target Device: <span class="device-link" onclick="showTopology('r1')">R1 (Router)</span></p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Konfigurasi HSRP</h2>
+                    <p class="text-indigo-700 font-bold text-xs md:text-sm mt-0.5">First Hop Redundancy Protocol.</p>
                 </div>
             </div>
-            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-600 mb-2">Membuat router meminjamkan IP secara otomatis ke PC.</p>
-                <div class="terminal">
-<span class="comment">! Langkah A: Amankan IP Gateway (Supaya tidak dipinjamkan ke orang lain)</span>
-<span class="prompt">R1(config)#</span> ip dhcp excluded-address 192.168.10.1
-<span class="prompt">R1(config)#</span> ip dhcp excluded-address 192.168.20.1
 
-<span class="comment">! Langkah B: Buat Kolam IP untuk SISWA</span>
-<span class="prompt">R1(config)#</span> ip dhcp pool POOL_SISWA
-<span class="prompt">R1(dhcp-config)#</span> network 192.168.10.0 255.255.255.0
-<span class="prompt">R1(dhcp-config)#</span> <span class="interactive-code" onclick="showHint('default-router 192.168.10.1', 'Memberitahu PC Client: <i>Kalau mau internetan atau ke VLAN lain, lewatlah pintu 192.168.10.1</i>.')">default-router 192.168.10.1</span>
-<span class="prompt">R1(dhcp-config)#</span> dns-server 8.8.8.8
-<span class="prompt">R1(dhcp-config)#</span> exit
+            <div class="ml-2 md:ml-14 bg-indigo-50 p-4 md:p-6 rounded-xl border border-indigo-200 shadow-sm space-y-4">
+                <p class="text-sm text-slate-700">
+                    Siapkan satu router lagi, beri nama <strong>Router Backup</strong>. Hubungkan ke Switch 2.
+                </p>
 
-<span class="comment">! Langkah C: Buat Kolam IP untuk GURU</span>
-<span class="prompt">R1(config)#</span> ip dhcp pool POOL_GURU
-<span class="prompt">R1(dhcp-config)#</span> network 192.168.20.0 255.255.255.0
-<span class="prompt">R1(dhcp-config)#</span> default-router 192.168.20.1
-<span class="prompt">R1(dhcp-config)#</span> dns-server 8.8.8.8
-<span class="prompt">R1(dhcp-config)#</span> exit
-                </div>
-            </div>
-        </section>
-
-        <section class="bg-gradient-to-br from-slate-50 to-teal-50 border border-teal-200 rounded-xl p-6 shadow-sm">
-            <h2 class="text-teal-900 font-bold mb-4"><i class="fas fa-check-double"></i> Verifikasi Hasil</h2>
-            <div class="space-y-4">
-                <div class="bg-white p-3 rounded border border-teal-100 flex gap-3">
-                    <div class="bg-teal-100 p-2 rounded text-teal-600 h-fit"><i class="fas fa-laptop"></i></div>
-                    <div>
-                        <h4 class="font-bold text-sm text-slate-700">1. Request DHCP di <span class="device-link" onclick="showTopology('pc')">PC Client</span></h4>
-                        <p class="text-xs text-slate-600">
-                            Buka PC Client > Desktop > IP Configuration > Pilih <strong>DHCP</strong>.<br>
-                            Pastikan mendapat IP <code>192.168.xx.xx</code> dan Gateway yang benar.
-                        </p>
+                <div class="mb-4">
+                    <h4 class="font-bold text-teal-700 text-sm mb-2">A. Di <span class="dev-link" onclick="showTopology('dev-hq')">Router HQ</span> (Primary)</h4>
+                    <div class="terminal border-teal-500">
+                        <span class="prompt">HQ(config)#</span> int g0/1.10<br>
+                        <span class="prompt">HQ(config-subif)#</span> <span class="cmd">standby 10 ip 192.168.10.254</span> <span class="comment">! IP Hantu</span><br>
+                        <span class="prompt">HQ(config-subif)#</span> <span class="cmd">standby 10 priority 150</span> <span class="comment">! Priority tinggi = Jadi Bos (Active)</span><br>
+                        <span class="prompt">HQ(config-subif)#</span> <span class="cmd">standby 10 preempt</span> <span class="comment">! Rebut kembali jika hidup lagi</span>
                     </div>
                 </div>
 
-                <div class="bg-white p-3 rounded border border-teal-100 flex gap-3">
-                    <div class="bg-teal-100 p-2 rounded text-teal-600 h-fit"><i class="fas fa-exchange-alt"></i></div>
-                    <div>
-                        <h4 class="font-bold text-sm text-slate-700">2. Ping Lintas VLAN</h4>
-                        <p class="text-xs text-slate-600">
-                            Dari PC Siswa (VLAN 10), ping ke PC Guru (VLAN 20).<br>
-                            Status awal mungkin <em>Request Timed Out</em> (karena proses ARP), coba lagi sampai <strong>Reply</strong>.
-                        </p>
+                <div>
+                    <h4 class="font-bold text-slate-600 text-sm mb-2">B. Di <span class="dev-link" onclick="showTopology('dev-backup')">Router Backup</span> (Secondary)</h4>
+                    <div class="terminal border-slate-500">
+                        <span class="prompt">Backup(config)#</span> int g0/1.10<br>
+                        <span class="prompt">Backup(config-subif)#</span> ip add 192.168.10.2 255.255.255.0<br>
+                        <span class="prompt">Backup(config-subif)#</span> <span class="cmd">standby 10 ip 192.168.10.254</span><br>
+                        <span class="prompt">Backup(config-subif)#</span> <span class="cmd">standby 10 priority 100</span> <span class="comment">! Priority rendah = Jadi Cadangan</span><br>
+                        <span class="prompt">Backup(config-subif)#</span> standby 10 preempt
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-12">
-            <a href="phase-b1.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
-                <i class="fas fa-arrow-left mr-2"></i> Kembali ke B1
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">4</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Verifikasi Failover</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Uji coba matikan router utama.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 grid md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-teal-700 text-sm mb-2">1. Cek Status HSRP</h4>
+                    <div class="terminal">
+                        <span class="prompt">HQ#</span> show standby brief<br>
+                        <span class="comment">State: Active</span><br><br>
+                        <span class="prompt">Backup#</span> show standby brief<br>
+                        <span class="comment">State: Standby</span>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-red-700 text-sm mb-2">2. Simulasi Kabel Putus</h4>
+                    <ul class="text-xs text-slate-600 list-disc ml-4 space-y-2">
+                        <li>Buka PC Client, lakukan <code>ping 192.168.10.254 -t</code> (ping terus menerus).</li>
+                        <li><strong>Matikan</strong> Router HQ (atau cabut kabel G0/1).</li>
+                        <li>Ping mungkin RTO 1-2 kali, lalu <strong>Reply</strong> kembali.</li>
+                        <li>Itu artinya Router Backup sukses mengambil alih!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="index.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
+                Kembali ke Dashboard
             </a>
             <a href="phase-b3.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-teal-600 text-white hover:bg-teal-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
-                Lanjut ke Fase B3 (EtherChannel) <i class="fas fa-arrow-right"></i>
+                Lanjut ke Fase B3 (Redundancy) <i class="fas fa-arrow-right"></i>
             </a>
         </div>
 
     </main>
+
 </body>
 </html>

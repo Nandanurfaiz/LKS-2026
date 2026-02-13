@@ -10,376 +10,251 @@
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f0fdfa; color: #334155; }
         
-        /* Terminal Cisco Style */
-        .terminal {
-            background-color: #0f172a;
-            color: #e2e8f0;
-            padding: 1.25rem;
-            border-radius: 0.5rem;
-            font-family: 'Roboto Mono', monospace;
-            font-size: 0.85rem;
-            border-left: 4px solid #0891b2; /* Cyan-600 */
-            margin: 1rem 0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
-            white-space: pre-wrap;
-            line-height: 1.6;
-        }
-        .prompt { color: #22d3ee; font-weight: bold; }
+        /* Terminal Styles */
+        .terminal { background-color: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; border-left: 4px solid #14b8a6; overflow-x: auto; margin: 0.5rem 0; }
+        .prompt { color: #2dd4bf; font-weight: bold; }
+        .cmd { color: #fff; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
-        
-        /* Interactive Code */
-        .interactive-code {
-            cursor: pointer;
-            border-bottom: 1px dashed #22d3ee;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .interactive-code:hover {
-            background-color: rgba(34, 211, 238, 0.2);
-            color: #ffffff;
-            border-bottom: 1px solid #ffffff;
-        }
 
-        /* DEVICE LINK (NEW FEATURE) */
-        .device-link {
-            color: #0891b2; /* Cyan-600 */
-            font-weight: bold;
-            cursor: pointer;
-            border-bottom: 1px dashed #0891b2;
-            transition: all 0.2s;
-            padding: 0 2px;
+        /* Interactive Device Link */
+        .dev-link {
+            color: #0f766e; font-weight: bold; border-bottom: 1px dashed #0f766e; cursor: pointer; transition: all 0.2s;
+            background-color: #ccfbf1; padding: 0 4px; border-radius: 4px;
         }
-        .device-link:hover {
-            background-color: #cffafe;
-            color: #0e7490;
-            border-bottom: 1px solid #0e7490;
-        }
-        .device-link::after {
-            content: '\f002';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            font-size: 0.7em;
-            margin-left: 4px;
-            opacity: 0.5;
-        }
-
-        /* Concept Card */
-        .concept-card {
-            background: white;
-            border: 1px solid #cffafe;
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            height: 100%;
-            transition: all 0.3s ease;
-        }
-        .concept-card:hover {
-            border-color: #0891b2;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
+        .dev-link:hover { background-color: #14b8a6; color: white; border-bottom: 1px solid transparent; }
+        .dev-link::after { content: '\f05b'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 0.7em; margin-left: 4px; opacity: 0.5; }
 
         /* Step Badge */
-        .step-badge {
-            width: 2.5rem;
-            height: 2.5rem;
-            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%); 
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 6px rgba(8, 145, 178, 0.3);
-        }
+        .step-badge { width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; box-shadow: 0 2px 4px rgba(20, 184, 166, 0.3); }
 
-        /* Modal Structure */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; border: 1px solid #888; width: 95%; max-width: 800px; border-radius: 1rem; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden; }
-        .close { position: absolute; right: 20px; top: 15px; font-size: 2rem; font-weight: bold; color: #64748b; cursor: pointer; z-index: 100; transition: color 0.2s; }
-        .close:hover { color: #ef4444; }
-
-        /* SVG Topology Styles */
-        .topo-svg { width: 100%; height: 400px; background-color: #f8fafc; }
-        .topo-line { stroke: #94a3b8; stroke-width: 3; }
-        .topo-node { cursor: pointer; transition: all 0.3s ease; fill: #e2e8f0; stroke: #475569; stroke-width: 2; }
-        .topo-label { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: bold; fill: #334155; text-anchor: middle; pointer-events: none; }
-        .topo-icon { font-family: 'Font Awesome 6 Free'; font-weight: 900; text-anchor: middle; dominant-baseline: central; fill: #475569; font-size: 24px; pointer-events: none; }
+        /* --- TOPOLOGY MODAL STYLES --- */
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.9); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #f8fafc; margin: 5% auto; padding: 0; border-radius: 1rem; width: 90%; max-width: 900px; position: relative; height: 80vh; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         
-        /* Active Highlighting Animation */
-        .active-node rect, .active-node circle {
-            fill: #cffafe !important; /* Cyan-100 */
-            stroke: #0891b2 !important; /* Cyan-600 */
-            stroke-width: 4;
-            filter: drop-shadow(0 0 8px rgba(8, 145, 178, 0.6));
-            animation: pulse-node 1.5s infinite;
+        .topo-wrapper { position: relative; width: 100%; height: 100%; background: #f1f5f9; display: flex; justify-content: center; align-items: center; }
+        
+        .device-box {
+            position: absolute; display: flex; flex-direction: column; align-items: center; transition: all 0.5s;
+            opacity: 0.4; transform: scale(0.9);
         }
-        .active-node text.topo-icon { fill: #0e7490 !important; }
+        .device-box.active { opacity: 1; transform: scale(1.3); z-index: 50; }
+        .device-box.active .icon { box-shadow: 0 0 20px 5px rgba(20, 184, 166, 0.6); border-color: #0d9488; background: white; }
+        
+        .icon {
+            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid #475569; border-radius: 8px; background: #e2e8f0; font-size: 1.5rem; color: #475569;
+        }
+        .router .icon { border-radius: 50%; background: #bae6fd; border-color: #0284c7; color: #0284c7; }
+        .switch .icon { border-radius: 4px; background: #bfdbfe; border-color: #2563eb; color: #2563eb; }
+        
+        .dev-label { margin-top: 5px; font-size: 0.7rem; font-weight: bold; background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; }
+        .line { position: absolute; background: #94a3b8; z-index: 0; opacity: 0.3; }
 
-        @keyframes pulse-node {
-            0% { stroke-width: 4; }
-            50% { stroke-width: 8; stroke-opacity: 0.5; }
-            100% { stroke-width: 4; }
-        }
     </style>
     <script>
-        function showHint(title, text) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalContentText').innerHTML = text;
-            document.getElementById('textModal').style.display = "block";
-        }
-        function closeTextModal() { document.getElementById('textModal').style.display = "none"; }
-
-        function showTopology(deviceId) {
+        function showTopology(targetId) {
             document.getElementById('topoModal').style.display = "block";
-            document.querySelectorAll('.topo-group').forEach(el => el.classList.remove('active-node'));
-            const target = document.getElementById('node-' + deviceId);
-            if(target) { target.classList.add('active-node'); }
+            document.querySelectorAll('.device-box').forEach(el => el.classList.remove('active'));
+            if(targetId) document.getElementById(targetId).classList.add('active');
         }
-        function closeTopoModal() { document.getElementById('topoModal').style.display = "none"; }
-
-        window.onclick = function(e) {
-            if (e.target == document.getElementById('textModal')) closeTextModal();
-            if (e.target == document.getElementById('topoModal')) closeTopoModal();
-        }
+        function closeModal() { document.getElementById('topoModal').style.display = "none"; }
+        document.onkeydown = function(evt) { if (evt.key === "Escape") closeModal(); };
     </script>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <div id="textModal" class="modal">
-        <div class="modal-content" style="max-width: 500px; padding: 1.5rem; margin: 20% auto;">
-            <span class="close" onclick="closeTextModal()">&times;</span>
-            <h3 id="modalTitle" class="text-xl font-bold text-teal-900 mb-3 border-b border-teal-100 pb-2">Penjelasan</h3>
-            <div id="modalContentText" class="text-slate-600 text-sm leading-relaxed space-y-2"></div>
-        </div>
-    </div>
-
-    <div id="topoModal" class="modal">
+    <div id="topoModal" class="modal" onclick="if(event.target == this) closeModal()">
         <div class="modal-content">
-            <span class="close" onclick="closeTopoModal()">&times;</span>
-            <div class="bg-slate-100 p-4 border-b border-slate-200 flex justify-between items-center">
-                <h3 class="font-bold text-slate-700"><i class="fas fa-sitemap mr-2"></i>Live Topology Highlight</h3>
-                <span class="text-xs text-slate-500 bg-white px-2 py-1 rounded border">Perangkat aktif berkedip biru</span>
+            <div class="absolute top-4 right-4 z-50">
+                <button onclick="closeModal()" class="bg-red-500 text-white w-8 h-8 rounded-full font-bold">X</button>
             </div>
-            
-            <svg class="topo-svg" viewBox="0 0 600 350">
-                <line x1="300" y1="60" x2="200" y2="150" class="topo-line" />
-                
-                <line x1="200" y1="145" x2="400" y2="145" class="topo-line" stroke="#0891b2" stroke-width="3" stroke-dasharray="5,2" />
-                <line x1="200" y1="155" x2="400" y2="155" class="topo-line" stroke="#0891b2" stroke-width="3" stroke-dasharray="5,2" />
-                <text x="300" y="140" class="topo-label" fill="#0891b2" style="font-size:10px">EtherChannel (Po1)</text>
+            <div class="topo-wrapper">
+                <div class="line" style="width: 200px; height: 8px; top: 300px; left: 50%; transform: translateX(-50%); background: #fca5a5; opacity: 0.8; border-top: 2px solid #ef4444; border-bottom: 2px solid #ef4444;"></div>
 
-                <line x1="200" y1="150" x2="130" y2="250" class="topo-line" />
-                <line x1="200" y1="150" x2="200" y2="250" class="topo-line" />
-                <line x1="400" y1="150" x2="400" y2="250" class="topo-line" />
-                <line x1="400" y1="150" x2="470" y2="250" class="topo-line" />
+                <div id="dev-sw1" class="device-box switch" style="top: 280px; left: 35%;">
+                    <div class="icon"><i class="fas fa-random"></i></div>
+                    <div class="dev-label">Switch 1</div>
+                </div>
 
-                <g id="node-r1" class="topo-group">
-                    <circle cx="300" cy="60" r="30" class="topo-node" />
-                    <text x="300" y="60" class="topo-icon">&#xf233;</text>
-                    <text x="300" y="105" class="topo-label">R1 (Router)</text>
-                </g>
-
-                <g id="node-sw1" class="topo-group">
-                    <rect x="170" y="130" width="60" height="40" rx="5" class="topo-node" />
-                    <text x="200" y="150" class="topo-icon" style="font-size:18px">&#xf6ff;</text>
-                    <text x="200" y="120" class="topo-label">SW-1</text>
-                </g>
-                <g id="node-sw2" class="topo-group">
-                    <rect x="370" y="130" width="60" height="40" rx="5" class="topo-node" />
-                    <text x="400" y="150" class="topo-icon" style="font-size:18px">&#xf6ff;</text>
-                    <text x="400" y="120" class="topo-label">SW-2</text>
-                </g>
-
-                <g id="node-pc" class="topo-group">
-                    <rect x="110" y="250" width="40" height="30" rx="2" class="topo-node" style="fill:#dbeafe" />
-                    <rect x="180" y="250" width="40" height="30" rx="2" class="topo-node" style="fill:#f3e8ff" />
-                    <text x="300" y="300" class="topo-label">PC Clients</text>
-                </g>
-            </svg>
+                <div id="dev-sw2" class="device-box switch" style="top: 280px; left: 65%;">
+                    <div class="icon"><i class="fas fa-random"></i></div>
+                    <div class="dev-label">Switch 2</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
         <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="phase-b2.html" class="text-slate-400 hover:text-cyan-600 transition p-2">
+                <a href="index.html" class="text-slate-400 hover:text-teal-600 transition p-2">
                     <i class="fas fa-arrow-left text-lg"></i>
                 </a>
                 <div class="flex flex-col">
                     <span class="font-bold text-slate-800 text-sm md:text-base leading-tight">Fase B3</span>
-                    <span class="text-xs text-slate-500 md:hidden">High Availability</span>
+                    <span class="text-xs text-slate-500 md:hidden">Redundancy & Aggregation</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">EtherChannel & STP</span>
+                <span class="hidden md:inline font-bold text-slate-800">EtherChannel & STP Tuning</span>
             </div>
-            <span class="bg-cyan-100 text-cyan-700 text-[10px] md:text-xs font-bold px-3 py-1 rounded-full uppercase">
-                Cisco IOS
+            <span class="bg-teal-100 text-teal-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase">
+                Modul B
             </span>
         </div>
     </nav>
 
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
-        <header class="mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Redundansi Jaringan</h1>
-            <p class="text-slate-600 leading-relaxed text-sm md:text-base">
-                Menggabungkan <strong>dua kabel fisik</strong> antara <span class="device-link" onclick="showTopology('sw1')">SW-1</span> dan <span class="device-link" onclick="showTopology('sw2')">SW-2</span> menjadi satu jalur logis yang cepat dan anti-putus.
+        <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Meningkatkan Performa & Keamanan L2</h1>
+            <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+                Kita akan menggabungkan dua kabel fisik menjadi satu jalur logis (EtherChannel) untuk menambah bandwidth, serta mengatur Spanning Tree Protocol (STP) agar beban jaringan terbagi rata (Load Balancing).
             </p>
         </header>
 
-        <section class="mb-12">
-            <h2 class="text-cyan-900 font-bold text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-lightbulb text-yellow-500"></i> Pahami Konsepnya
-            </h2>
-            <div class="grid md:grid-cols-2 gap-4">
-                <div class="concept-card">
-                    <div class="text-cyan-600 text-2xl mb-2"><i class="fas fa-link"></i></div>
-                    <h3 class="font-bold text-slate-800 mb-1">EtherChannel (LACP)</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Mengikat 2 kabel fisik menjadi 1 kabel logis. 
-                        <br><strong>Manfaat:</strong> Speed naik 2x lipat (200 Mbps) & jika 1 kabel putus, koneksi tetap jalan.
-                    </p>
-                </div>
-                <div class="concept-card">
-                    <div class="text-cyan-600 text-2xl mb-2"><i class="fas fa-traffic-light"></i></div>
-                    <h3 class="font-bold text-slate-800 mb-1">Spanning Tree (STP)</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Polisi lalu lintas anti-looping. Tanpa STP, data akan berputar selamanya di antara kabel redundant sampai switch hang. STP memblokir salah satu jalur sebagai cadangan.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 text-sm">
-            <div class="flex gap-3">
-                <div class="text-yellow-600 text-xl"><i class="fas fa-plug"></i></div>
-                <div>
-                    <h4 class="font-bold text-yellow-800 mb-1">Persiapan Fisik (Wajib)</h4>
-                    <p class="text-yellow-700 text-xs leading-relaxed">
-                        Sebelum konfigurasi, tambahkan 1 kabel <strong>Cross-Over</strong> lagi antara switch.
-                        <br>Hubungkan: <strong>SW-1 Port Fa0/3</strong> <--> <strong>SW-2 Port Fa0/3</strong>.
-                        <br>(Sekarang ada 2 kabel menghubungkan <span class="device-link" onclick="showTopology('sw1')">SW-1</span> dan <span class="device-link" onclick="showTopology('sw2')">SW-2</span>: Fa0/2 dan Fa0/3).
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section class="mb-10">
-            <div class="flex items-center gap-4 mb-4">
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">1</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Konfigurasi EtherChannel (LACP)</h2>
-                    <p class="text-slate-500 text-xs">Lakukan langkah ini di <strong>KEDUA Switch</strong> (<span class="device-link" onclick="showTopology('sw1')">SW-1</span> & <span class="device-link" onclick="showTopology('sw2')">SW-2</span>).</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">EtherChannel (LACP)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menggabungkan Port F0/1 dan F0/2 menjadi <strong>Po1</strong>.</p>
                 </div>
             </div>
-            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-sm text-slate-600 mb-2">Lakukan konfigurasi yang sama persis di <span class="dev-link" onclick="showTopology('dev-sw1')">Switch 1</span> dan <span class="dev-link" onclick="showTopology('dev-sw2')">Switch 2</span>.</p>
+                
                 <div class="terminal">
-<span class="comment">! Pilih kedua port penghubung</span>
-<span class="prompt">SW-1(config)#</span> interface range fa0/2-3
-
-<span class="comment">! 1. Bungkus menjadi Channel Group 1</span>
-<span class="prompt">SW-1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('channel-group 1 mode active', '<b>LACP Active</b><br>Mengaktifkan protokol standar LACP. Switch akan aktif mengajak switch lawan bernegosiasi membuat EtherChannel.')">channel-group 1 mode active</span>
-
-<span class="comment">! 2. Nyalakan port (Just in case)</span>
-<span class="prompt">SW-1(config-if-range)#</span> no shutdown
-<span class="prompt">SW-1(config-if-range)#</span> exit
-
-<span class="comment">! 3. Konfigurasi Trunk pada Interface LOGICAL (Port-Channel)</span>
-<span class="prompt">SW-1(config)#</span> interface port-channel 1
-<span class="prompt">SW-1(config-if)#</span> <span class="interactive-code" onclick="showHint('switchport mode trunk', 'Menerapkan mode trunk pada ikatan kabel (bundle). Otomatis semua port fisik di dalamnya ikut jadi trunk.')">switchport mode trunk</span>
-<span class="prompt">SW-1(config-if)#</span> switchport trunk native vlan 99
+                    <span class="prompt">SW(config)#</span> int range f0/1-2<br>
+                    <span class="comment">! Pastikan trunk dimatikan dulu (opsional tapi aman)</span><br>
+                    <span class="prompt">SW(config-if-range)#</span> shutdown<br>
+                    <span class="prompt">SW(config-if-range)#</span> <span class="cmd">channel-group 1 mode active</span><br>
+                    <span class="prompt">SW(config-if-range)#</span> no shutdown<br>
+                    <span class="prompt">SW(config-if-range)#</span> exit
                 </div>
-                <div class="bg-cyan-50 border-l-4 border-cyan-500 p-2 mt-2 text-xs text-cyan-800">
-                    <strong>PENTING:</strong> Konfigurasi Trunk sekarang pindah ke <code>interface port-channel 1</code>. Jangan lagi mengonfigurasi Trunk di Fa0/2 atau Fa0/3 secara terpisah!
+                <div class="bg-blue-50 border border-blue-200 p-3 rounded text-xs text-blue-800">
+                    <i class="fas fa-info-circle"></i> <strong>Catatan:</strong> "Mode Active" berarti kita menggunakan standar <strong>LACP</strong> (IEEE 802.3ad) yang umum dipakai. Jika soal meminta PAgP (Cisco), ganti 'active' dengan 'desirable'.
                 </div>
             </div>
         </section>
 
-        <section class="mb-10">
-            <div class="flex items-center gap-4 mb-4">
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Optimasi Spanning Tree (Rapid-PVST)</h2>
-                    <p class="text-slate-500 text-xs">Mempercepat waktu pemulihan jika kabel putus (dari 50 detik jadi < 2 detik).</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Setting Trunk pada Port-Channel</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Konfigurasi trunking sekarang pindah ke interface virtual.</p>
                 </div>
             </div>
-            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                
-                <h4 class="font-bold text-cyan-800 text-sm mb-2">A. Di <span class="device-link" onclick="showTopology('sw1')">SW-1 (Switch Utama/Root)</span></h4>
-                <div class="terminal">
-<span class="prompt">SW-1(config)#</span> <span class="interactive-code" onclick="showHint('spanning-tree mode rapid-pvst', 'Mengubah algoritma STP klasik (lambat) menjadi Rapid (cepat).')">spanning-tree mode rapid-pvst</span>
-<span class="prompt">SW-1(config)#</span> <span class="interactive-code" onclick="showHint('spanning-tree vlan 10,20,99 root primary', '<b>Root Primary</b><br>Memaksa SW-1 menjadi Boss (Root Bridge). Port di switch Boss tidak akan pernah diblokir.')">spanning-tree vlan 10,20,99 root primary</span>
-                </div>
 
-                <h4 class="font-bold text-cyan-800 text-sm mb-2 mt-4">B. Di <span class="device-link" onclick="showTopology('sw2')">SW-2 (Switch Cadangan)</span></h4>
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-sm text-slate-600">
+                    Jangan setting trunk di fisik (f0/1, f0/2), tapi di <strong>Port-channel 1</strong>. Lakukan di kedua switch.
+                </p>
+                
                 <div class="terminal">
-<span class="prompt">SW-2(config)#</span> spanning-tree mode rapid-pvst
-<span class="prompt">SW-2(config)#</span> spanning-tree vlan 10,20,99 root secondary
+                    <span class="prompt">SW(config)#</span> int port-channel 1<br>
+                    <span class="prompt">SW(config-if)#</span> <span class="cmd">switchport mode trunk</span><br>
+                    <span class="comment">! (Opsional) Hanya izinkan VLAN tertentu</span><br>
+                    <span class="prompt">SW(config-if)#</span> switchport trunk allowed vlan 10,20,99<br>
+                    <span class="prompt">SW(config-if)#</span> exit
                 </div>
             </div>
         </section>
 
-        <section class="mb-10">
-            <div class="flex items-center gap-4 mb-4">
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">3</div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Port Security (Bonus Point)</h2>
-                    <p class="text-slate-500 text-xs">Mengunci port agar hanya bisa dipakai PC yang terdaftar.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Aktifkan Rapid-PVST</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Agar perpindahan jalur (convergence) lebih cepat.</p>
                 </div>
             </div>
-            <div class="ml-14 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-600 mb-2">Terapkan pada port Access (PC Siswa & Guru) di <span class="device-link" onclick="showTopology('sw1')">SW-1</span> dan <span class="device-link" onclick="showTopology('sw2')">SW-2</span>:</p>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <p class="text-sm text-slate-600">
+                    Lakukan di <strong>SEMUA</strong> switch (SW1 & SW2).
+                </p>
                 <div class="terminal">
-<span class="prompt">SW-1(config)#</span> interface range fa0/5, fa0/10
-<span class="prompt">SW-1(config-if-range)#</span> switchport mode access
-<span class="prompt">SW-1(config-if-range)#</span> switchport port-security
-<span class="prompt">SW-1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('maximum 1', 'Hanya mengizinkan 1 alamat MAC (1 PC) per kabel.')">switchport port-security maximum 1</span>
-<span class="prompt">SW-1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('mac-address sticky', 'Switch otomatis menghafal MAC address PC pertama yang colok dan menyimpannya di config.')">switchport port-security mac-address sticky</span>
-<span class="prompt">SW-1(config-if-range)#</span> <span class="interactive-code" onclick="showHint('violation restrict', 'Jika ada penyusup: Buang paketnya, catat log error, tapi JANGAN matikan port (biar admin tau).')">switchport port-security violation restrict</span>
+                    <span class="prompt">SW(config)#</span> <span class="cmd">spanning-tree mode rapid-pvst</span>
                 </div>
             </div>
         </section>
 
-        <section class="bg-gradient-to-br from-slate-50 to-cyan-50 border border-cyan-200 rounded-xl p-6 shadow-sm">
-            <h2 class="text-cyan-900 font-bold mb-4"><i class="fas fa-check-double"></i> Verifikasi Hasil</h2>
-            <div class="space-y-4">
-                <div class="bg-white p-3 rounded border border-cyan-100">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-sm text-slate-700">1. Cek EtherChannel</span>
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">4</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Tuning STP Root Bridge</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Membagi beban trafik VLAN.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                
+                <div>
+                    <h4 class="font-bold text-teal-700 text-sm mb-2">A. Di <span class="dev-link" onclick="showTopology('dev-sw1')">Switch 1</span></h4>
+                    <p class="text-xs text-slate-600 mb-1">SW1 jadi Bos (Primary) untuk VLAN 10, dan Wakil (Secondary) untuk VLAN 20.</p>
+                    <div class="terminal">
+                        <span class="prompt">SW1(config)#</span> spanning-tree vlan 10 root primary<br>
+                        <span class="prompt">SW1(config)#</span> spanning-tree vlan 20 root secondary
                     </div>
-                    <div class="terminal mt-2"><span class="prompt">SW-1#</span> show etherchannel summary</div>
-                    <p class="text-xs text-slate-600 mt-1">
-                        Cari kode <strong>(SU)</strong> di samping Po1.<br>
-                        S = Layer 2, U = In Use (Aktif).<br>
-                        Protocol harus <strong>LACP</strong>.
-                    </p>
                 </div>
 
-                <div class="bg-white p-3 rounded border border-cyan-100">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-sm text-slate-700">2. Cek Spanning Tree</span>
+                <div>
+                    <h4 class="font-bold text-teal-700 text-sm mb-2">B. Di <span class="dev-link" onclick="showTopology('dev-sw2')">Switch 2</span></h4>
+                    <p class="text-xs text-slate-600 mb-1">SW2 jadi Bos (Primary) untuk VLAN 20, dan Wakil (Secondary) untuk VLAN 10.</p>
+                    <div class="terminal">
+                        <span class="prompt">SW2(config)#</span> spanning-tree vlan 20 root primary<br>
+                        <span class="prompt">SW2(config)#</span> spanning-tree vlan 10 root secondary
                     </div>
-                    <div class="terminal mt-2"><span class="prompt">SW-1#</span> show spanning-tree</div>
-                    <p class="text-xs text-slate-600 mt-1">
-                        Di SW-1 harus ada tulisan: <strong>"This bridge is the root"</strong>.<br>
-                        Interface yang muncul adalah <strong>Po1</strong> (bukan Fa0/2 atau Fa0/3 lagi).
-                    </p>
+                </div>
+
+                <div class="bg-green-50 border border-green-200 p-3 rounded text-xs text-green-800">
+                    <strong>Hasil:</strong> Trafik VLAN 10 akan lewat jalur kiri (SW1), trafik VLAN 20 akan lewat jalur kanan (SW2). Jalur lebih efisien!
                 </div>
             </div>
         </section>
 
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-12">
-            <a href="phase-b2.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
-                <i class="fas fa-arrow-left mr-2"></i> Kembali ke B2
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">5</div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Verifikasi</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Perintah pengecekan.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h5 class="font-bold text-xs text-slate-700">Cek EtherChannel</h5>
+                        <div class="terminal">
+                            <span class="prompt">#</span> show etherchannel summary<br>
+                            <span class="comment">Hasil harus: Po1(SU) P(f0/1) P(f0/2)<br>S=Layer2, U=In Use (Aktif)</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-xs text-slate-700">Cek Spanning Tree</h5>
+                        <div class="terminal">
+                            <span class="prompt">#</span> show spanning-tree vlan 10<br>
+                            <span class="comment">Cek baris: "This bridge is the root"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="index.html" class="w-full md:w-auto text-center px-6 py-3 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold text-sm">
+                Kembali ke Dashboard
             </a>
-            <a href="phase-b4.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-cyan-600 text-white hover:bg-cyan-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
-                Lanjut ke Fase B4 (OSPF Routing) <i class="fas fa-arrow-right"></i>
+            <a href="phase-b4.html" class="w-full md:w-auto text-center px-8 py-3 rounded-lg bg-teal-600 text-white hover:bg-teal-700 shadow-lg hover:shadow-xl transition font-bold flex items-center justify-center gap-2 text-sm">
+                Lanjut ke Fase B4 (OSPF) <i class="fas fa-arrow-right"></i>
             </a>
         </div>
 
     </main>
+
 </body>
 </html>
