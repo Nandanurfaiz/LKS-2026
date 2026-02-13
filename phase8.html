@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase 8: Firewall & Security - LKS 2026</title>
+    <title>Fase 8: Virtual IP & Firewall - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -60,7 +60,7 @@
             opacity: 0.7;
         }
 
-        /* Step Badge - Orange Theme */
+        /* Step Badge */
         .step-badge {
             width: 2.5rem;
             height: 2.5rem;
@@ -112,7 +112,7 @@
                     <span class="text-xs text-slate-500 md:hidden">Security</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">Firewall & Router Hardening</span>
+                <span class="hidden md:inline font-bold text-slate-800">Virtual IP & Firewall</span>
             </div>
             <span class="bg-orange-100 text-orange-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
                 Modul Security
@@ -123,9 +123,9 @@
     <main class="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-24">
 
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Keamanan Jaringan (IPTables)</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Advanced Routing & Security</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Kita akan mengamankan Router dari serangan luar dengan memblokir Ping (ICMP) dan membatasi akses SSH hanya untuk Admin.
+                Menambahkan **Virtual IP** (untuk persiapan High Availability) dan mengamankan Router dengan **IPTables**.
             </p>
         </header>
 
@@ -135,40 +135,62 @@
             </h2>
             <div class="grid md:grid-cols-2 gap-6 text-sm">
                 <div>
-                    <h4 class="font-bold text-orange-700 mb-2">Rule 1: Block Ping (ICMP)</h4>
-                    <p class="text-slate-700 mb-2">Router tidak boleh membalas ping dari Client, tapi Client tetap bisa internetan.</p>
-                    <div class="bg-white p-2 rounded border border-orange-100 text-xs font-mono">
-                        Client -> Ping Router (10.10.10.1) -> <span class="text-red-600 font-bold">DROP</span>
-                    </div>
+                    <h4 class="font-bold text-orange-700 mb-2">Target Konfigurasi:</h4>
+                    <ul class="list-disc ml-5 text-slate-700 space-y-1">
+                        <li><strong>Virtual IP:</strong> 172.16.10.254 (Secondary IP).</li>
+                        <li><strong>Ping:</strong> Router MENOLAK ping dari Client.</li>
+                        <li><strong>SSH:</strong> Hanya ADMIN (Lokal) yang boleh remote.</li>
+                    </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold text-orange-700 mb-2">Rule 2: Secure SSH</h4>
-                    <p class="text-slate-700 mb-2">SSH ke Router hanya diizinkan dari jaringan lokal (Management), akses dari luar ditolak.</p>
-                    <div class="bg-white p-2 rounded border border-orange-100 text-xs font-mono">
-                        Client -> SSH Router (Port 22) -> <span class="text-green-600 font-bold">ACCEPT</span><br>
-                        Internet -> SSH Router -> <span class="text-red-600 font-bold">DROP</span>
-                    </div>
+                    <h4 class="font-bold text-orange-700 mb-2">Mengapa Virtual IP?</h4>
+                    <p class="text-slate-700 mb-2 text-xs">
+                        Di kisi-kisi diminta "Virtual IP". Ini teknik membuat 1 kabel LAN memiliki 2 alamat IP. Berguna jika IP utama mati, IP virtual bisa pindah ke router cadangan (Failover).
+                    </p>
                 </div>
             </div>
         </section>
 
         <section class="mb-10 md:mb-12">
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
-                <div class="step-badge">1</div>
+                <div class="step-badge bg-yellow-500 text-white shadow-yellow-300">1</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Cek Status Awal</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Pastikan tool firewall terinstall di Router (fw).</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Virtual IP (IP Alias)</h2>
+                    <p class="text-yellow-700 font-bold text-xs md:text-sm mt-0.5">Materi Baru (Wajib!)</p>
                 </div>
             </div>
 
-            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-600 mb-2">Di terminal <strong>Router (fw)</strong>, pastikan paket penyimpan rule ada:</p>
-                <div class="terminal">
-                    <span class="prompt">root@fw:~#</span> apt install iptables-persistent -y
+            <div class="ml-2 md:ml-14 bg-yellow-50 p-4 md:p-6 rounded-xl border border-yellow-200 shadow-sm space-y-4">
+                <p class="text-xs text-slate-700 mb-2">
+                    Kita akan menambahkan IP <code>172.16.10.254</code> pada interface DMZ (misal: <code>ens34</code> atau <code>ens37</code>) tanpa menghilangkan IP lama.
+                </p>
+
+                <div>
+                    <h4 class="font-bold text-yellow-800 text-sm mb-1">1. Cek Nama Interface</h4>
+                    <div class="terminal border-yellow-400">
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('ip a', 'Lihat daftar interface. Cari yang IP-nya 172.16.10.1. Misal namanya ens34.')">ip a</span>
+                    </div>
                 </div>
-                <p class="text-xs text-slate-600 mt-2 mb-1">Cek aturan saat ini (Harusnya ada rule NAT dari Fase 2):</p>
-                <div class="terminal">
-                    <span class="prompt">root@fw:~#</span> iptables -t nat -L -v -n
+
+                <div>
+                    <h4 class="font-bold text-yellow-800 text-sm mb-1">2. Tambahkan Config Alias</h4>
+                    <div class="terminal border-yellow-400">
+                        <span class="prompt">root@fw:~#</span> nano /etc/network/interfaces
+                    </div>
+                    <p class="text-xs text-slate-600 mb-2">Tambahkan baris ini di paling bawah (Sesuaikan <code>ens34</code> dengan nama interface DMZ Anda!):</p>
+                    <div class="file-content border-yellow-300 bg-yellow-100">
+auto ens34:0
+iface ens34:0 inet static
+    address 172.16.10.254/24</div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-yellow-800 text-sm mb-1">3. Aktifkan & Tes</h4>
+                    <div class="terminal border-yellow-400">
+                        <span class="prompt">root@fw:~#</span> systemctl restart networking<br>
+                        <span class="prompt">root@fw:~#</span> ping 172.16.10.254
+                    </div>
+                    <p class="text-xs text-green-700 font-bold mt-1">Jika Reply, berarti Router Anda sekarang punya 2 identitas!</p>
                 </div>
             </div>
         </section>
@@ -177,29 +199,16 @@
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Blokir Ping (ICMP)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Membuat router "Invisible" dari Client.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Cek Status Firewall</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Persiapan IPTables.</p>
                 </div>
             </div>
 
-            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                
-                <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">Penerapan Rule</h4>
-                    <p class="text-xs text-slate-600 mb-2">Perintah ini akan membuang paket Ping (echo-request) yang masuk ke Router dari arah Client (ens39).</p>
-                    <div class="terminal">
-                        <span class="comment"># Format: iptables -A INPUT -i [Interface] -p icmp -j DROP</span><br>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('iptables -A INPUT ...', '<b>Blokir Ping.</b><br>-A INPUT: Tambah aturan di pintu masuk Router.<br>-i ens39: Khusus trafik dari kabel Client.<br>-p icmp: Protokol Ping.<br>-j DROP: Buang paket (jangan balas).')">iptables -A INPUT -i ens39 -p icmp --icmp-type echo-request -j DROP</span>
-                    </div>
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="terminal">
+                    <span class="prompt">root@fw:~#</span> apt install iptables-persistent -y<br>
+                    <span class="prompt">root@fw:~#</span> iptables -L -n -v
                 </div>
-
-                <div class="bg-orange-50 border-l-4 border-orange-400 p-3">
-                    <h4 class="font-bold text-orange-800 text-sm mb-1"><i class="fas fa-vial"></i> Tes Langsung (Validasi)</h4>
-                    <p class="text-xs text-slate-700">Buka CMD di Laptop Client, coba ping Gateway:</p>
-                    <code class="block bg-slate-800 text-white p-2 rounded mt-1 text-xs font-mono">ping 10.10.10.1</code>
-                    <p class="text-xs text-slate-700 mt-1"><strong>Target:</strong> Request Timed Out (RTO). <br>Tapi coba ping ke Google (8.8.8.8), harusnya tetap <strong>Reply</strong>.</p>
-                </div>
-
             </div>
         </section>
 
@@ -207,25 +216,23 @@
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">3</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Amankan SSH (Port 22)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Hanya izinkan Laptop Client, blokir yang lain.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Blokir Ping (ICMP)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Router tidak boleh menjawab Ping dari Client.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">Strategi Whitelist</h4>
-                    <p class="text-xs text-slate-600 mb-2">Kita izinkan dulu network Client, baru blokir sisanya.</p>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">Penerapan Rule</h4>
                     <div class="terminal">
-                        <span class="comment"># 1. Izinkan Network Client (10.10.10.0/24) masuk SSH</span><br>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('Allow SSH Client', 'Mengizinkan semua IP dari 10.10.10.1 s.d 10.10.10.254 untuk mengakses port 22 (SSH).')">iptables -A INPUT -p tcp --dport 22 -s 10.10.10.0/24 -j ACCEPT</span><br><br>
-                        
-                        <span class="comment"># 2. Blokir SSH dari manapun selain di atas</span><br>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('Block SSH All', 'Menutup port 22 untuk semua interface dan IP lainnya (misal dari Internet atau DMZ).')">iptables -A INPUT -p tcp --dport 22 -j DROP</span>
+                        <span class="comment"># Ganti 'ens33' dengan interface arah Client/Internet jika perlu</span><br>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('iptables -A INPUT ...', 'Membuang paket ICMP Echo Request (Ping) yang masuk.')">iptables -A INPUT -p icmp --icmp-type echo-request -j DROP</span>
                     </div>
                 </div>
-
+                <div class="bg-orange-50 border-l-4 border-orange-400 p-3">
+                    <h4 class="font-bold text-orange-800 text-sm mb-1"><i class="fas fa-vial"></i> Validasi</h4>
+                    <p class="text-xs text-slate-700">Dari Laptop Client: <code>ping 172.16.10.1</code> -> Harus <strong>Request Timed Out</strong>.</p>
+                </div>
             </div>
         </section>
 
@@ -233,42 +240,35 @@
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">4</div>
                 <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Amankan SSH (Port 22)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Whitelist IP Admin.</p>
+                </div>
+            </div>
+
+            <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div class="terminal">
+                    <span class="comment"># 1. Izinkan Network Lokal (Admin)</span><br>
+                    <span class="prompt">root@fw:~#</span> iptables -A INPUT -p tcp --dport 22 -s 172.16.10.0/24 -j ACCEPT<br>
+                    <span class="prompt">root@fw:~#</span> iptables -A INPUT -p tcp --dport 22 -s 192.168.10.0/24 -j ACCEPT<br><br>
+                    
+                    <span class="comment"># 2. Blokir Sisanya</span><br>
+                    <span class="prompt">root@fw:~#</span> iptables -A INPUT -p tcp --dport 22 -j DROP
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="step-badge">5</div>
+                <div>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800">Simpan Permanen</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Agar aturan tidak hilang saat restart.</p>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Wajib agar tidak hilang saat reboot.</p>
                 </div>
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm">
                 <div class="terminal">
-                    <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('netfilter-persistent save', '<b>Save Rules.</b><br>Menyimpan semua aturan IPTables yang baru saja dibuat ke dalam file konfigurasi agar dimuat ulang saat booting.')">netfilter-persistent save</span>
-                </div>
-                <p class="text-xs text-slate-500 mt-2">
-                    <i class="fas fa-info-circle text-orange-500"></i> Jika Anda ingin menghapus semua aturan dan mulai dari nol:
-                    <code class="bg-slate-100 px-1 rounded">iptables -F</code> lalu simpan lagi.
-                </p>
-            </div>
-        </section>
-
-        <section class="bg-orange-50 border-l-4 border-orange-500 p-5 md:p-6 mb-12 shadow-sm">
-            <h2 class="text-orange-900 font-bold text-base md:text-lg mb-4 flex items-center gap-2">
-                <i class="fas fa-check-double"></i> Verifikasi Akhir
-            </h2>
-            
-            <div class="grid md:grid-cols-3 gap-4 text-sm text-slate-700">
-                <div class="bg-white p-4 rounded border shadow-sm">
-                    <h5 class="font-bold text-orange-600 mb-2">1. Ping Router</h5>
-                    <p class="text-xs mb-2">Dari Laptop, ping ke 10.10.10.1.</p>
-                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Harus RTO</span>
-                </div>
-                <div class="bg-white p-4 rounded border shadow-sm">
-                    <h5 class="font-bold text-orange-600 mb-2">2. Ping Internet</h5>
-                    <p class="text-xs mb-2">Dari Laptop, ping ke 8.8.8.8.</p>
-                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Harus Reply</span>
-                </div>
-                <div class="bg-white p-4 rounded border shadow-sm">
-                    <h5 class="font-bold text-orange-600 mb-2">3. SSH Router</h5>
-                    <p class="text-xs mb-2">Buka PuTTY ke 10.10.10.1.</p>
-                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Bisa Login</span>
+                    <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('netfilter-persistent save', 'Menyimpan konfigurasi IPTables.')">netfilter-persistent save</span>
                 </div>
             </div>
         </section>

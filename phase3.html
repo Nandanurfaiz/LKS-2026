@@ -38,7 +38,7 @@
         .prompt { color: #22c55e; font-weight: bold; }
         .comment { color: #94a3b8; font-style: italic; }
         
-        /* INTERACTIVE CODE HINT STYLE - PURPLE THEME */
+        /* Interactive Code */
         .interactive-code {
             cursor: pointer;
             border-bottom: 1px dashed #a78bfa;
@@ -60,7 +60,7 @@
             opacity: 0.7;
         }
 
-        /* Step Styling - Purple Theme */
+        /* Step Badge */
         .step-badge {
             width: 2.5rem;
             height: 2.5rem;
@@ -77,39 +77,9 @@
         }
 
         /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-            backdrop-filter: blur(3px);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 20% auto;
-            padding: 1.5rem;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 600px;
-            border-radius: 1rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative;
-        }
-        .close {
-            color: #64748b;
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-        }
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+        .modal-content { background-color: #fefefe; margin: 20% auto; padding: 1.5rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 1rem; position: relative; }
+        .close { color: #64748b; position: absolute; top: 10px; right: 15px; font-size: 2rem; font-weight: bold; cursor: pointer; }
     </style>
     <script>
         function showHint(title, text) {
@@ -117,12 +87,8 @@
             document.getElementById('modalText').innerHTML = text;
             document.getElementById('myModal').style.display = "block";
         }
-        function closeModal() {
-            document.getElementById('myModal').style.display = "none";
-        }
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('myModal')) { closeModal(); }
-        }
+        function closeModal() { document.getElementById('myModal').style.display = "none"; }
+        window.onclick = function(event) { if (event.target == document.getElementById('myModal')) closeModal(); }
     </script>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -146,11 +112,9 @@
                     <span class="text-xs text-slate-500 md:hidden">Public Services</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">DNS & Secure Web (HTTPS)</span>
+                <span class="hidden md:inline font-bold text-slate-800">DNS & Secure Web (Simple Mode)</span>
             </div>
-            <span class="bg-purple-100 text-purple-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
-                DMZ Area
-            </span>
+            <span class="bg-purple-100 text-purple-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">DMZ Area</span>
         </div>
     </nav>
 
@@ -159,7 +123,7 @@
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Layanan Publik (DMZ)</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Kita akan membangun <strong>DNS Server</strong>, <strong>Web Server Apache</strong>, dan mengaktifkan <strong>HTTPS (SSL)</strong> agar sesuai kisi-kisi "Secure Web Server".
+                Fokus utama: Membangun DNS Server dan Web Server yang aman (HTTPS) dengan cara yang cepat dan efisien sesuai standar kisi-kisi.
             </p>
         </header>
 
@@ -183,7 +147,7 @@
                     <h4 class="font-bold text-purple-700 mb-2 mt-4 md:mt-0">Misi Utama:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
                         <li>Install <strong>Apache2</strong> di Web01 & Web02.</li>
-                        <li><strong><span class="text-red-500 font-bold">BARU!</span> Aktifkan HTTPS</strong> (Port 443) dengan OpenSSL.</li>
+                        <li><strong>Aktifkan HTTPS</strong> (Port 443) pakai cara cepat (default-ssl).</li>
                         <li>Config <strong>DNS Server</strong> (Bind9) di Router.</li>
                     </ul>
                 </div>
@@ -200,7 +164,6 @@
             </div>
 
             <div class="ml-2 md:ml-14 bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
-                
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Cloning VM</h4>
                     <p class="text-xs text-slate-600 mb-2">Matikan `Debian-Master`. Lakukan <strong>Full Clone</strong> dua kali:</p>
@@ -213,9 +176,8 @@
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">2. Config IP Web01</h4>
-                    <p class="text-xs text-slate-500 mb-1">Nyalakan <code>web01</code>, login root, edit network:</p>
                     <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/network/interfaces', '<b>Edit IP Address.</b><br>Membuka konfigurasi jaringan untuk mengubah dari DHCP menjadi Statis agar IP tidak berubah-ubah.')">nano /etc/network/interfaces</span>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/network/interfaces', 'Edit konfigurasi IP Address.')">nano /etc/network/interfaces</span>
                     </div>
                     <div class="file-content">
 auto ens33
@@ -224,14 +186,16 @@ iface ens33 inet static
     gateway 172.16.10.1
     dns-nameservers 8.8.8.8</div>
                     <div class="terminal mt-2">
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('hostnamectl set-hostname web01', '<b>Ganti Nama Mesin.</b><br>Mengubah identitas komputer ini menjadi <b>web01</b> agar tidak tertukar dengan server lain saat kita me-remote.')">hostnamectl set-hostname web01</span><br>
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart networking', '<b>Terapkan Konfigurasi.</b><br>Merestart layanan jaringan untuk mengaktifkan IP Address 172.16.10.10 yang baru saja kita ketik.')">systemctl restart networking</span>
+                        <span class="prompt">root@web01:~#</span> hostnamectl set-hostname web01<br>
+                        <span class="prompt">root@web01:~#</span> systemctl restart networking
                     </div>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">3. Config IP Web02</h4>
-                    <p class="text-xs text-slate-500 mb-1">Lakukan hal sama di <code>web02</code>, tapi IP beda:</p>
+                    <div class="terminal">
+                        <span class="prompt">root@web02:~#</span> nano /etc/network/interfaces
+                    </div>
                     <div class="file-content">
 auto ens33
 iface ens33 inet static
@@ -239,11 +203,10 @@ iface ens33 inet static
     gateway 172.16.10.1
     dns-nameservers 8.8.8.8</div>
                     <div class="terminal mt-2">
-                        <span class="prompt">root@web02:~#</span> <span class="interactive-code" onclick="showHint('hostnamectl set-hostname web02', '<b>Ganti Nama Mesin.</b><br>Mengubah identitas komputer ini menjadi <b>web02</b>.')">hostnamectl set-hostname web02</span><br>
-                        <span class="prompt">root@web02:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart networking', '<b>Terapkan Konfigurasi.</b><br>Mengaktifkan IP Address 172.16.10.20.')">systemctl restart networking</span>
+                        <span class="prompt">root@web02:~#</span> hostnamectl set-hostname web02<br>
+                        <span class="prompt">root@web02:~#</span> systemctl restart networking
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -251,8 +214,8 @@ iface ens33 inet static
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Secure Web Server (HTTPS)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Install Apache & Enable SSL (Port 443).</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Secure Web (Cara Cepat)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Aktifkan HTTPS dalam 3 perintah saja.</p>
                 </div>
             </div>
 
@@ -262,56 +225,34 @@ iface ens33 inet static
                     <h4 class="font-bold text-yellow-800 text-sm mb-2"><i class="fas fa-compact-disc"></i> Persiapan DVD (Wajib di Web01 & 02)</h4>
                     <div class="terminal">
                         <span class="comment"># Masukkan DVD-1 di VMware, lalu:</span><br>
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Daftarkan DVD.</b><br>Mengenalkan kaset DVD-1 ke sistem operasi agar bisa dipakai menginstall aplikasi.')">apt-cdrom add</span><br>
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt update', '<b>Refresh Database.</b><br>Membaca ulang daftar isi aplikasi di dalam DVD.')">apt update</span>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', 'Daftarkan DVD.')">apt-cdrom add</span><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt update', 'Update database paket.')">apt update</span>
                     </div>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Apache2 & SSL Tools</h4>
-                    <p class="text-xs text-slate-600 mb-1">Lakukan di <strong>KEDUA</strong> server (Web01 & Web02):</p>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install & Aktifkan SSL</h4>
+                    <p class="text-xs text-slate-600 mb-1">Lakukan perintah "sakti" ini di <strong>KEDUA</strong> server:</p>
                     <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt install apache2 openssl -y', '<b>Install Paket.</b><br>Apache2 untuk web server, OpenSSL untuk membuat sertifikat keamanan.')">apt install apache2 openssl -y</span>
-                    </div>
-                </div>
+                        <span class="comment"># 1. Install Apache</span><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt install apache2 -y', 'Install web server.')">apt install apache2 -y</span>
+                        
+                        <span class="comment"># 2. Aktifkan Modul SSL (Agar support HTTPS)</span><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('a2enmod ssl', 'Perintah untuk menghidupkan fitur SSL di Apache.')">a2enmod ssl</span>
 
-                <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Buat Sertifikat SSL (Self-Signed)</h4>
-                    <p class="text-xs text-slate-600 mb-1">Agar website bisa diakses via HTTPS (Gembok Hijau/Merah):</p>
-                    <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt', '<b>Generate Certificate.</b><br>Perintah panjang ini membuat kunci rahasia (.key) dan sertifikat publik (.crt) yang berlaku selama 1 tahun (365 hari). <br><b>Isi pertanyaan identitas (Country, State, dll) dengan bebas/asal saja.</b>')">openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt</span>
-                    </div>
-                </div>
+                        <span class="comment"># 3. Aktifkan Config Default SSL (Pakai sertifikat bawaan/snakeoil)</span><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('a2ensite default-ssl', 'Mengaktifkan file konfigurasi default-ssl.conf yang sudah disediakan Debian. Tidak perlu buat file baru!')">a2ensite default-ssl</span>
 
-                <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Konfigurasi Apache SSL</h4>
-                    <div class="terminal">
-                        <span class="comment"># Buat file config baru untuk HTTPS</span><br>
-                        <span class="prompt">root@web01:~#</span> nano /etc/apache2/sites-available/lks-ssl.conf
-                    </div>
-                    <div class="file-content">
-&lt;VirtualHost *:443&gt;
-    ServerAdmin admin@lks2026.id
-    DocumentRoot /var/www/html
-    
-    SSLEngine on
-    SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
-    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
-&lt;/VirtualHost&gt;</div>
-                </div>
-
-                <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">4. Aktifkan & Restart</h4>
-                    <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('a2enmod ssl', 'Mengaktifkan modul SSL di Apache.')">a2enmod ssl</span><br>
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('a2ensite lks-ssl.conf', 'Mengaktifkan konfigurasi website HTTPS yang baru kita buat.')">a2ensite lks-ssl.conf</span><br>
+                        <span class="comment"># 4. Restart</span><br>
                         <span class="prompt">root@web01:~#</span> systemctl restart apache2
                     </div>
-                    <p class="text-xs text-red-500 font-bold mt-2">ULANGI LANGKAH 2 s.d 4 DI WEB02!</p>
+                    <div class="bg-green-50 border border-green-200 p-2 rounded text-xs text-green-800 mt-2">
+                        <strong>Info:</strong> Sertifikat otomatis pakai <code>ssl-cert-snakeoil.pem</code>. Web sudah bisa diakses via <code>https://IP</code>.
+                    </div>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">5. Ubah Konten (Pembeda)</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Ubah Konten (Pembeda)</h4>
                     <div class="terminal">
                         <span class="prompt">root@web01:~#</span> echo "&lt;h1&gt;WEB 01 (Secure)&lt;/h1&gt;" > /var/www/html/index.html<br>
                         <span class="prompt">root@web02:~#</span> echo "&lt;h1&gt;WEB 02 (Secure)&lt;/h1&gt;" > /var/www/html/index.html
@@ -334,16 +275,15 @@ iface ens33 inet static
                 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Bind9</h4>
-                    <p class="text-xs text-slate-500 mb-1">Pindah ke VM <code>fw</code> (Router). Pastikan DVD terpasang.</p>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install bind9 dnsutils -y', '<b>Install DNS Tools.</b><br><b>bind9:</b> Software DNS Server.<br><b>dnsutils:</b> Paket berisi perintah nslookup dan dig untuk mengetes DNS.')">apt install bind9 dnsutils -y</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('apt install bind9 dnsutils -y', 'Install paket DNS Server.')">apt install bind9 dnsutils -y</span>
                     </div>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Buat Zone Domain</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Config Zone</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/bind/named.conf.local', '<b>Daftarkan Domain.</b><br>Di file ini kita memberi tahu Bind9 bahwa kita memiliki domain bernama <b>lks2026.id</b>.')">nano /etc/bind/named.conf.local</span>
+                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nano /etc/bind/named.conf.local', 'Edit file zona lokal.')">nano /etc/bind/named.conf.local</span>
                     </div>
                     <div class="file-content">
 zone "lks2026.id" {
@@ -353,7 +293,7 @@ zone "lks2026.id" {
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Buat File Database</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Config Database</h4>
                     <div class="terminal">
                         <span class="prompt">root@fw:~#</span> cp /etc/bind/db.local /etc/bind/db.lks<br>
                         <span class="prompt">root@fw:~#</span> nano /etc/bind/db.lks
@@ -372,16 +312,13 @@ $TTL    604800
 @       IN      NS      lks2026.id.
 @       IN      A       172.16.10.1
 www     IN      A       172.16.10.1</div>
-                    <button class="text-xs text-purple-600 font-bold mt-2 flex items-center gap-1" onclick="showHint('Kenapa IP 172.16.10.1?', 'Kita mengarahkan domain ke IP Router (Gateway), karena nanti di Fase 7 kita akan menginstall Load Balancer (HAProxy) di Router ini. Jadi trafik web akan masuk ke Router dulu baru dibagi ke Web01/02.')">
-                        <i class="fas fa-info-circle"></i> Kenapa IP-nya 172.16.10.1?
-                    </button>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-slate-700 text-sm mb-1">4. Restart & Cek</h4>
                     <div class="terminal">
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('systemctl restart bind9', '<b>Restart DNS.</b><br>Wajib dilakukan setiap kali mengubah file zona.')">systemctl restart bind9</span><br>
-                        <span class="prompt">root@fw:~#</span> <span class="interactive-code" onclick="showHint('nslookup www.lks2026.id localhost', '<b>Tes DNS.</b><br>Jika menjawab 172.16.10.1, berarti sukses.')">nslookup www.lks2026.id localhost</span>
+                        <span class="prompt">root@fw:~#</span> systemctl restart bind9<br>
+                        <span class="prompt">root@fw:~#</span> nslookup www.lks2026.id localhost
                     </div>
                 </div>
 
@@ -399,7 +336,7 @@ www     IN      A       172.16.10.1</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>SSL:</strong> Sertifikat Self-signed terpasang.</div>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>HTTPS:</strong> Aktif (Snakeoil Cert).</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
