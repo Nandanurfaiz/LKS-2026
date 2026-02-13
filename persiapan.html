@@ -277,14 +277,152 @@
             </div>
         </section>
 
+        <section class="mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="step-number">5</div>
+                <h2 class="text-xl font-bold text-slate-800">Eksekusi Cloning</h2>
+            </div>
+            <div class="card border-l-4 border-indigo-500">
+                <h3 class="font-bold text-indigo-900 mb-2">Langkah Cloning di VMware</h3>
+                <ol class="list-decimal ml-5 text-sm text-slate-700 space-y-2">
+                    <li>Pastikan VM <strong>Debian-Master-LKS</strong> dalam keadaan <strong>Mati (Powered Off)</strong>.</li>
+                    <li>Klik Kanan pada nama VM -> <strong>Manage</strong> -> <strong>Clone...</strong></li>
+                    <li>Klik <strong>Next</strong> -> Pilih <strong>The current state...</strong> -> Next.</li>
+                    <li>Pilih <strong>Create a full clone</strong> (Wajib Full Clone agar independen).</li>
+                    <li>
+                        Beri nama VM baru sesuai target (misal: <code>FW</code>, <code>WEB01</code>, dll).
+                    </li>
+                    <li>Ulangi langkah ini sampai Anda punya 5 VM baru.</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="step-number">6</div>
+                <h2 class="text-xl font-bold text-slate-800">Setting Identitas VM (Wajib!)</h2>
+            </div>
+            <p class="text-sm text-slate-600 mb-6">
+                Setelah di-clone, semua VM masih bernama "master-debian" dan punya 3 Adapter. 
+                Anda <strong>WAJIB</strong> menyesuaikan satu per satu sebelum lanjut ke Fase 1.
+            </p>
+
+            <div class="space-y-6">
+                
+                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                    <div class="bg-slate-100 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
+                        <span class="font-bold text-slate-700">1. VM: FW (Router)</span>
+                        <span class="vm-fw">GATEWAY</span>
+                    </div>
+                    <div class="p-4">
+                        <div class="grid md:grid-cols-2 gap-4 text-sm mb-4">
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase font-bold">Network Adapter</p>
+                                <p class="font-mono text-indigo-700 font-bold">JANGAN UBAH (Tetap 3)</p>
+                                <ul class="list-disc ml-4 text-xs text-slate-600 mt-1">
+                                    <li>Adapter 1: Bridged (Internet)</li>
+                                    <li>Adapter 2: VMnet10 (DMZ)</li>
+                                    <li>Adapter 3: VMnet11 (INT)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase font-bold">Tugas Pertama</p>
+                                <p class="text-xs text-slate-600">Nyalakan VM, login root, lalu ganti hostname.</p>
+                            </div>
+                        </div>
+                        <div class="code-box">
+<span class="comment"># Ganti nama mesin jadi FW</span>
+<span class="cmd">hostnamectl set-hostname FW</span>
+
+<span class="comment"># Edit file hosts, ganti 'master-debian' jadi 'FW'</span>
+<span class="cmd">nano /etc/hosts</span>
+
+<span class="comment"># Keluar dan masuk lagi agar terminal berubah</span>
+<span class="cmd">bash</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                    <div class="bg-slate-100 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
+                        <span class="font-bold text-slate-700">2. VM: INT-SRV</span>
+                        <span class="vm-int">INTERNAL</span>
+                    </div>
+                    <div class="p-4">
+                        <div class="alert bg-yellow-50 text-yellow-800 text-xs p-2 rounded border border-yellow-200 mb-3">
+                            <i class="fas fa-exclamation-triangle"></i> <strong>Penting:</strong> Sebelum dinyalakan, Hapus Adapter 1 & 2 di Setting VMware! Sisakan Adapter 3 saja.
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm mb-4">
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase font-bold">Network Adapter</p>
+                                <p class="font-mono text-green-700 font-bold">SISA 1 ADAPTER</p>
+                                <ul class="list-disc ml-4 text-xs text-slate-600 mt-1">
+                                    <li>Network Adapter: <strong>Custom (VMnet11)</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-box">
+<span class="cmd">hostnamectl set-hostname INT-SRV</span>
+<span class="cmd">nano /etc/hosts</span> <span class="comment"># Ganti jadi INT-SRV</span>
+<span class="cmd">bash</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                    <div class="bg-slate-100 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
+                        <span class="font-bold text-slate-700">3. VM: MAIL, WEB01, WEB02</span>
+                        <span class="vm-dmz">DMZ ZONE</span>
+                    </div>
+                    <div class="p-4">
+                        <div class="alert bg-yellow-50 text-yellow-800 text-xs p-2 rounded border border-yellow-200 mb-3">
+                            <i class="fas fa-exclamation-triangle"></i> <strong>Penting:</strong> Hapus Adapter 1 & 3. Sisakan Adapter 2 (Tengah) saja.
+                        </div>
+                        <div class="text-sm mb-4">
+                            <p class="text-xs text-slate-500 uppercase font-bold">Network Adapter</p>
+                            <p class="font-mono text-orange-700 font-bold">SISA 1 ADAPTER (VMnet10)</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs font-bold text-slate-700">Di VM "mail":</p>
+                                <div class="code-box mt-0">
+<span class="cmd">hostnamectl set-hostname MAIL-SRV</span>
+<span class="cmd">nano /etc/hosts</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-700">Di VM "web01":</p>
+                                <div class="code-box mt-0">
+<span class="cmd">hostnamectl set-hostname WEB01-SRV</span>
+<span class="cmd">nano /etc/hosts</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-700">Di VM "web02":</p>
+                                <div class="code-box mt-0">
+<span class="cmd">hostnamectl set-hostname WEB02-SRV</span>
+<span class="cmd">nano /etc/hosts</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <div class="flex justify-between mt-8">
             <button class="px-6 py-2 bg-slate-200 text-slate-700 rounded font-bold hover:bg-slate-300">Kembali</button>
-            <button onclick="alert('Lanjut ke Fase 1 jika 5 VM sudah siap!')" class="px-6 py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 shadow-lg">
-                Semua VM Siap? Lanjut Fase 1 <i class="fas fa-arrow-right ml-2"></i>
+            <button onclick="alert('Pastikan 5 VM sudah punya nama yang benar (cek prompt root@NAMA) sebelum lanjut!')" class="px-6 py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 shadow-lg">
+                Selesai Ganti Nama? Lanjut Fase 1 <i class="fas fa-arrow-right ml-2"></i>
             </button>
         </div>
 
+        
     </main>
+
+    
 
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fase 3: DNS & Web Server (Apache) - LKS 2026</title>
+    <title>Fase 3: DNS & Secure Web (Apache) - LKS 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -146,7 +146,7 @@
                     <span class="text-xs text-slate-500 md:hidden">Public Services</span>
                 </div>
                 <span class="hidden md:inline text-slate-300">|</span>
-                <span class="hidden md:inline font-bold text-slate-800">DNS & Apache Web Server</span>
+                <span class="hidden md:inline font-bold text-slate-800">DNS & Secure Web (HTTPS)</span>
             </div>
             <span class="bg-purple-100 text-purple-700 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase whitespace-nowrap">
                 DMZ Area
@@ -159,7 +159,7 @@
         <header class="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 md:mb-3">Layanan Publik (DMZ)</h1>
             <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                Kita akan membangun <strong>DNS Server</strong> dan menyiapkan <strong>Dua Web Server (Apache)</strong> yang kontennya berbeda, sebagai persiapan untuk Load Balancing (Fase 7).
+                Kita akan membangun <strong>DNS Server</strong>, <strong>Web Server Apache</strong>, dan mengaktifkan <strong>HTTPS (SSL)</strong> agar sesuai kisi-kisi "Secure Web Server".
             </p>
         </header>
 
@@ -173,8 +173,8 @@
                     <div class="bg-white p-3 rounded border border-purple-100 overflow-x-auto">
                         <ul class="space-y-1 font-mono text-xs md:text-sm text-slate-700">
                             <li><strong>Domain:</strong> lks2026.id</li>
-                            <li><strong>Web01:</strong> 172.16.10.10 (VM Baru)</li>
-                            <li><strong>Web02:</strong> 172.16.10.20 (VM Baru)</li>
+                            <li><strong>Web01:</strong> 172.16.10.10 (HTTPS)</li>
+                            <li><strong>Web02:</strong> 172.16.10.20 (HTTPS)</li>
                             <li><strong>Gateway:</strong> 172.16.10.1 (Router fw)</li>
                         </ul>
                     </div>
@@ -182,8 +182,8 @@
                 <div>
                     <h4 class="font-bold text-purple-700 mb-2 mt-4 md:mt-0">Misi Utama:</h4>
                     <ul class="list-disc ml-5 text-slate-700 space-y-1">
-                        <li>Install <strong>Apache2</strong> di Web01 & Web02 (via DVD).</li>
-                        <li>Ubah konten Web01 & Web02 agar berbeda.</li>
+                        <li>Install <strong>Apache2</strong> di Web01 & Web02.</li>
+                        <li><strong><span class="text-red-500 font-bold">BARU!</span> Aktifkan HTTPS</strong> (Port 443) dengan OpenSSL.</li>
                         <li>Config <strong>DNS Server</strong> (Bind9) di Router.</li>
                     </ul>
                 </div>
@@ -251,8 +251,8 @@ iface ens33 inet static
             <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                 <div class="step-badge">2</div>
                 <div>
-                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Install Web Server (Apache)</h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Menggunakan Apache2 sebagai pengganti Nginx.</p>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800">Secure Web Server (HTTPS)</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Install Apache & Enable SSL (Port 443).</p>
                 </div>
             </div>
 
@@ -260,7 +260,6 @@ iface ens33 inet static
                 
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                     <h4 class="font-bold text-yellow-800 text-sm mb-2"><i class="fas fa-compact-disc"></i> Persiapan DVD (Wajib di Web01 & 02)</h4>
-                    <p class="text-xs text-slate-700 mb-2">Karena ini VM baru, mereka belum kenal DVD. Lakukan ini di <strong>KEDUA</strong> server:</p>
                     <div class="terminal">
                         <span class="comment"># Masukkan DVD-1 di VMware, lalu:</span><br>
                         <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt-cdrom add', '<b>Daftarkan DVD.</b><br>Mengenalkan kaset DVD-1 ke sistem operasi agar bisa dipakai menginstall aplikasi.')">apt-cdrom add</span><br>
@@ -269,28 +268,53 @@ iface ens33 inet static
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Apache2 (Di Kedua Server)</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">1. Install Apache2 & SSL Tools</h4>
+                    <p class="text-xs text-slate-600 mb-1">Lakukan di <strong>KEDUA</strong> server (Web01 & Web02):</p>
                     <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt install apache2 -y', '<b>Install Apache.</b><br>Memasang aplikasi Apache Web Server.')">apt install apache2 -y</span>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('apt install apache2 openssl -y', '<b>Install Paket.</b><br>Apache2 untuk web server, OpenSSL untuk membuat sertifikat keamanan.')">apt install apache2 openssl -y</span>
                     </div>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Ubah Tampilan Web01</h4>
-                    <p class="text-xs text-slate-600 mb-2">Hapus file bawaan dan buat yang baru.</p>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">2. Buat Sertifikat SSL (Self-Signed)</h4>
+                    <p class="text-xs text-slate-600 mb-1">Agar website bisa diakses via HTTPS (Gembok Hijau/Merah):</p>
                     <div class="terminal">
-                        <span class="prompt">root@web01:~#</span> rm /var/www/html/index.html<br>
-                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('echo ... > index.html', '<b>Buat Halaman Web 01.</b>')">echo "&lt;h1&gt;Ini Server WEB 01 (Apache)&lt;/h1&gt;" > /var/www/html/index.html</span><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt', '<b>Generate Certificate.</b><br>Perintah panjang ini membuat kunci rahasia (.key) dan sertifikat publik (.crt) yang berlaku selama 1 tahun (365 hari). <br><b>Isi pertanyaan identitas (Country, State, dll) dengan bebas/asal saja.</b>')">openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Konfigurasi Apache SSL</h4>
+                    <div class="terminal">
+                        <span class="comment"># Buat file config baru untuk HTTPS</span><br>
+                        <span class="prompt">root@web01:~#</span> nano /etc/apache2/sites-available/lks-ssl.conf
+                    </div>
+                    <div class="file-content">
+&lt;VirtualHost *:443&gt;
+    ServerAdmin admin@lks2026.id
+    DocumentRoot /var/www/html
+    
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
+    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
+&lt;/VirtualHost&gt;</div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">4. Aktifkan & Restart</h4>
+                    <div class="terminal">
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('a2enmod ssl', 'Mengaktifkan modul SSL di Apache.')">a2enmod ssl</span><br>
+                        <span class="prompt">root@web01:~#</span> <span class="interactive-code" onclick="showHint('a2ensite lks-ssl.conf', 'Mengaktifkan konfigurasi website HTTPS yang baru kita buat.')">a2ensite lks-ssl.conf</span><br>
                         <span class="prompt">root@web01:~#</span> systemctl restart apache2
                     </div>
+                    <p class="text-xs text-red-500 font-bold mt-2">ULANGI LANGKAH 2 s.d 4 DI WEB02!</p>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-700 text-sm mb-1">3. Ubah Tampilan Web02</h4>
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">5. Ubah Konten (Pembeda)</h4>
                     <div class="terminal">
-                        <span class="prompt">root@web02:~#</span> rm /var/www/html/index.html<br>
-                        <span class="prompt">root@web02:~#</span> <span class="interactive-code" onclick="showHint('echo ... > index.html', '<b>Buat Halaman Web 02.</b><br>Konten HARUS BEDA agar kita bisa melihat efek Load Balancing di Fase 7 nanti.')">echo "&lt;h1&gt;Ini Server WEB 02 (Apache)&lt;/h1&gt;" > /var/www/html/index.html</span><br>
-                        <span class="prompt">root@web02:~#</span> systemctl restart apache2
+                        <span class="prompt">root@web01:~#</span> echo "&lt;h1&gt;WEB 01 (Secure)&lt;/h1&gt;" > /var/www/html/index.html<br>
+                        <span class="prompt">root@web02:~#</span> echo "&lt;h1&gt;WEB 02 (Secure)&lt;/h1&gt;" > /var/www/html/index.html
                     </div>
                 </div>
 
@@ -371,15 +395,15 @@ www     IN      A       172.16.10.1</div>
             <div class="grid md:grid-cols-2 gap-3 md:gap-4">
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>Web01 & 02:</strong> Terinstall Apache2 & Konten berbeda.</div>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>Web01 & 02:</strong> Apache Aktif (Port 80 & 443).</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>DNS:</strong> <code>nslookup www.lks2026.id</code> reply 172.16.10.1.</div>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>SSL:</strong> Sertifikat Self-signed terpasang.</div>
                 </div>
                 <div class="flex gap-3 p-3 bg-white rounded-lg border border-green-100 shadow-sm items-center">
                     <i class="fas fa-check text-green-600 text-lg"></i>
-                    <div class="text-xs md:text-sm text-slate-700"><strong>Load Balancer:</strong> Menunggu Fase 7.</div>
+                    <div class="text-xs md:text-sm text-slate-700"><strong>DNS:</strong> <code>nslookup www.lks2026.id</code> OK.</div>
                 </div>
             </div>
         </section>
